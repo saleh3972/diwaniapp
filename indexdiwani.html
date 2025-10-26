@@ -5381,6 +5381,7 @@ const firebaseConfig = {
                 { id: 'returns', label: '↩️ إدارة المرتجعات' },
                 { id: 'expenses', label: '💸 إدارة المصروفات' },
                 { id: 'revenues', label: '💰 إدارة الإيرادات' },
+                { id: 'sadaqa', label: '🤲 حساب الصدقة' },
                 { id: 'salaries', label: '💼 إدارة الرواتب' },
                 { id: 'reports', label: '📑 التقارير' },
                 { id: 'settings', label: '⚙️ الإعدادات والنظام' }
@@ -5404,6 +5405,114 @@ const firebaseConfig = {
                 button.setAttribute('onclick', `showSection('${section.id}')`);
                 sidebarNav.appendChild(button);
             });
+            // إضافة قسم الصدقة إذا لم يكن موجوداً
+            if (!document.getElementById('sadaqa')) {
+                const container = document.querySelector('.container');
+                if (container) {
+                    const sadaqaSection = document.createElement('div');
+                    sadaqaSection.id = 'sadaqa';
+                    sadaqaSection.className = 'section';
+                    sadaqaSection.innerHTML = `
+                        <h2>🤲 حساب الصدقة</h2>
+                        <div class="form-grid grid-3">
+                            <input type="number" id="sadaqaAmount" placeholder="المبلغ (ريال) *" min="1" required>
+                            <input type="date" id="sadaqaDate" required>
+                            <input type="text" id="sadaqaDesc" placeholder="وصف أو اسم المستفيد">
+                            <button class="btn-primary btn-add" onclick="addSadaqa()">➕ إضافة صدقة</button>
+                        </div>
+                        <div id="sadaqaList" style="margin-top:2em;"></div>
+                        <div id="sadaqaTotal" style="margin-top:1em; font-weight:bold;"></div>
+                    `;
+                    container.appendChild(sadaqaSection);
+                    // عرض السجلات مباشرة بعد إنشاء القسم
+                    setTimeout(() => { window.renderSadaqaList(); }, 0);
+                }
+            }
+            // دوال الصدقة
+            window.addSadaqa = function() {
+                const amount = parseFloat(document.getElementById('sadaqaAmount').value);
+                const date = document.getElementById('sadaqaDate').value;
+                const desc = document.getElementById('sadaqaDesc').value;
+                if (!amount || !date) {
+                    showNotification('⚠️ خطأ', 'يرجى إدخال المبلغ والتاريخ', 'error');
+                    return;
+                }
+                const sadaqat = JSON.parse(localStorage.getItem('sadaqat') || '[]');
+                sadaqat.push({ amount, date, desc });
+                localStorage.setItem('sadaqat', JSON.stringify(sadaqat));
+                document.getElementById('sadaqaAmount').value = '';
+                document.getElementById('sadaqaDate').value = '';
+                document.getElementById('sadaqaDesc').value = '';
+                renderSadaqaList();
+            };
+            window.renderSadaqaList = function() {
+                const sadaqat = JSON.parse(localStorage.getItem('sadaqat') || '[]');
+                let html = '<table border="1" style="width:100%;text-align:center"><tr><th>المبلغ</th><th>التاريخ</th><th>الوصف</th><th style="text-align:left">إجراءات</th></tr>';
+                let total = 0;
+                sadaqat.forEach((s, i) => {
+                    html += `<tr>
+                        <td>${s.amount}</td>
+                        <td>${s.date}</td>
+                        <td>${s.desc || ''}</td>
+                        <td style='text-align:left'>
+                            <div class='action-buttons' style='justify-content: flex-start;'>
+                                <button class='btn-warning edit-btn' onclick="editSadaqa(${i})">✏️ تعديل</button>
+                                <button class='btn-danger' onclick="deleteSadaqa(${i})">حذف</button>
+                            </div>
+                        </td>
+                    </tr>`;
+                    total += s.amount;
+                });
+                html += '</table>';
+                document.getElementById('sadaqaList').innerHTML = html;
+                document.getElementById('sadaqaTotal').innerText = 'إجمالي الصدقات: ' + total + ' ريال';
+            };
+            // حذف سجل صدقة
+            window.deleteSadaqa = function(idx) {
+                const sadaqat = JSON.parse(localStorage.getItem('sadaqat') || '[]');
+                if (confirm('هل أنت متأكد من حذف هذا السجل؟')) {
+                    sadaqat.splice(idx, 1);
+                    localStorage.setItem('sadaqat', JSON.stringify(sadaqat));
+                    renderSadaqaList();
+                }
+            };
+            // تعديل سجل صدقة
+            window.editSadaqa = function(idx) {
+                const sadaqat = JSON.parse(localStorage.getItem('sadaqat') || '[]');
+                const s = sadaqat[idx];
+                document.getElementById('sadaqaAmount').value = s.amount;
+                document.getElementById('sadaqaDate').value = s.date;
+                document.getElementById('sadaqaDesc').value = s.desc;
+                // عند الحفظ، نستبدل السجل القديم
+                window._sadaqaEditIdx = idx;
+                const btn = document.querySelector('#sadaqa .btn-add');
+                if (btn) {
+                    btn.textContent = '💾 حفظ التعديل';
+                    btn.onclick = function() {
+                        const amount = parseFloat(document.getElementById('sadaqaAmount').value);
+                        const date = document.getElementById('sadaqaDate').value;
+                        const desc = document.getElementById('sadaqaDesc').value;
+                        if (!amount || !date) {
+                            showNotification('⚠️ خطأ', 'يرجى إدخال المبلغ والتاريخ', 'error');
+                            return;
+                        }
+                        sadaqat[idx] = { amount, date, desc };
+                        localStorage.setItem('sadaqat', JSON.stringify(sadaqat));
+                        renderSadaqaList();
+                        document.getElementById('sadaqaAmount').value = '';
+                        document.getElementById('sadaqaDate').value = '';
+                        document.getElementById('sadaqaDesc').value = '';
+                        btn.textContent = '➕ إضافة صدقة';
+                        btn.onclick = addSadaqa;
+                        window._sadaqaEditIdx = null;
+                    };
+                }
+            };
+            // عرض السجلات عند فتح القسم
+            if (!window._sadaqaListLoaded) {
+                document.addEventListener('DOMContentLoaded', window.renderSadaqaList);
+                window._sadaqaListLoaded = true;
+            }
 
             const activeSection = document.querySelector('.section.active');
             if (activeSection) {
