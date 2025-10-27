@@ -1,0 +1,47 @@
+/* ========================================
+   🎨 المتغيرات العامة - نظام ديواني
+   ======================================== */
+
+:root {
+    /* الألوان الأساسية */
+    --primary-color: #2c5aa0;
+    --secondary-color: #34495e;
+    --accent-color: #e74c3c;
+    --success-color: #27ae60;
+    --warning-color: #f39c12;
+    --info-color: #3498db;
+    
+    /* الألوان الخلفية */
+    --bg-color: #ecf0f1;
+    --text-color: #2c3e50;
+    
+    /* الخطوط */
+    --font-size: 16px;
+    --font-family: 'Tajawal', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    
+    /* التأثيرات */
+    --border-radius: 12px;
+    --shadow: 0 4px 6px rgba(0,0,0,0.1);
+    --shadow-hover: 0 8px 25px rgba(0,0,0,0.15);
+    
+    /* الشريط الجانبي */
+    --sidebar-width: 280px;
+    --sidebar-bg: #2c3e50;
+    --sidebar-text: #ecf0f1;
+    
+    /* الهيدر */
+    --header-bg: linear-gradient(135deg, #2c5aa0 0%, #34495e 100%);
+    
+    /* الانتقالات */
+    --transition-speed: 0.3s;
+}
+
+/* وضع الظلام (اختياري للمستقبل) */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-color: #1a1a1a;
+        --text-color: #e0e0e0;
+        --primary-color: #4a90e2;
+        --sidebar-bg: #1e1e1e;
+    }
+}
