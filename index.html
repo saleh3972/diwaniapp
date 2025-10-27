@@ -2497,7 +2497,7 @@ textarea.input-success:focus {
     <div id="login-overlay">
         <div id="login-box">
             <!-- شعار البرنامج -->
-            <img src="logo.png" alt="شعار نظام ديواني" class="login-logo" id="loginLogo" style="display: none;" onerror="this.style.display='none'">
+            <img src="logo/logo.png" alt="شعار نظام ديواني" class="login-logo" id="loginLogo" style="display: none;" onerror="this.style.display='none'">
             
             <h2>ديواني<br><span style="font-size: 0.8em; font-weight: normal; color: #1e3a5f;">نظام محاسبي متكامل</span></h2>
             <input type="email" id="loginEmail" class="login-input" placeholder="البريد الإلكتروني" onkeypress="if(event.key==='Enter')handleLogin()">
@@ -10384,9 +10384,9 @@ if (data.length > 0) {
             
             debugLog('📄 الملف المختار:', file.name, 'الحجم:', file.size);
             
-            // Check file size (max 2MB)
-            if (file.size > 2 * 1024 * 1024) {
-                showNotification('❌ حجم الملف يجب أن يكون أقل من 2 ميجابايت', 'error');
+            // Check file size (max 500KB for localStorage compatibility)
+            if (file.size > 500 * 1024) {
+                showNotification('❌ حجم الملف كبير جداً', 'حجم الملف يجب أن يكون أقل من 500 كيلوبايت. يرجى ضغط الصورة أولاً.', 'error');
                 fileInput.value = '';
                 return;
             }
@@ -10413,12 +10413,20 @@ if (data.length > 0) {
                 sessionStorage.setItem('currentActivity', JSON.stringify(currentActivity));
                 
                 // حفظ في localStorage activities
-                const storageKey = `activity_${currentActivity.id}_data`;
-                const activityData = JSON.parse(localStorage.getItem(storageKey)) || {};
-                activityData.logo = base64String;
-                localStorage.setItem(storageKey, JSON.stringify(activityData));
-                
-                debugLog('💾 تم حفظ الشعار في localStorage');
+                try {
+                    const storageKey = `activity_${currentActivity.id}_data`;
+                    const activityData = JSON.parse(localStorage.getItem(storageKey)) || {};
+                    activityData.logo = base64String;
+                    localStorage.setItem(storageKey, JSON.stringify(activityData));
+                    debugLog('💾 تم حفظ الشعار في localStorage');
+                } catch (error) {
+                    if (error.name === 'QuotaExceededError') {
+                        showNotification('❌ مساحة التخزين ممتلئة', 'الصورة كبيرة جداً. يرجى استخدام صورة أصغر (أقل من 200 كيلوبايت).', 'error');
+                        fileInput.value = '';
+                        return;
+                    }
+                    throw error;
+                }
                 
                 // Update preview
                 const previewImg = document.getElementById('activityLogoPreview');
