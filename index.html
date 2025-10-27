@@ -53,21 +53,28 @@
        - رسائل واضحة مع أزرار مخصصة لكل حالة
        - تأثيرات بصرية سلسة (Animations)
     
-    📅 تاريخ التحديث: 23 أكتوبر 2025
+    تاريخ التحديث: 23 أكتوبر 2025
     ========================================
 -->
 <head>
     <title>النظام المحاسبي - ديواني</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Preconnect للخطوط لتحسين الأداء -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Reem+Kufi&display=swap" rel="stylesheet">
+    
+    <!-- السكربتات الخارجية - Firebase بدون defer لأنه مطلوب فوراً -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
-    <!-- إضافة Firebase -->
+    <!-- إضافة Firebase - بدون defer لأن الكود الداخلي يعتمد عليه -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -5571,42 +5578,53 @@ const firebaseConfig = {
             
             // Update mini stats based on section
             if (sectionId === 'items') {
-                document.getElementById('miniStatItems').textContent = items.length;
+                const miniStatItemsEl = document.getElementById('miniStatItems');
+                if (miniStatItemsEl) miniStatItemsEl.textContent = items.length;
                 renderItems();
                 generateItemCode(); // توليد الكود تلقائياً عند فتح صفحة الأصناف
             }
             else if (sectionId === 'customers') {
-                document.getElementById('miniStatCustomers').textContent = customers.length;
+                const miniStatCustomersEl = document.getElementById('miniStatCustomers');
+                if (miniStatCustomersEl) miniStatCustomersEl.textContent = customers.length;
                 renderCustomers();
                 generateCustomerCode(); // توليد الكود تلقائياً عند فتح صفحة العملاء
             }
             else if (sectionId === 'suppliers') {
-                document.getElementById('miniStatSuppliers').textContent = suppliers.length;
+                const miniStatSuppliersEl = document.getElementById('miniStatSuppliers');
+                if (miniStatSuppliersEl) miniStatSuppliersEl.textContent = suppliers.length;
                 renderSuppliers();
                 generateSupplierCode(); // توليد الكود تلقائياً عند فتح صفحة الموردين
             }
             else if (sectionId === 'purchases') {
-                document.getElementById('miniStatPurchases').textContent = purchases.length;
+                const miniStatPurchasesEl = document.getElementById('miniStatPurchases');
+                if (miniStatPurchasesEl) miniStatPurchasesEl.textContent = purchases.length;
                 updatePurchaseDropdowns();
                 generatePurchaseCode(); // توليد كود المشتريات تلقائياً
-                document.getElementById('purchaseDate').value = new Date().toISOString().split('T')[0];
+                const purchaseDateEl = document.getElementById('purchaseDate');
+                if (purchaseDateEl) purchaseDateEl.value = new Date().toISOString().split('T')[0];
             }
             else if (sectionId === 'sales') {
-                document.getElementById('miniStatSales').textContent = sales.length;
+                const miniStatSalesEl = document.getElementById('miniStatSales');
+                if (miniStatSalesEl) miniStatSalesEl.textContent = sales.length;
                 updateSaleDropdowns();
                 generateSaleCode(); // توليد كود المبيعات تلقائياً
-                document.getElementById('saleDate').value = new Date().toISOString().split('T')[0];
+                const saleDateEl = document.getElementById('saleDate');
+                if (saleDateEl) saleDateEl.value = new Date().toISOString().split('T')[0];
             }
             else if (sectionId === 'expenses') {
-                document.getElementById('miniStatExpenses').textContent = expenses.length;
+                const miniStatExpensesEl = document.getElementById('miniStatExpenses');
+                if (miniStatExpensesEl) miniStatExpensesEl.textContent = expenses.length;
                 updateExpenseStats();
                 renderExpenses();
-                document.getElementById('expenseDate').value = new Date().toISOString().split('T')[0];
+                const expenseDateEl = document.getElementById('expenseDate');
+                if (expenseDateEl) expenseDateEl.value = new Date().toISOString().split('T')[0];
             } else if (sectionId === 'revenues') {
-                document.getElementById('miniStatRevenues').textContent = revenues.length;
+                const miniStatRevenuesEl = document.getElementById('miniStatRevenues');
+                if (miniStatRevenuesEl) miniStatRevenuesEl.textContent = revenues.length;
                 updateRevenueStats();
                 renderRevenues();
-                document.getElementById('revenueDate').value = new Date().toISOString().split('T')[0];
+                const revenueDateEl = document.getElementById('revenueDate');
+                if (revenueDateEl) revenueDateEl.value = new Date().toISOString().split('T')[0];
             } else if (sectionId === 'salaries') {
                 renderSalaries();
                 updateSalarySummary();
@@ -11264,12 +11282,14 @@ function updateLiveStats() {
     // المبيعات اليومية
     const todaySales = sales.filter(s => s.date === today)
                            .reduce((sum, sale) => sum + sale.total, 0);
-    document.getElementById('liveSales').textContent = todaySales.toFixed(2);
+    const liveSalesEl = document.getElementById('liveSales');
+    if (liveSalesEl) liveSalesEl.textContent = todaySales.toFixed(2);
     
     // الإيرادات الشهرية
     const monthRevenue = sales.filter(s => s.date.substring(0, 7) === currentMonth)
                              .reduce((sum, sale) => sum + sale.total, 0);
-    document.getElementById('liveRevenue').textContent = monthRevenue.toFixed(2);
+    const liveRevenueEl = document.getElementById('liveRevenue');
+    if (liveRevenueEl) liveRevenueEl.textContent = monthRevenue.toFixed(2);
     
     // صافي الربح (مبيعات - مشتريات - مصروفات)
     const monthPurchases = purchases.filter(p => p.date.substring(0, 7) === currentMonth)
@@ -11277,49 +11297,19 @@ function updateLiveStats() {
     const monthExpenses = expenses.filter(e => e.date.substring(0, 7) === currentMonth)
                                  .reduce((sum, expense) => sum + expense.amount, 0);
     const netProfit = monthRevenue - monthPurchases - monthExpenses;
-    document.getElementById('liveProfit').textContent = netProfit.toFixed(2);
+    const liveProfitEl = document.getElementById('liveProfit');
+    if (liveProfitEl) liveProfitEl.textContent = netProfit.toFixed(2);
     
     // العملاء الجدد (سنضيف createdAt لاحقاً)
     const newCustomers = customers.length; // مؤقتاً
-    document.getElementById('liveCustomers').textContent = newCustomers;
-}
-
-
-// ===== دوال لوحة التحكم المتقدمة =====
-function initAdvancedDashboard() {
-    updateLiveStats();
-    renderCharts();
-    updatePerformanceIndicators();
-}
-
-function updateLiveStats() {
-    const today = new Date().toISOString().split('T')[0];
-    const currentMonth = new Date().toISOString().substring(0, 7);
+    const liveCustomersEl = document.getElementById('liveCustomers');
+    if (liveCustomersEl) liveCustomersEl.textContent = newCustomers;
     
-    // المبيعات اليومية
-    const todaySales = sales.filter(s => s.date === today)
-                           .reduce((sum, sale) => sum + sale.total, 0);
-    document.getElementById('liveSales').textContent = todaySales.toFixed(2);
-    
-    // الإيرادات الشهرية
-    const monthRevenue = sales.filter(s => s.date.substring(0, 7) === currentMonth)
-                             .reduce((sum, sale) => sum + sale.total, 0);
-    document.getElementById('liveRevenue').textContent = monthRevenue.toFixed(2);
-    
-    // صافي الربح (مبيعات - مشتريات - مصروفات)
-    const monthPurchases = purchases.filter(p => p.date.substring(0, 7) === currentMonth)
-                                   .reduce((sum, purchase) => sum + purchase.total, 0);
-    const monthExpenses = expenses.filter(e => e.date.substring(0, 7) === currentMonth)
-                                 .reduce((sum, expense) => sum + expense.amount, 0);
-    const netProfit = monthRevenue - monthPurchases - monthExpenses;
-    document.getElementById('liveProfit').textContent = netProfit.toFixed(2);
-    
-    // العملاء الجدد
-    const newCustomers = customers.length;
-    document.getElementById('liveCustomers').textContent = newCustomers;
-
     // المصروفات الشهرية
-    document.getElementById('monthlyExpenses').innerHTML = `<p>المصروفات هذا الشهر: ${monthExpenses.toFixed(2)} ريال</p>`;
+    const monthlyExpensesEl = document.getElementById('monthlyExpenses');
+    if (monthlyExpensesEl) {
+        monthlyExpensesEl.innerHTML = `<p>المصروفات هذا الشهر: ${monthExpenses.toFixed(2)} ريال</p>`;
+    }
 
     // الأرباح المتراكمة (من بداية السنة)
     const yearStart = new Date().getFullYear() + '-01-01';
@@ -11327,7 +11317,10 @@ function updateLiveStats() {
     const cumulativePurchases = purchases.filter(p => p.date >= yearStart).reduce((sum, purchase) => sum + purchase.total, 0);
     const cumulativeExpenses = expenses.filter(e => e.date >= yearStart).reduce((sum, expense) => sum + expense.amount, 0);
     const cumulativeProfits = cumulativeRevenue - cumulativePurchases - cumulativeExpenses;
-    document.getElementById('cumulativeProfits').innerHTML = `<p>الأرباح المتراكمة: ${cumulativeProfits.toFixed(2)} ريال</p>`;
+    const cumulativeProfitsEl = document.getElementById('cumulativeProfits');
+    if (cumulativeProfitsEl) {
+        cumulativeProfitsEl.innerHTML = `<p>الأرباح المتراكمة: ${cumulativeProfits.toFixed(2)} ريال</p>`;
+    }
 }
 
 function renderCharts() {
@@ -11667,6 +11660,8 @@ function updatePerformanceIndicators() {
     const monthlySummary = document.getElementById('monthlySummary');
     const financialPerformance = document.getElementById('financialPerformance');
     
+    if (!monthlySummary || !financialPerformance) return;
+    
     const currentMonth = new Date().toISOString().substring(0, 7);
     
     const monthSales = sales.filter(s => s.date.substring(0, 7) === currentMonth)
@@ -11796,53 +11791,13 @@ function sendWhatsAppInvoice(saleId) {
     window.open(whatsappUrl, '_blank');
 }
 
-
 // دالة لتحديد كل العملاء أو إلغاء تحديدهم
 function toggleAllCustomerCheckboxes(mainCheckbox) {
-    // ابحث عن كل خانات الاختيار التي تحمل الكلاس 'customer-checkbox'
-    const checkboxes = document.querySelectorAll('.customer-checkbox');
-
-    // قم بالمرور على كل خانة اختيار
-    checkboxes.forEach(checkbox => {
-        // اجعل حالتها (محددة أو غير محددة) مطابقة لحالة خانة الاختيار الرئيسية
-        checkbox.checked = mainCheckbox.checked;
-    });
-}// دالة لتحديد كل العملاء أو إلغاء تحديدهم
-function toggleAllCustomerCheckboxes(mainCheckbox) {
     const checkboxes = document.querySelectorAll('.customer-checkbox');
     checkboxes.forEach(checkbox => {
         checkbox.checked = mainCheckbox.checked;
     });
 }
-
-// دالة لتجهيز رقم الهاتف للواتساب (مهمة جداً)
-function formatPhoneNumberForWhatsApp(phone) {
-    if (!phone) return null;
-
-    // إزالة أي مسافات أو شرطات أو علامة +
-    let cleaned = phone.replace(/[\s\-+]/g, '');
-
-    // إذا كان الرقم يبدأ بـ 05 (الشكل السعودي المحلي)
-    if (cleaned.startsWith('05')) {
-        // استبدال الصفر الأول بـ 966
-        return '966' + cleaned.substring(1);
-    }
-
-    // إذا كان الرقم يبدأ بـ 5 مباشرة
-    if (cleaned.length === 9 && cleaned.startsWith('5')) {
-        return '966' + cleaned;
-    }
-
-    // إذا كان الرقم مكتوباً بالشكل الدولي الصحيح بالفعل
-    if (cleaned.startsWith('966')) {
-        return cleaned;
-    }
-
-    // إذا لم يتعرف على الصيغة، أرجع الرقم كما هو (قد يعمل)
-    return cleaned;
-}
-
-
 
 // === دوال حذف المرتجعات ===
 
@@ -11914,18 +11869,18 @@ async function deletePurchaseReturn(returnId) {
     </script>
 
 <!-- نظام الحوار الاحترافي -->
-<div id="confirm-overlay" class="confirm-overlay">
+<div id="confirm-overlay" class="confirm-overlay" role="dialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby="confirm-body">
     <div class="confirm-dialog">
         <div id="confirm-header" class="confirm-header">
-            <span id="confirm-icon" class="confirm-icon">⚠️</span>
+            <span id="confirm-icon" class="confirm-icon" aria-hidden="true">⚠️</span>
             <h3 id="confirm-title" class="confirm-title">تأكيد العملية</h3>
         </div>
         <div id="confirm-body" class="confirm-body">
             هل أنت متأكد من رغبتك في تنفيذ هذه العملية؟
         </div>
         <div class="confirm-footer">
-            <button id="confirm-btn-cancel" class="confirm-btn-cancel">إلغاء</button>
-            <button id="confirm-btn-confirm" class="confirm-btn-confirm">تأكيد</button>
+            <button id="confirm-btn-cancel" class="confirm-btn-cancel" type="button">إلغاء</button>
+            <button id="confirm-btn-confirm" class="confirm-btn-confirm" type="button">تأكيد</button>
         </div>
     </div>
 </div>
