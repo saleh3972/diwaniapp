@@ -905,28 +905,28 @@
 }
 
 .trash-tabs {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
     gap: 8px;
     margin-bottom: 20px;
-    padding: 0 12px;
-    justify-content: space-around;
-    overflow-x: auto;
+    padding: 12px;
+    background: #f5f5f5;
+    border-radius: 8px;
 }
 
 .trash-tab {
-    flex: 0 0 auto;
-    min-width: 70px;
-    padding: 8px 10px;
+    padding: 10px 8px;
     background: white;
     border: none;
     cursor: pointer;
-    font-size: 0.85em;
+    font-size: 0.8em;
     color: #666;
     border-radius: 6px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     transition: all 0.3s ease;
     text-align: center;
-    white-space: nowrap;
+    white-space: normal;
+    word-wrap: break-word;
 }
 
 .trash-tab:hover {
@@ -997,22 +997,18 @@
 }
 
 .trash-stats {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
     gap: 8px;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     padding: 12px;
     background: #f5f5f5;
     border-radius: 8px;
-    flex-wrap: nowrap;
-    justify-content: space-around;
-    overflow-x: auto;
 }
 
 .trash-stat {
-    flex: 0 0 auto;
-    min-width: 70px;
     text-align: center;
-    padding: 6px 10px;
+    padding: 8px 6px;
     background: white;
     border-radius: 6px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
@@ -1025,29 +1021,34 @@
 }
 
 .trash-stat-value {
-    font-size: 1.5em;
+    font-size: 1.6em;
     font-weight: bold;
     color: var(--primary-color);
 }
 
 .trash-stat-label {
-    font-size: 0.7em;
+    font-size: 0.75em;
     color: #666;
     margin-top: 2px;
-    white-space: nowrap;
+    white-space: normal;
+    word-wrap: break-word;
+    line-height: 1.2;
 }
 
 /* تحسينات للجوال */
 @media (max-width: 768px) {
     .trash-stats {
+        grid-template-columns: repeat(auto-fit, minmax(75px, 1fr));
         gap: 6px;
         padding: 8px;
-        justify-content: flex-start;
+    }
+    
+    .trash-tabs {
+        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
     }
     
     .trash-stat {
-        min-width: 60px;
-        padding: 5px 8px;
+        padding: 6px 4px;
     }
     
     .trash-stat-value {
@@ -1056,6 +1057,11 @@
     
     .trash-stat-label {
         font-size: 0.65em;
+    }
+    
+    .trash-tab {
+        font-size: 0.7em;
+        padding: 8px 6px;
     }
 }
 /* ===== نهاية أنماط سلة المحذوفات ===== */
@@ -2597,10 +2603,6 @@ textarea.input-success:focus {
 
             <div class="user-section">
                 <div class="current-user" id="currentUserDisplay"></div>
-                <button onclick="showTrashModal()" style="width: 100%; margin-top: 10px; background: linear-gradient(135deg, #d32f2f 0%, #c62828 100%); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-size: 1em; transition: all 0.3s ease; box-shadow: 0 2px 5px rgba(211, 47, 47, 0.3);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(211, 47, 47, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 5px rgba(211, 47, 47, 0.3)'">
-                    🗑️ سلة المحذوفات
-                    <span id="trash-count-badge" style="background: #fff; color: #d32f2f; padding: 2px 8px; border-radius: 10px; font-size: 0.8em; margin-right: 5px; font-weight: bold;"></span>
-                </button>
                 <button class="btn-secondary" onclick="showSection('account-info')" style="width: 100%; margin-top: 10px;">👤 معلومات الحساب</button>
                 <button class="btn-danger" onclick="logout()" style="width: 100%; margin-top: 10px;">تسجيل الخروج</button>
             </div>
@@ -2672,6 +2674,10 @@ textarea.input-success:focus {
                 <h2>🗑️ سلة المحذوفات</h2>
                 <button class="btn-secondary" onclick="closeTrashModal()">✖ إغلاق</button>
             </div>
+            
+            <p style="text-align: center; color: #666; font-size: 0.95em; margin: 10px 0; padding: 10px; background: #fff3cd; border-radius: 8px;">
+                يتم الاحتفاظ بالعناصر المحذوفة لمدة 30 يوماً
+            </p>
             
             <div class="trash-stats">
                 <div class="trash-stat">
@@ -3673,11 +3679,15 @@ textarea.input-success:focus {
 
         <div id="activityManagementSection" class="activities-management settings-card" style="display: none;">
             <h3>🏢 إدارة الأنشطة التجارية</h3>
-            <div class="form-grid grid-2">
+            <div class="form-grid grid-3">
                 <input type="text" id="settingNewActivityName" placeholder="اسم النشاط الجديد">
                 <button class="btn-primary btn-add" onclick="addNewActivity(true)">➕ إضافة نشاط</button>
+                <button class="btn-danger" onclick="showTrashModal()">
+                    🗑️ سلة المحذوفات
+                    <span id="trash-count-badge" style="background: #fff; color: #d32f2f; padding: 2px 8px; border-radius: 10px; font-size: 0.8em; margin-right: 5px; font-weight: bold;"></span>
+                </button>
             </div>
-            <div class="activity-selector">
+            <div class="activity-selector" style="margin-top: 20px;">
                 <label for="activitiesDropdown" class="activity-selector-label">قائمة الأنشطة:</label>
                 <div class="activity-selector-controls">
                     <select id="activitiesDropdown" onchange="handleActivitySelection()">
@@ -3698,8 +3708,9 @@ textarea.input-success:focus {
         </div>
 
         <!-- شعار النشاط التجاري - متاح لمدير النشاط -->
-        <div id="activityLogoSection" class="activity-logo-settings settings-card" style="display: none;">
-            <h3>🏢 شعار النشاط التجاري</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div id="activityLogoSection" class="activity-logo-settings settings-card" style="display: none;">
+                <h3>🏢 شعار النشاط التجاري</h3>
             <p style="color: #666; font-size: 0.9em; margin-bottom: 15px;">اختر شعاراً للنشاط التجاري الحالي (يظهر في الترويسة والفواتير)</p>
             
             <div class="logo-preview-container" style="text-align: center; margin-bottom: 20px;">
@@ -3722,10 +3733,10 @@ textarea.input-success:focus {
                     <li>أقصى حجم للملف: 2 ميجابايت</li>
                 </ul>
             </div>
-        </div>
+            </div>
 
-        <div id="programLogoSection" class="logo-settings settings-card">
-            <h3>🎨 شعار البرنامج</h3>
+            <div id="programLogoSection" class="logo-settings settings-card">
+                <h3>🎨 شعار البرنامج</h3>
             <p style="color: #666; font-size: 0.9em; margin-bottom: 15px;">اختر شعاراً يظهر في شاشة تسجيل الدخول</p>
             
             <div class="logo-preview-container" style="text-align: center; margin-bottom: 20px;">
@@ -3746,6 +3757,7 @@ textarea.input-success:focus {
                     <li>الحجم الموصى به: 500×500 بكسل</li>
                     <li>أقصى حجم للملف: 2 ميجابايت</li>
                 </ul>
+            </div>
             </div>
         </div>
 
