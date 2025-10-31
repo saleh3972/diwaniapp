@@ -1334,7 +1334,18 @@
     /* تخصيص زر النسخ الاحتياطي باللون الأخضر الداكن */
     .btn-warning.backup-btn { background: #1e8449; color: #ffffff; border: 1px solid #16653a; box-shadow: 0 2px 6px rgba(22, 101, 58, 0.18); }
     .btn-warning.backup-btn:hover { background: #16653a; color: #ffffff; box-shadow: 0 4px 12px rgba(22, 101, 58, 0.28); }
-        .remaining-unpaid { color: var(--accent-color); font-weight: bold; }
+      .remaining-unpaid { 
+    color: var(--accent-color); /* أحمر - عليه مبلغ */
+    font-weight: bold; 
+}
+.remaining-paid { 
+    color: var(--text-color); /* أسود/عادي - الرصيد صفر */
+    font-weight: normal; 
+}
+.remaining-credit { 
+    color: var(--success-color); /* أخضر - له رصيد */
+    font-weight: bold; 
+}
         .report-controls { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
         .report-controls select, .report-controls input[type="date"] { max-width: 200px; min-width: 150px; }
         .report-controls button { min-width: 150px; }
@@ -7085,9 +7096,9 @@ const firebaseConfig = {
             renderPurchaseItems();
             updatePurchaseTotals();
             renderPurchasesList();
-        }
-        
-        function renderPurchasesList() {
+      
+  }
+    function renderPurchasesList() {
             const tbody = document.getElementById('purchasesList');
             tbody.innerHTML = '';
             
@@ -7139,7 +7150,14 @@ const firebaseConfig = {
             filteredPurchases.forEach(purchase => {
                 const supplier = suppliers.find(s => s.id === purchase.supplierId);
                 const totalQty = purchase.items.reduce((sum, item) => sum + item.quantity, 0);
+
+                // --- 💡 بداية التعديل: منطق الألوان الجديد ---
                 const remaining = purchase.remainingAmount ?? (purchase.total - (purchase.paidAmount || 0));
+                // تحديد الكلاس بناءً على قيمة المتبقي
+                const remainingClass = remaining > 0.01 ? 'remaining-unpaid' : (remaining < -0.01 ? 'remaining-credit' : 'remaining-paid');
+                const remainingText = remaining.toFixed(2);
+                // --- 💡 نهاية التعديل ---
+
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>PUR${purchase.number.toString().padStart(3, '0')}</td>
@@ -7148,7 +7166,7 @@ const firebaseConfig = {
                     <td>${totalQty}</td>
                     <td>${purchase.total.toFixed(2)}</td>
                     <td>${(purchase.paidAmount || 0).toFixed(2)}</td>
-                    <td class="${Math.abs(remaining) <= 0.01 ? 'remaining-paid' : 'remaining-unpaid'}">${remaining.toFixed(2)}</td>
+                    <td class="${remainingClass}">${remainingText}</td>
                     <td>
                     <div class="action-buttons">
                         <button class="btn-secondary" onclick="printPurchaseInvoice(${purchase.id})">🖨️ طباعة</button>
@@ -7159,6 +7177,8 @@ const firebaseConfig = {
                 tbody.appendChild(tr);
             });
         }
+
+        
 
         // دوال الفلترة للمشتريات
         function applyPurchasesFilters() {
@@ -7533,8 +7553,7 @@ const firebaseConfig = {
                 showNotification('❌ خطأ', 'حدث خطأ في حفظ البيانات', 'error');
             }
         }
-        
-   function renderSalesList() {
+    function renderSalesList() {
     const tbody = document.getElementById('salesList');
     tbody.innerHTML = '';
     
@@ -7586,7 +7605,17 @@ const firebaseConfig = {
     filteredSales.forEach(sale => {
         const customer = customers.find(c => c.id === sale.customerId);
         const totalQty = sale.items.reduce((sum, item) => sum + item.quantity, 0);
+        
+        // --- 💡 بداية التعديل: منطق الألوان الجديد ---
         const remaining = sale.remainingAmount ?? (sale.total - (sale.paidAmount || 0));
+        // تحديد الكلاس بناءً على قيمة المتبقي
+        // remaining-unpaid: أحمر (عليه فلوس)
+        // remaining-credit: أخضر (له فلوس)
+        // remaining-paid: أسود (الرصيد صفر)
+        const remainingClass = remaining > 0.01 ? 'remaining-unpaid' : (remaining < -0.01 ? 'remaining-credit' : 'remaining-paid');
+        const remainingText = remaining.toFixed(2);
+        // --- 💡 نهاية التعديل ---
+
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td data-label="رقم الفاتورة">SAL${sale.number.toString().padStart(3, '0')}</td>
@@ -7595,7 +7624,7 @@ const firebaseConfig = {
             <td data-label="الكمية">${totalQty}</td>
             <td data-label="الإجمالي">${sale.total.toFixed(2)}</td>
             <td data-label="المدفوع">${(sale.paidAmount || 0).toFixed(2)}</td>
-            <td data-label="المتبقي" class="${Math.abs(remaining) <= 0.01 ? 'remaining-paid' : 'remaining-unpaid'}">${remaining.toFixed(2)}</td>
+            <td data-label="المتبقي" class="${remainingClass}">${remainingText}</td>
             <td data-label="الإجراءات">
                 <div class="action-buttons">
                     <button class="btn-secondary" onclick="printSaleInvoice(${sale.id})">🖨️ طباعة</button>
@@ -7927,18 +7956,41 @@ const firebaseConfig = {
                 total: totalReturnValue
             };
 
-            salesReturns.push(newReturn);
+
+// --- 💡 إضافة جديدة: تحديث الفاتورة الأصلية ---
+            // 1. ابحث عن الفاتورة الأصلية في مصفوفة المبيعات
+            const originalSaleIndex = sales.findIndex(s => s.id === activeSaleReturn.id);
+            
+            if (originalSaleIndex > -1) {
+                // 2. قم بتحديث قيم الفاتورة الأصلية
+                const originalSale = sales[originalSaleIndex];
+                
+                // خصم قيمة المرتجع من الإجمالي والمتبقي
+                originalSale.total = roundCurrency((originalSale.total || 0) - totalReturnValue);
+                originalSale.remainingAmount = roundCurrency((originalSale.remainingAmount || 0) - totalReturnValue);
+                
+                // (اختياري) يمكنك إضافة ملاحظة للفاتورة الأصلية
+                originalSale.notes = (originalSale.notes || '') + ` [مرتجع بقيمة: ${totalReturnValue.toFixed(2)}]`;
+                
+                debugLog('تم تحديث الفاتورة الأصلية:', sales[originalSaleIndex]);
+            }
+            // --- 💡 نهاية الإضافة ---
+
+            // السطر 7930 يبدأ من هنا
+         salesReturns.push(newReturn);
             currentSaleReturnNumber++;
             
             const success1 = await saveToFirebase('salesReturns', salesReturns);
             const success2 = await saveToFirebase('items', items);
+            const success3 = await saveToFirebase('sales', sales); // <-- إضافة جديدة: لحفظ التعديل على المبيعات
             
-            if (success1 && success2) {
+            if (success1 && success2 && success3) { // <-- تعديل الشرط: التأكد من حفظ كل شيء
                 showNotification('✅ تم الحفظ', `تم حفظ مرتجع المبيعات رقم SR${newReturn.number.toString().padStart(3, '0')} بنجاح`, 'success');
                 newSaleReturn();
                 renderSalesReturns();
                 updateDashboard();
                 renderItems();
+                renderSalesList(); // <-- إضافة جديدة: لتحديث قائمة المبيعات وإظهار الرصيد الجديد
             } else {
                 showNotification('❌ خطأ', 'حدث خطأ في حفظ البيانات', 'error');
             }
@@ -8043,7 +8095,7 @@ const firebaseConfig = {
             document.getElementById('purchaseReturnTotal').textContent = total.toFixed(2);
         }
 
-        async function savePurchaseReturn() {
+     async function savePurchaseReturn() {
             if (!activePurchaseReturn) {
                 showNotification('⚠️ لم يتم البحث', 'الرجاء البحث عن فاتورة أولاً', 'warning');
                 return;
@@ -8088,18 +8140,39 @@ const firebaseConfig = {
                 total: totalReturnValue
             };
 
+            // --- 💡 إضافة جديدة: تحديث فاتورة الشراء الأصلية ---
+            // 1. ابحث عن الفاتورة الأصلية في مصفوفة المشتريات
+            const originalPurchaseIndex = purchases.findIndex(p => p.id === activePurchaseReturn.id);
+
+            if (originalPurchaseIndex > -1) {
+                // 2. قم بتحديث قيم الفاتورة الأصلية
+                const originalPurchase = purchases[originalPurchaseIndex];
+                
+                // خصم قيمة المرتجع من الإجمالي والمتبقي
+                originalPurchase.total = roundCurrency((originalPurchase.total || 0) - totalReturnValue);
+                originalPurchase.remainingAmount = roundCurrency((originalPurchase.remainingAmount || 0) - totalReturnValue);
+                
+                // (اختياري) يمكنك إضافة ملاحظة للفاتورة الأصلية
+                originalPurchase.notes = (originalPurchase.notes || '') + ` [مرتجع بقيمة: ${totalReturnValue.toFixed(2)}]`;
+                
+                debugLog('تم تحديث فاتورة الشراء الأصلية:', purchases[originalPurchaseIndex]);
+            }
+            // --- 💡 نهاية الإضافة ---
+
             purchaseReturns.push(newReturn);
             currentPurchaseReturnNumber++;
             
             const success1 = await saveToFirebase('purchaseReturns', purchaseReturns);
             const success2 = await saveToFirebase('items', items);
+            const success3 = await saveToFirebase('purchases', purchases); // <-- إضافة جديدة: حفظ المشتريات
             
-            if (success1 && success2) {
-                showNotification('✅ تم الحفظ', `تم حفظ مرتجع المشتريات رقم PR${newReturn.number.toString().padStart(3, '0')} بنجاح`, 'success');
+            if (success1 && success2 && success3) { // <-- تعديل الشرط
+                showNotification('✅ تم الحفظ', `تم حفظ مرتجع المGit¹S-PR${newReturn.number.toString().padStart(3, '0')} بنجاح`, 'success');
                 newPurchaseReturn();
                 renderPurchaseReturns();
                 updateDashboard();
                 renderItems();
+                renderPurchasesList(); // <-- إضافة جديدة: تحديث قائمة المشتريات
             } else {
                 showNotification('❌ خطأ', 'حدث خطأ في حفظ البيانات', 'error');
             }
