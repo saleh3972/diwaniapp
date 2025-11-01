@@ -78,6 +78,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
     <style>
         /* تنسيقات لوحة التحكم المتقدمة */
@@ -3100,10 +3101,12 @@ textarea.input-success:focus {
         </div>
     </div>
     
-    <div style="display: flex; gap: 10px; margin-top: 20px;">
-        <button class="btn-primary" id="savePurchaseBtn" onclick="savePurchase()">💾 حفظ الفاتورة</button>
-        <button class="btn-secondary" onclick="newPurchase()">🆕 فاتورة جديدة</button>
-    </div>
+   <div style="display: flex; gap: 10px; margin-top: 20px; align-items: center; flex-wrap: wrap;">
+    <button class="btn-primary" id="savePurchaseBtn" onclick="savePurchase()">💾 حفظ الفاتورة</button>
+    <button class="btn-secondary" onclick="newPurchase()">🆕 فاتورة جديدة</button>
+
+    <input type="file" id="purchaseAttachment" accept="image/*,application/pdf" style="flex: 1; min-width: 250px; padding: 10px; border: 2px dashed var(--primary-color); background: #f8f9fa;">
+</div>
     
     <h3 style="margin-top: 30px;">فواتير المشتريات السابقة</h3>
     
@@ -3142,7 +3145,7 @@ textarea.input-success:focus {
         </div>
     </div>
     
-    <table id="purchasesTable">
+  <table id="purchasesTable">
         <thead>
             <tr>
                 <th class="sortable" data-column="code">رقم الفاتورة</th>
@@ -3152,7 +3155,7 @@ textarea.input-success:focus {
                 <th class="sortable" data-column="total">الإجمالي</th>
                 <th class="sortable" data-column="paidAmount">المدفوع</th>
                 <th class="sortable" data-column="remainingAmount">المتبقي</th>
-                <th>الإجراءات</th>
+                <th>المرفق</th> <th>الإجراءات</th>
             </tr>
         </thead>
         <tbody id="purchasesList"></tbody>
@@ -3410,21 +3413,23 @@ textarea.input-success:focus {
     </div>
     
     <div class="form-grid grid-3">
-        <select id="expensePaymentMethod">
-            <option value="cash">نقدي</option>
-            <option value="bank">تحويل بنكي</option>
-            <option value="check">شيك</option>
-            <option value="card">بطاقة ائتمان</option>
-        </select>
-        <input type="text" id="expenseReference" placeholder="رقم المرجع (اختياري)">
+    <select id="expensePaymentMethod">
+        <option value="cash">نقدي</option>
+        <option value="bank">تحويل بنكي</option>
+        <option value="check">شيك</option>
+        <option value="card">بطاقة ائتمان</option>
+    </select>
+    <input type="text" id="expenseReference" placeholder="رقم المرجع (اختيار)">
+    
+    <input type="file" id="expenseAttachment" accept="image/*,application/pdf" style="padding: 10px; border: 2px dashed var(--primary-color); background: #f8f9fa;">
+    
     <button class="btn-primary btn-add" onclick="addExpense()">➕ إضافة مصروف</button>
-    </div>
-
+</div>
     <div class="search-container">
         <input type="text" id="searchExpenses" class="search-input" placeholder="🔍 بحث في المصروفات...">
     </div>
 
-    <table>
+   <table>
         <thead>
             <tr>
                 <th>التاريخ</th>
@@ -3433,12 +3438,11 @@ textarea.input-success:focus {
                 <th>طريقة الدفع</th>
                 <th>الوصف</th>
                 <th>رقم المرجع</th>
-                <th>الإجراءات</th>
+                <th>المرفق</th> <th>الإجراءات</th>
             </tr>
         </thead>
         <tbody id="expensesList"></tbody>
     </table>
-    
     <div class="stats-grid" style="margin-top: 30px;">
         <div class="stat-card">
             <div class="stat-number" id="totalExpenses">0</div>
@@ -4153,7 +4157,69 @@ textarea.input-success:focus {
         </div>
     </div>
     <script>
+// === دوال Firebase المحسّنة مع معالجة الأخطاء ===
+// ... (أسفل دوال firebaseGet, firebaseSet, etc.)
 
+/**
+ * دالة لرفع ملف إلى Firebase Storage
+ * @param {File} file - الملف المراد رفعه
+ * @param {string} path - المسار داخل Storage (مثل 'purchases' أو 'expenses')
+ * @returns {Promise<string|null>} - رابط تحميل الملف أو null عند الفشل
+ */
+/**
+ * دالة لرفع ملف إلى Cloudinary
+ * @param {File} file - الملف المراد رفعه
+ * @param {string} path - (لم نعد نستخدمه هنا ولكن سنبقيه للتوافق)
+ * @returns {Promise<string|null>} - رابط تحميل الملف أو null عند الفشل
+ */
+async function uploadFile(file, path) {
+    if (!file) return null;
+
+    // --- ⬇️ إعدادات Cloudinary الخاصة بك ⬇️ ---
+    const CLOUD_NAME = "dgjcr2bgq";
+    const UPLOAD_PRESET = "diwani_uploads";
+    // --- ⬆️ نهاية الإعدادات ⬆️ ---
+
+    const url = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload`;
+
+    // استخدام FormData لإرسال الملف
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', UPLOAD_PRESET);
+
+    // (اختياري) يمكننا إضافة مجلد بناءً على النشاط
+    if (currentActivityId) {
+        formData.append('folder', `diwani_attachments/${currentActivityId}/${path}`);
+    }
+
+    try {
+        showLoading(`جاري رفع المرفق... ${file.name}`);
+
+        // إرسال الطلب إلى Cloudinary
+        const response = await fetch(url, {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.secure_url) {
+            // نجح الرفع!
+            hideLoading();
+            showNotification('✅ نجاح', 'تم رفع المرفق بنجاح', 'success');
+            return data.secure_url; // إرجاع الرابط الآمن للملف
+        } else {
+            // فشل الرفع
+            throw new Error(data.error.message || 'فشل الرفع');
+        }
+
+    } catch (error) {
+        hideLoading();
+        logError('Cloudinary Upload', error);
+        showNotification('❌ فشل الرفع', 'حدث خطأ أثناء رفع الملف: ' + error.message, 'error');
+        return null;
+    }
+}
 // === وضع التطوير/الإنتاج ===
 const DEBUG_MODE = true; // تفعيل وضع التصحيح
 
@@ -4181,47 +4247,46 @@ const firebaseConfig = {
         const database = firebase.database();
 
         // === متغيرات النظام ===
-    let activities = [];
-    let currentActivityId = null;
-    let items = [], customers = [], suppliers = [], purchases = [], sales = [], expenses = [], revenues = [], salaries = [];
-    let advances = [];
-    let salesReturns = [], purchaseReturns = [];
-        let currentPurchaseItems = [], currentSaleItems = [];
-        let editingPurchaseId = null, editingSaleId = null, editingSalaryId = null;
-        let currentPurchaseNumber = 1, currentSaleNumber = 1;
-        let currentSaleReturnNumber = 1, currentPurchaseReturnNumber = 1;
-        let activeSaleReturn = null, activePurchaseReturn = null;
-        let users = [];
-        const FIREBASE_SHARED_ROOT = 'shared_activities';
-    const GOSI_RATE = 0.09;
-    const GOSI_SALARY_CAP = 45000;
-    
-    // ===== متغيرات الإشعارات وسلة المحذوفات =====
-    let notifications = [];
-    let trashBin = {
-        items: [],
-        customers: [],
-        suppliers: [],
-        purchases: [],
-        sales: [],
-        expenses: [],
-        revenues: [],
-        salaries: [],
-        advances: []
-    };
-    const LOW_STOCK_THRESHOLD = 5; // حد التنبيه لانخفاض المخزون
-    
-    // ===== تكوين EmailJS الثابت (عدّل القيم أدناه ثم فعّل العلم EMAILJS_FIXED) =====
-    const EMAILJS_FIXED = false; // true = استخدام الإعدادات الثابتة الموضوعة أدناه وعدم إظهار واجهة الإعداد
+let activities = [];
+let currentActivityId = null;
+let items = [], customers = [], suppliers = [], purchases = [], sales = [], expenses = [], revenues = [], salaries = [];
+let advances = [];
+let salesReturns = [], purchaseReturns = [];
+let currentPurchaseItems = [], currentSaleItems = [];
+let editingPurchaseId = null, editingSaleId = null, editingSalaryId = null;
+let currentPurchaseNumber = 1, currentSaleNumber = 1;
+let currentSaleReturnNumber = 1, currentPurchaseReturnNumber = 1;
+let activeSaleReturn = null, activePurchaseReturn = null;
+let users = [];
+const FIREBASE_SHARED_ROOT = 'shared_activities';
+const GOSI_RATE = 0.09;
+const GOSI_SALARY_CAP = 45000;
 
-    const EMAILJS_DEFAULTS = {
-        serviceID: 'service_hu6ucxi',
-        templateID: 'VH3waGBnucCE-S4eeM0I4', // قالب الفواتير
-        resetTemplateID: 'template_aqp69jt', // قالب إعادة كلمة المرور
-        publicKey: '-FKicwCTdzG90IoY6'
-    };
-    let emailJsConfig = { ...EMAILJS_DEFAULTS };
+// ===== متغيرات الإشعارات وسلة المحذوفات =====
+let notifications = [];
+let trashBin = {
+    items: [],
+    customers: [],
+    suppliers: [],
+    purchases: [],
+    sales: [],
+    expenses: [],
+    revenues: [],
+    salaries: [],
+    advances: []
+};
+const LOW_STOCK_THRESHOLD = 5; // حد التنبيه لانخفاض المخزون
 
+// ===== تكوين EmailJS الثابت (عدّل القيم أدناه ثم فعّل العلم EMAILJS_FIXED) =====
+const EMAILJS_FIXED = false; // true = استخدام الإعدادات الثابتة الموضوعة أدناه وعدم إظهار واجهة الإعداد
+
+const EMAILJS_DEFAULTS = {
+    serviceID: 'service_hu6ucxi',
+    templateID: 'VH3waGBnucCE-S4eeM0I4', // قالب الفواتير
+    resetTemplateID: 'template_aqp69jt', // قالب إعادة كلمة المرور
+    publicKey: '-FKicwCTdzG90IoY6'
+};
+let emailJsConfig = { ...EMAILJS_DEFAULTS };
     // ===== وظائف التشفير للأمان =====
     async function hashPassword(password) {
         // استخدام SHA-256 لتشفير كلمة المرور
@@ -6050,12 +6115,183 @@ const firebaseConfig = {
                 tbody.appendChild(tr);
             });
         }
+function newPurchaseReturn() {
+    activePurchaseReturn = null;
+    document.getElementById('purchaseReturnInvoiceSearch').value = '';
+    document.getElementById('purchaseReturnInvoiceDetails').style.display = 'none';
+    document.getElementById('purchaseReturnItemsContainer').style.display = 'none';
+    document.getElementById('purchaseReturnItemsList').innerHTML = '';
+    document.getElementById('purchaseReturnTotal').textContent = '0.00';
+}
 
-        function searchCustomers() {
-            const searchTerm = document.getElementById('searchCustomers').value.toLowerCase();
-            const filteredCustomers = customers.filter(customer => 
-                customer.name.toLowerCase().includes(searchTerm) || 
-                customer.code.toLowerCase().includes(searchTerm) ||
+function findPurchaseForReturn() {
+    const invoiceNumber = parseInt(document.getElementById('purchaseReturnInvoiceSearch').value);
+    if (isNaN(invoiceNumber)) {
+        showNotification('⚠️ رقم غير صحيح', 'الرجاء إدخال رقم فاتورة صحيح', 'warning');
+        return;
+    }
+    
+    const purchase = purchases.find(p => p.number === invoiceNumber);
+    if (!purchase) {
+        showNotification('❌ غير موجود', 'لم يتم العثور على فاتورة بهذا الرقم', 'error');
+        newPurchaseReturn();
+        return;
+    }
+
+    activePurchaseReturn = purchase;
+    const supplier = suppliers.find(s => s.id === purchase.supplierId);
+    
+    const detailsDiv = document.getElementById('purchaseReturnInvoiceDetails');
+    detailsDiv.innerHTML = `
+        <p><strong>رقم الفاتورة:</strong> PUR${purchase.number.toString().padStart(3, '0')}</p>
+        <p><strong>المورد:</strong> ${supplier ? supplier.name : 'غير معروف'}</p>
+        <p><strong>التاريخ:</strong> ${purchase.date}</p>
+    `;
+    detailsDiv.style.display = 'block';
+
+    const itemsTbody = document.getElementById('purchaseReturnItemsList');
+    itemsTbody.innerHTML = '';
+    purchase.items.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.dataset.itemId = item.id;
+        tr.dataset.price = item.price;
+        tr.innerHTML = `
+            <td>${item.name}</td>
+            <td>${item.price.toFixed(2)}</td>
+            <td>${item.quantity}</td>
+            <td><input type="number" class="return-item-qty-input" min="0" max="${item.quantity}" value="0" oninput="updatePurchaseReturnTotal()"></td>
+        `;
+        itemsTbody.appendChild(tr);
+    });
+    
+    document.getElementById('purchaseReturnItemsContainer').style.display = 'block';
+    updatePurchaseReturnTotal();
+}
+
+function updatePurchaseReturnTotal() {
+    let total = 0;
+    document.querySelectorAll('#purchaseReturnItemsList tr').forEach(tr => {
+        const price = parseFloat(tr.dataset.price);
+        const qty = parseInt(tr.querySelector('input').value) || 0;
+        total += price * qty;
+    });
+    document.getElementById('purchaseReturnTotal').textContent = total.toFixed(2);
+}
+
+async function savePurchaseReturn() {
+    if (!activePurchaseReturn) {
+        showNotification('⚠️ لم يتم البحث', 'الرجاء البحث عن فاتورة أولاً', 'warning');
+        return;
+    }
+    
+    const returnedItems = [];
+    let totalReturnValue = 0;
+    document.querySelectorAll('#purchaseReturnItemsList tr').forEach(tr => {
+        const qty = parseInt(tr.querySelector('input').value) || 0;
+        if (qty > 0) {
+            const originalItem = activePurchaseReturn.items.find(i => i.id == tr.dataset.itemId);
+            returnedItems.push({
+                id: originalItem.id,
+                name: originalItem.name,
+                price: originalItem.price,
+                quantity: qty
+            });
+            totalReturnValue += originalItem.price * qty;
+        }
+    });
+
+    if (returnedItems.length === 0) {
+        showNotification('⚠️ لا يوجد كميات', 'لم يتم تحديد أي كميات للإرجاع', 'warning');
+        return;
+    }
+
+    returnedItems.forEach(returnedItem => {
+        const itemInStock = items.find(i => i.id === returnedItem.id);
+        if (itemInStock) {
+            itemInStock.stock -= returnedItem.quantity;
+        }
+    });
+
+    const newReturn = {
+        id: Date.now(),
+        number: currentPurchaseReturnNumber,
+        date: new Date().toISOString().split('T')[0],
+        originalInvoiceId: activePurchaseReturn.id,
+        originalInvoiceNumber: activePurchaseReturn.number,
+        supplierId: activePurchaseReturn.supplierId,
+        items: returnedItems,
+        total: totalReturnValue
+    };
+
+    const originalPurchaseIndex = purchases.findIndex(p => p.id === activePurchaseReturn.id);
+
+    if (originalPurchaseIndex > -1) {
+        const originalPurchase = purchases[originalPurchaseIndex];
+        originalPurchase.total = roundCurrency((originalPurchase.total || 0) - totalReturnValue);
+        originalPurchase.remainingAmount = roundCurrency((originalPurchase.remainingAmount || 0) - totalReturnValue);
+        originalPurchase.notes = (originalPurchase.notes || '') + ` [مرتجع بقيمة: ${totalReturnValue.toFixed(2)}]`;
+        debugLog('تم تحديث فاتورة الشراء الأصلية:', purchases[originalPurchaseIndex]);
+    }
+
+    purchaseReturns.push(newReturn);
+    currentPurchaseReturnNumber++;
+    
+    const success1 = await saveToFirebase('purchaseReturns', purchaseReturns);
+    const success2 = await saveToFirebase('items', items);
+    const success3 = await saveToFirebase('purchases', purchases); 
+    
+    if (success1 && success2 && success3) { 
+        showNotification('✅ تم الحفظ', `تم حفظ مرتجع المشتريات رقم S-PR${newReturn.number.toString().padStart(3, '0')} بنجاح`, 'success');
+        newPurchaseReturn();
+        renderPurchaseReturns();
+        updateDashboard();
+        renderItems();
+        renderPurchasesList(); 
+    } else {
+        showNotification('❌ خطأ', 'حدث خطأ في حفظ البيانات', 'error');
+    }
+}
+
+function renderPurchaseReturns() {
+    const tbody = document.getElementById('purchaseReturnsList');
+    tbody.parentElement.querySelector('thead tr').innerHTML = `
+        <th>رقم المرتجع</th>
+        <th>التاريخ</th>
+        <th>المورد</th>
+        <th>فاتورة الشراء الأصلية</th>
+        <th>إجمالي القيمة</th>
+        <th>الإجراءات</th>
+    `;
+
+    tbody.innerHTML = '';
+    if (purchaseReturns.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">لا توجد مرتجعات مشتريات</td></tr>';
+        return;
+    }
+    purchaseReturns.forEach(pr => {
+        const supplier = suppliers.find(s => s.id === pr.supplierId);
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>PR${pr.number.toString().padStart(3, '0')}</td>
+            <td>${pr.date}</td>
+            <td>${supplier ? supplier.name : 'غير معروف'}</td>
+            <td>PUR${pr.originalInvoiceNumber.toString().padStart(3, '0')}</td>
+            <td>${pr.total.toFixed(2)}</td>
+            <td>
+                <div class="action-buttons">
+                    <button class="btn-danger" onclick="deletePurchaseReturn(${pr.id})">حذف</button>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+function searchCustomers() {
+    const searchTerm = document.getElementById('searchCustomers').value.toLowerCase();
+    const filteredCustomers = customers.filter(customer => 
+        customer.name.toLowerCase().includes(searchTerm) || 
+        customer.code.toLowerCase().includes(searchTerm) ||
                 (customer.phone && customer.phone.toLowerCase().includes(searchTerm))
             );
             renderFilteredCustomers(filteredCustomers);
@@ -7095,73 +7331,97 @@ const firebaseConfig = {
             remainingEl.className = remainingAmount <= 0 ? 'remaining-paid' : 'remaining-unpaid';
         }
         
-        async function savePurchase() {
-            const date = document.getElementById('purchaseDate').value;
-            const supplierId = parseInt(document.getElementById('purchaseSupplier').value);
-            const notes = document.getElementById('purchaseNotes').value;
-            const paidAmount = parseFloat(document.getElementById('purchasePaidAmount').value) || 0;
+       async function savePurchase() {
+    const date = document.getElementById('purchaseDate').value;
+    const supplierId = parseInt(document.getElementById('purchaseSupplier').value);
+    const notes = document.getElementById('purchaseNotes').value;
+    const paidAmount = parseFloat(document.getElementById('purchasePaidAmount').value) || 0;
 
-            if (!date || !supplierId || currentPurchaseItems.length === 0) {
-                showNotification('⚠️ بيانات ناقصة', 'يرجى ملء جميع البيانات المطلوبة وإضافة أصناف للفاتورة', 'warning');
-                return;
-            }
-            
-            const subtotal = currentPurchaseItems.reduce((sum, item) => sum + item.total, 0);
-            const tax = subtotal * 0.15;
-            const total = subtotal + tax;
-            const remainingAmount = total - paidAmount;
+    if (!date || !supplierId || currentPurchaseItems.length === 0) {
+        showNotification('⚠️ بيانات ناقصة', 'يرجى ملء جميع البيانات المطلوبة وإضافة أصناف للفاتورة', 'warning');
+        return;
+    }
+    
+    const attachmentFile = document.getElementById('purchaseAttachment').files[0];
+    let attachmentUrl = null;
 
-            if (editingPurchaseId) {
-                const purchaseIndex = purchases.findIndex(p => p.id === editingPurchaseId);
-                if (purchaseIndex > -1) {
-                    const originalPurchase = purchases[purchaseIndex];
-                    
-                    originalPurchase.items.forEach(pi => {
-                        const item = items.find(i => i.id === pi.id);
-                        if (item) item.stock -= pi.quantity;
-                    });
-
-                    const updatedPurchase = {
-                        ...originalPurchase,
-                        date,
-                        supplierId,
-                        notes,
-                        paidAmount,
-                        items: [...currentPurchaseItems],
-                        subtotal,
-                        tax,
-                        total,
-                        remainingAmount
-                    };
-
-                    purchases[purchaseIndex] = updatedPurchase;
-                    
-                    showNotification('✅ تم التحديث', `تم تحديث الفاتورة رقم PUR${originalPurchase.number.toString().padStart(3, '0')} بنجاح!`, 'success');
-                }
-            } else {
-                 const newPurchaseData = { id: Date.now(), number: currentPurchaseNumber, date, supplierId, notes, paidAmount, items: [...currentPurchaseItems], subtotal, tax, total, remainingAmount };
-                purchases.push(newPurchaseData);
-                currentPurchaseNumber++;
-                showNotification('✅ تم الحفظ', `تم حفظ الفاتورة رقم PUR${newPurchaseData.number.toString().padStart(3, '0')} بنجاح!`, 'success');
-            }
-            
-            const success1 = await saveToFirebase('purchases', purchases);
-            
-            currentPurchaseItems.forEach(pi => {
-                const item = items.find(i => i.id === pi.id);
-                if (item) item.stock += pi.quantity;
-            });
-            const success2 = await saveToFirebase('items', items);
-            
-            if (success1 && success2) {
-                newPurchase();
-                updateDashboard();
-                renderItems();
-            } else {
-                showNotification('❌ خطأ', 'حدث خطأ في حفظ البيانات', 'error');
-            }
+    if (attachmentFile) {
+        attachmentUrl = await uploadFile(attachmentFile, 'purchases');
+        if (!attachmentUrl) {
+            showNotification('❌ فشل الرفع', 'تعذر رفع المرفق، لم يتم حفظ الفاتورة', 'error');
+            return;
         }
-        
+    }
+    
+    const subtotal = currentPurchaseItems.reduce((sum, item) => sum + item.total, 0);
+    const tax = subtotal * 0.15;
+    const total = subtotal + tax;
+    const remainingAmount = total - paidAmount;
+
+    if (editingPurchaseId) {
+        const purchaseIndex = purchases.findIndex(p => p.id === editingPurchaseId);
+        if (purchaseIndex > -1) {
+            const originalPurchase = purchases[purchaseIndex];
+            
+            originalPurchase.items.forEach(pi => {
+                const item = items.find(i => i.id === pi.id);
+                if (item) item.stock -= pi.quantity;
+            });
+
+            const updatedPurchase = {
+                ...originalPurchase,
+                date,
+                supplierId,
+                notes,
+                paidAmount,
+                items: [...currentPurchaseItems],
+                subtotal,
+                tax,
+                total,
+                remainingAmount,
+                attachmentUrl: attachmentUrl || originalPurchase.attachmentUrl
+            };
+
+            purchases[purchaseIndex] = updatedPurchase;
+            
+            showNotification('✅ تم التحديث', `تم تحديث الفاتورة رقم PUR${originalPurchase.number.toString().padStart(3, '0')} بنجاح!`, 'success');
+        }
+    } else {
+         const newPurchaseData = { 
+             id: Date.now(), 
+             number: currentPurchaseNumber, 
+             date, 
+             supplierId, 
+             notes, 
+             paidAmount, 
+             items: [...currentPurchaseItems], 
+             subtotal, 
+             tax, 
+             total, 
+             remainingAmount,
+             attachmentUrl: attachmentUrl 
+         };
+        purchases.push(newPurchaseData);
+        currentPurchaseNumber++;
+        showNotification('✅ تم الحفظ', `تم حفظ الفاتورة رقم PUR${newPurchaseData.number.toString().padStart(3, '0')} بنجاح!`, 'success');
+    }
+    
+    const success1 = await saveToFirebase('purchases', purchases);
+    
+    currentPurchaseItems.forEach(pi => {
+        const item = items.find(i => i.id === pi.id);
+        if (item) item.stock += pi.quantity;
+    });
+    const success2 = await saveToFirebase('items', items);
+    
+    if (success1 && success2) {
+        newPurchase();
+        updateDashboard();
+        renderItems();
+    } else {
+        showNotification('❌ خطأ', 'حدث خطأ في حفظ البيانات', 'error');
+    }
+}        
         function newPurchase() {
             currentPurchaseItems = [];
             editingPurchaseId = null;
@@ -7176,87 +7436,89 @@ const firebaseConfig = {
             renderPurchasesList();
       
   }
-    function renderPurchasesList() {
-            const tbody = document.getElementById('purchasesList');
-            tbody.innerHTML = '';
-            
-            // تطبيق الفلترة
-            let filteredPurchases = [...purchases];
-            const searchText = document.getElementById('searchPurchases')?.value || '';
-            
-            // البحث النصي
-            if (searchText) {
-                filteredPurchases = filteredPurchases.filter(purchase => {
-                    const supplier = suppliers.find(s => s.id === purchase.supplierId);
-                    return (`pur${purchase.number}`.toLowerCase().includes(searchText.toLowerCase()) || 
-                            (supplier && supplier.name.toLowerCase().includes(searchText.toLowerCase())) || 
-                            purchase.date.includes(searchText));
-                });
-            }
-            
-            // فلترة حسب التاريخ
-            const dateFrom = document.getElementById('purchasesDateFrom')?.value;
-            const dateTo = document.getElementById('purchasesDateTo')?.value;
-            if (dateFrom) {
-                filteredPurchases = filteredPurchases.filter(purchase => new Date(purchase.date) >= new Date(dateFrom));
-            }
-            if (dateTo) {
-                filteredPurchases = filteredPurchases.filter(purchase => new Date(purchase.date) <= new Date(dateTo));
-            }
-            
-            // فلترة حسب المبلغ
-            const amountFrom = document.getElementById('purchasesAmountFrom')?.value;
-            const amountTo = document.getElementById('purchasesAmountTo')?.value;
-            if (amountFrom) {
-                filteredPurchases = filteredPurchases.filter(purchase => purchase.total >= parseFloat(amountFrom));
-            }
-            if (amountTo) {
-                filteredPurchases = filteredPurchases.filter(purchase => purchase.total <= parseFloat(amountTo));
-            }
-            
-            // تطبيق الترتيب
-            const sortState = FilterSortHelper.currentSort['purchases'];
-            if (sortState) {
-                filteredPurchases = FilterSortHelper.sortData(filteredPurchases, sortState.column, sortState.direction);
-            }
-            
-            if (filteredPurchases.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center;">لا توجد نتائج</td></tr>';
-                return;
-            }
-            
-            filteredPurchases.forEach(purchase => {
-                const supplier = suppliers.find(s => s.id === purchase.supplierId);
-                const totalQty = purchase.items.reduce((sum, item) => sum + item.quantity, 0);
+  function renderPurchasesList() {
+    const tbody = document.getElementById('purchasesList');
+    tbody.innerHTML = '';
+    
+    // تطبيق الفلترة
+    let filteredPurchases = [...purchases];
+    const searchText = document.getElementById('searchPurchases')?.value || '';
+    
+    // البحث النصي
+    if (searchText) {
+        filteredPurchases = filteredPurchases.filter(purchase => {
+            const supplier = suppliers.find(s => s.id === purchase.supplierId);
+            return (`pur${purchase.number}`.toLowerCase().includes(searchText.toLowerCase()) || 
+                    (supplier && supplier.name.toLowerCase().includes(searchText.toLowerCase())) || 
+                    purchase.date.includes(searchText));
+        });
+    }
+    
+    // فلترة حسب التاريخ
+    const dateFrom = document.getElementById('purchasesDateFrom')?.value;
+    const dateTo = document.getElementById('purchasesDateTo')?.value;
+    if (dateFrom) {
+        filteredPurchases = filteredPurchases.filter(purchase => new Date(purchase.date) >= new Date(dateFrom));
+    }
+    if (dateTo) {
+        filteredPurchases = filteredPurchases.filter(purchase => new Date(purchase.date) <= new Date(dateTo));
+    }
+    
+    // فلترة حسب المبلغ
+    const amountFrom = document.getElementById('purchasesAmountFrom')?.value;
+    const amountTo = document.getElementById('purchasesAmountTo')?.value;
+    if (amountFrom) {
+        filteredPurchases = filteredPurchases.filter(purchase => purchase.total >= parseFloat(amountFrom));
+    }
+    if (amountTo) {
+        filteredPurchases = filteredPurchases.filter(purchase => purchase.total <= parseFloat(amountTo));
+    }
+    
+    // تطبيق الترتيب
+    const sortState = FilterSortHelper.currentSort['purchases'];
+    if (sortState) {
+        filteredPurchases = FilterSortHelper.sortData(filteredPurchases, sortState.column, sortState.direction);
+    }
+    
+    if (filteredPurchases.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align: center;">لا توجد نتائج</td></tr>'; // 💡 تم تغيير الرقم إلى 9
+        return;
+    }
+    
+    // --- هذا هو الكود الصحيح (حلقة واحدة فقط) ---
+    filteredPurchases.forEach(purchase => {
+        const supplier = suppliers.find(s => s.id === purchase.supplierId);
+        const totalQty = purchase.items.reduce((sum, item) => sum + item.quantity, 0);
 
-                // --- 💡 بداية التعديل: منطق الألوان الجديد ---
-                const remaining = purchase.remainingAmount ?? (purchase.total - (purchase.paidAmount || 0));
-                // تحديد الكلاس بناءً على قيمة المتبقي
-                const remainingClass = remaining > 0.01 ? 'remaining-unpaid' : (remaining < -0.01 ? 'remaining-credit' : 'remaining-paid');
-                const remainingText = remaining.toFixed(2);
-                // --- 💡 نهاية التعديل ---
-
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>PUR${purchase.number.toString().padStart(3, '0')}</td>
-                    <td>${purchase.date}</td>
-                    <td>${supplier ? supplier.name : 'غير معروف'}</td>
-                    <td>${totalQty}</td>
-                    <td>${purchase.total.toFixed(2)}</td>
-                    <td>${(purchase.paidAmount || 0).toFixed(2)}</td>
-                    <td class="${remainingClass}">${remainingText}</td>
-                    <td>
-                    <div class="action-buttons">
-                        <button class="btn-secondary" onclick="printPurchaseInvoice(${purchase.id})">🖨️ طباعة</button>
-                        <button class="btn-warning edit-btn" onclick="editPurchase(${purchase.id})">✏️ تعديل</button>
-                        <button class="btn-danger" onclick="deletePurchase(${purchase.id})">حذف</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
+        const remaining = purchase.remainingAmount ?? (purchase.total - (purchase.paidAmount || 0));
+        const remainingClass = remaining > 0.01 ? 'remaining-unpaid' : (remaining < -0.01 ? 'remaining-credit' : 'remaining-paid');
+        const remainingText = remaining.toFixed(2);
         
+        const attachmentLink = purchase.attachmentUrl 
+            ? `<a href="${purchase.attachmentUrl}" target="_blank" class="btn-info" style="padding: 4px 8px; text-decoration: none;">عرض</a>`
+            : 'لا يوجد';
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>PUR${purchase.number.toString().padStart(3, '0')}</td>
+            <td>${purchase.date}</td>
+            <td>${supplier ? supplier.name : 'غير معروف'}</td>
+            <td>${totalQty}</td>
+            <td>${purchase.total.toFixed(2)}</td>
+            <td>${(purchase.paidAmount || 0).toFixed(2)}</td>
+            <td class="${remainingClass}">${remainingText}</td>
+            <td>${attachmentLink}</td>
+            <td>
+            <div class="action-buttons">
+                <button class="btn-secondary" onclick="printPurchaseInvoice(${purchase.id})">🖨️ طباعة</button>
+                <button class="btn-warning edit-btn" onclick="editPurchase(${purchase.id})">✏️ تعديل</button>
+                <button class="btn-danger" onclick="deletePurchase(${purchase.id})">حذف</button>
+            </div>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
 
         // دوال الفلترة للمشتريات
         function applyPurchasesFilters() {
@@ -8110,15 +8372,22 @@ const firebaseConfig = {
     });
 }
 
-        function newPurchaseReturn() {
-            activePurchaseReturn = null;
-            document.getElementById('purchaseReturnInvoiceSearch').value = '';
-            document.getElementById('purchaseReturnInvoiceDetails').style.display = 'none';
-            document.getElementById('purchaseReturnItemsContainer').style.display = 'none';
-            document.getElementById('purchaseReturnItemsList').innerHTML = '';
-            document.getElementById('purchaseReturnTotal').textContent = '0.00';
-        }
-
+     function newPurchase() {
+    currentPurchaseItems = [];
+    editingPurchaseId = null;
+    document.getElementById('purchaseDate').value = new Date().toISOString().split('T')[0];
+    document.getElementById('purchaseSupplier').value = '';
+    document.getElementById('purchaseNotes').value = '';
+    document.getElementById('purchasePaidAmount').value = '';
+    
+    document.getElementById('purchaseAttachment').value = null;
+    
+    generatePurchaseCode();
+    document.getElementById('savePurchaseBtn').textContent = '💾 حفظ الفاتورة';
+    renderPurchaseItems();
+    updatePurchaseTotals();
+    renderPurchasesList();
+}
         function findPurchaseForReturn() {
             const invoiceNumber = parseInt(document.getElementById('purchaseReturnInvoiceSearch').value);
             if (isNaN(invoiceNumber)) {
@@ -8296,36 +8565,79 @@ function renderPurchaseReturns() {
         }
 
         // ===== Expenses and Revenues Functions =====
-        async function addExpense() {
-            const date = document.getElementById('expenseDate').value;
-            const category = document.getElementById('expenseCategory').value;
-            const amount = parseFloat(document.getElementById('expenseAmount').value);
-            if (!date || !category || isNaN(amount)) { showNotification('⚠️ بيانات ناقصة', 'يرجى ملء الحقول المطلوبة', 'warning'); return; }
+    async function addExpense() {
+    const date = document.getElementById('expenseDate').value;
+    const category = document.getElementById('expenseCategory').value;
+    const amount = parseFloat(document.getElementById('expenseAmount').value);
+    if (!date || !category || isNaN(amount)) { 
+        showNotification('⚠️ بيانات ناقصة', 'يرجى ملء الحقول المطلوبة', 'warning'); 
+        return; 
+    }
 
-            const expense = { id: Date.now(), date, category, amount, description: document.getElementById('expenseDescription').value, paymentMethod: document.getElementById('expensePaymentMethod').value, reference: document.getElementById('expenseReference').value };
-            expenses.push(expense);
-            const success = await saveToFirebase('expenses', expenses);
-            if (success) {
-                clearExpenseForm();
-                renderExpenses();
-                updateExpenseStats();
-                updateDashboard();
-            } else {
-                showNotification('❌ خطأ', 'حدث خطأ في حفظ البيانات', 'error');
-            }
-        }
+    const attachmentFile = document.getElementById('expenseAttachment').files[0];
+    let attachmentUrl = null;
 
-        function renderExpenses() {
-            const tbody = document.getElementById('expensesList');
-            tbody.innerHTML = '';
-            if (expenses.length === 0) { tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">لا توجد مصروفات</td></tr>'; return; }
-            [...expenses].sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(exp => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td>${exp.date}</td><td>${exp.category}</td><td>${exp.amount.toFixed(2)}</td><td>${getPaymentMethodName(exp.paymentMethod)}</td><td>${exp.description || '-'}</td><td>${exp.reference || '-'}</td><td><button class="btn-warning edit-btn" onclick="editExpense(${exp.id})">✏️ تعديل</button><button class="btn-danger" onclick="deleteExpense(${exp.id})">حذف</button></td>`;
-                tbody.appendChild(tr);
-            });
+    if (attachmentFile) {
+        attachmentUrl = await uploadFile(attachmentFile, 'expenses');
+        if (!attachmentUrl) {
+            showNotification('❌ فشل الرفع', 'تعذر رفع المرفق، لم يتم حفظ المصروف', 'error');
+            return;
         }
+    }
+
+    const expense = { 
+        id: Date.now(), 
+        date, 
+        category, 
+        amount, 
+        description: document.getElementById('expenseDescription').value, 
+        paymentMethod: document.getElementById('expensePaymentMethod').value, 
+        reference: document.getElementById('expenseReference').value,
+        attachmentUrl: attachmentUrl 
+    };
+    
+    expenses.push(expense);
+    const success = await saveToFirebase('expenses', expenses);
+    if (success) {
+        clearExpenseForm(); 
+        renderExpenses();
+        updateExpenseStats();
+        updateDashboard();
+    } else {
+        showNotification('❌ خطأ', 'حدث خطأ في حفظ البيانات', 'error');
+    }
+}
+       function renderExpenses() {
+    const tbody = document.getElementById('expensesList');
+    tbody.innerHTML = '';
+    if (expenses.length === 0) { 
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center;">لا توجد مصروفات</td></tr>'; // 💡 تم تغيير الرقم إلى 8
+        return; 
+    }
+    
+    [...expenses].sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(exp => {
+        const tr = document.createElement('tr');
         
+        const attachmentLink = exp.attachmentUrl 
+            ? `<a href="${exp.attachmentUrl}" target="_blank" class="btn-info" style="padding: 4px 8px; text-decoration: none;">عرض</a>`
+            : 'لا يوجد';
+        
+        tr.innerHTML = `
+            <td>${exp.date}</td>
+            <td>${exp.category}</td>
+            <td>${exp.amount.toFixed(2)}</td>
+            <td>${getPaymentMethodName(exp.paymentMethod)}</td>
+            <td>${exp.description || '-'}</td>
+            <td>${exp.reference || '-'}</td>
+            <td>${attachmentLink}</td>
+            <td>
+                <button class="btn-warning edit-btn" onclick="editExpense(${exp.id})">✏️ تعديل</button>
+                <button class="btn-danger" onclick="deleteExpense(${exp.id})">حذف</button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
         function getPaymentMethodName(method) { return { 'cash': 'نقدي', 'bank': 'تحويل بنكي', 'check': 'شيك', 'card': 'بطاقة ائتمان' }[method] || method; }
 
         function editExpense(id) {
@@ -8386,15 +8698,17 @@ function renderPurchaseReturns() {
             }
         }
         
-        function clearExpenseForm() {
-            document.getElementById('expenseDate').value = new Date().toISOString().split('T')[0];
-            ['expenseCategory', 'expenseAmount', 'expenseDescription', 'expenseReference'].forEach(id => document.getElementById(id).value = '');
-            document.getElementById('expensePaymentMethod').value = 'cash';
-            const btn = document.querySelector('#expenses .btn-primary');
-            btn.textContent = '➕ إضافة مصروف';
-            btn.onclick = addExpense;
-        }
-
+      function clearExpenseForm() {
+    document.getElementById('expenseDate').value = new Date().toISOString().split('T')[0];
+    ['expenseCategory', 'expenseAmount', 'expenseDescription', 'expenseReference'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('expensePaymentMethod').value = 'cash';
+    
+    document.getElementById('expenseAttachment').value = null; 
+    
+    const btn = document.querySelector('#expenses .btn-primary');
+    btn.textContent = '➕ إضافة مصروف';
+    btn.onclick = addExpense;
+}
         function updateExpenseStats() {
             const today = new Date().toISOString().split('T')[0];
             const month = today.substring(0, 7);
