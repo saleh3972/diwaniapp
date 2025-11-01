@@ -2789,6 +2789,10 @@ textarea.input-success:focus {
         <div class="stat-label">إجمالي الإيرادات</div>
         <div class="stat-number" id="totalRevenuesHome">0</div>
     </div>
+    <div class="stat-card">
+    <div class="stat-label">إجمالي العهد والسلف</div>
+    <div class="stat-number" id="totalAdvancesHome">0</div>
+</div>
 </div>
 </div> 
 <div id="advanced-dashboard" class="section">
@@ -3509,6 +3513,67 @@ textarea.input-success:focus {
 </div>
 
 
+<!-- ضع هذا الكود بعد قسم الإيرادات وقبل قسم الصدقة -->
+<div id="advances" class="section">
+    <h2>💳 إدارة العهد والسلف <span class="title-stat-card"><span class="stat-mini-label">الإجمالي:</span><span id="miniStatAdvances" class="stat-mini-number">0.00</span></span></h2>
+    <p>💰 هنا يمكنك إدارة سلف الموظفين والعهد المالية</p>
+    
+    <div class="form-grid grid-4">
+        <input type="date" id="advanceDate" value="">
+        <select id="advanceType">
+            <option value="سلفة">سلفة موظف</option>
+            <option value="عهدة">عهدة مالية</option>
+            <option value="سداد">سداد</option>
+        </select>
+        <input type="text" id="advanceEmployee" placeholder="اسم الموظف / المستلم *" required>
+        <input type="number" id="advanceAmount" placeholder="المبلغ *" required min="0">
+    </div>
+    
+    <div class="form-grid grid-3">
+        <input type="text" id="advanceDescription" placeholder="الوصف / الغرض">
+        <select id="advanceStatus">
+            <option value="مستحق">مستحق</option>
+            <option value="مسدد">مسدد</option>
+            <option value="جزئي">مسدد جزئياً</option>
+        </select>
+        <button class="btn-primary btn-add" onclick="addAdvance()">➕ إضافة عهدة/سلفة</button>
+    </div>
+
+    <div class="search-container">
+        <input type="text" id="searchAdvances" class="search-input" placeholder="🔍 بحث في العهد والسلف...">
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>التاريخ</th>
+                <th>النوع</th>
+                <th>الموظف / المستلم</th>
+                <th>المبلغ</th>
+                <th>الحالة</th>
+                <th>الوصف</th>
+                <th>الإجراءات</th>
+            </tr>
+        </thead>
+        <tbody id="advancesList"></tbody>
+    </table>
+    
+    <div class="stats-grid" style="margin-top: 30px;">
+        <div class="stat-card">
+            <div class="stat-number" id="totalAdvances">0.00</div>
+            <div class="stat-label">إجمالي السلف والعهد</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="dueAdvances">0.00</div>
+            <div class="stat-label">المبالغ المستحقة</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="paidAdvances">0.00</div>
+            <div class="stat-label">المبالغ المسددة</div>
+        </div>
+    </div>
+</div>
+
 <div id="salaries" class="section">
     <h2>💼 إدارة الرواتب <span class="title-stat-card"><span class="stat-mini-label">الإجمالي:</span><span id="miniStatSalaries" class="stat-mini-number">0.00</span></span></h2>
     <p>🧾 قم بإعداد ومتابعة مسيرات الرواتب الشهرية للموظفين مع تطبيق أنظمة التأمينات الاجتماعية تلقائياً.</p>
@@ -4119,6 +4184,7 @@ const firebaseConfig = {
     let activities = [];
     let currentActivityId = null;
     let items = [], customers = [], suppliers = [], purchases = [], sales = [], expenses = [], revenues = [], salaries = [];
+    let advances = [];
     let salesReturns = [], purchaseReturns = [];
         let currentPurchaseItems = [], currentSaleItems = [];
         let editingPurchaseId = null, editingSaleId = null, editingSalaryId = null;
@@ -4140,7 +4206,8 @@ const firebaseConfig = {
         sales: [],
         expenses: [],
         revenues: [],
-        salaries: []
+        salaries: [],
+        advances: []
     };
     const LOW_STOCK_THRESHOLD = 5; // حد التنبيه لانخفاض المخزون
     
@@ -5411,6 +5478,7 @@ const firebaseConfig = {
                 { id: 'returns', label: '↩️ إدارة المرتجعات' },
                 { id: 'expenses', label: '💸 إدارة المصروفات' },
                 { id: 'revenues', label: '💰 إدارة الإيرادات' },
+                { id: 'advances', label: '💳 العهد والسلف' },
                 { id: 'sadaqa', label: '🤲 حساب الصدقة' },
                 { id: 'salaries', label: '💼 إدارة الرواتب' },
                 { id: 'reports', label: '📑 التقارير' },
@@ -5652,6 +5720,16 @@ const firebaseConfig = {
                 renderSalaries();
                 updateSalarySummary();
             }
+           else if (sectionId === 'advances') {
+           const miniStatAdvancesEl = document.getElementById('miniStatAdvances');
+    if (miniStatAdvancesEl) miniStatAdvancesEl.textContent = advances.length;
+    renderAdvances();
+    updateAdvanceStats();
+    setupAdvanceSearch();
+    const advanceDateEl = document.getElementById('advanceDate');
+    if (advanceDateEl) advanceDateEl.value = new Date().toISOString().split('T')[0];
+}
+
             else if (sectionId === 'advanced-dashboard') initAdvancedDashboard();
             else if (sectionId === 'returns') showReturnTab('sales');
             else if (sectionId === 'settings') {
@@ -9672,7 +9750,7 @@ if (data.length > 0) {
         const el = document.getElementById(id);
         if (el) el.textContent = value;
     };
-
+   document.getElementById('totalAdvancesHome').textContent = advances.length;
     setText('totalItems', items.length);
     setText('totalCustomers', customers.length);
     setText('totalSuppliers', suppliers.length);
@@ -10995,6 +11073,7 @@ function emailSaleInvoice(saleId) {
             revenues = (await loadFromFirebase('revenues')) || [];
             salaries = (await loadFromFirebase('salaries')) || [];
             salesReturns = (await loadFromFirebase('salesReturns')) || [];
+            advances = (await loadFromFirebase('advances')) || [];
             purchaseReturns = (await loadFromFirebase('purchaseReturns')) || [];
 
             currentPurchaseNumber = purchases.length > 0 ? Math.max(0, ...purchases.map(p => p.number)) + 1 : 1;
@@ -11892,6 +11971,234 @@ function toggleAllCustomerCheckboxes(mainCheckbox) {
     });
 }
 
+// دالة إضافة عهدة/سلفة جديدة
+async function addAdvance() {
+    const date = document.getElementById('advanceDate').value;
+    const type = document.getElementById('advanceType').value;
+    const employee = document.getElementById('advanceEmployee').value;
+    const amount = parseFloat(document.getElementById('advanceAmount').value);
+    const description = document.getElementById('advanceDescription').value;
+    const status = document.getElementById('advanceStatus').value;
+
+    if (!date || !employee || !amount) {
+        showNotification('⚠️ بيانات ناقصة', 'يرجى ملء الحقول الإلزامية', 'error');
+        return;
+    }
+
+    const newAdvance = {
+        id: Date.now(),
+        date,
+        type,
+        employee,
+        amount,
+        description,
+        status,
+        createdAt: new Date().toISOString()
+    };
+
+    advances.push(newAdvance);
+    await saveToFirebase('advances', advances);
+    
+    // تحديث الواجهة
+    renderAdvances();
+    updateAdvanceStats();
+    clearAdvanceForm();
+    
+    showNotification('✅ تمت الإضافة', 'تم إضافة السلفة/العهدة بنجاح', 'success');
+}
+
+// دالة عرض العهد والسلف
+function renderAdvances() {
+    const advancesList = document.getElementById('advancesList');
+    if (!advancesList) return;
+
+    advancesList.innerHTML = advances.map(advance => `
+        <tr>
+            <td>${advance.date}</td>
+            <td>${advance.type}</td>
+            <td>${advance.employee}</td>
+            <td>${advance.amount.toFixed(2)}</td>
+            <td>${getStatusBadge(advance.status)}</td>
+            <td>${advance.description || '-'}</td>
+            <td class="action-buttons">
+                <button class="btn-warning edit-btn" onclick="editAdvance(${advance.id})">✏️</button>
+                <button class="btn-danger" onclick="deleteAdvance(${advance.id})">🗑️</button>
+            </td>
+        </tr>
+    `).join('');
+
+    // تحديث الإحصائيات المصغرة
+    const miniStat = document.getElementById('miniStatAdvances');
+    if (miniStat) {
+        miniStat.textContent = advances.length;
+    }
+}
+
+// دالة مسح النموذج
+function clearAdvanceForm() {
+    document.getElementById('advanceDate').value = '';
+    document.getElementById('advanceEmployee').value = '';
+    document.getElementById('advanceAmount').value = '';
+    document.getElementById('advanceDescription').value = '';
+    // الاحتفاظ بالقيم الافتراضية للنوع والحالة
+}
+
+// دالة تحديث إحصائيات العهد والسلف
+function updateAdvanceStats() {
+    const totalAdvancesEl = document.getElementById('totalAdvances');
+    const dueAdvancesEl = document.getElementById('dueAdvances');
+    const paidAdvancesEl = document.getElementById('paidAdvances');
+
+    if (totalAdvancesEl) {
+        const total = advances.reduce((sum, advance) => sum + advance.amount, 0);
+        totalAdvancesEl.textContent = total.toFixed(2);
+    }
+
+    if (dueAdvancesEl) {
+        const due = advances
+            .filter(advance => advance.status === 'مستحق')
+            .reduce((sum, advance) => sum + advance.amount, 0);
+        dueAdvancesEl.textContent = due.toFixed(2);
+    }
+
+    if (paidAdvancesEl) {
+        const paid = advances
+            .filter(advance => advance.status === 'مسدد')
+            .reduce((sum, advance) => sum + advance.amount, 0);
+        paidAdvancesEl.textContent = paid.toFixed(2);
+    }
+}
+
+// دالة لعرض شارة الحالة
+function getStatusBadge(status) {
+    const badges = {
+        'مستحق': '<span style="color: #e74c3c; font-weight: bold;">مستحق</span>',
+        'مسدد': '<span style="color: #27ae60; font-weight: bold;">مسدد</span>',
+        'جزئي': '<span style="color: #f39c12; font-weight: bold;">مسدد جزئياً</span>'
+    };
+    return badges[status] || status;
+}
+
+// دالة التعديل
+function editAdvance(id) {
+    const advance = advances.find(a => a.id === id);
+    if (!advance) return;
+
+    document.getElementById('advanceDate').value = advance.date;
+    document.getElementById('advanceType').value = advance.type;
+    document.getElementById('advanceEmployee').value = advance.employee;
+    document.getElementById('advanceAmount').value = advance.amount;
+    document.getElementById('advanceDescription').value = advance.description || '';
+    document.getElementById('advanceStatus').value = advance.status;
+
+    // تغيير زر الإضافة إلى تحديث
+    const addButton = document.querySelector('#advances .btn-add');
+    addButton.textContent = '💾 حفظ التعديل';
+    addButton.onclick = function() { updateAdvance(id); };
+
+    // تمرير للأعلى
+    document.getElementById('advances').scrollIntoView({ behavior: 'smooth' });
+}
+
+// دالة التحديث
+async function updateAdvance(id) {
+    const advanceIndex = advances.findIndex(a => a.id === id);
+    if (advanceIndex === -1) return;
+
+    const date = document.getElementById('advanceDate').value;
+    const type = document.getElementById('advanceType').value;
+    const employee = document.getElementById('advanceEmployee').value;
+    const amount = parseFloat(document.getElementById('advanceAmount').value);
+    const description = document.getElementById('advanceDescription').value;
+    const status = document.getElementById('advanceStatus').value;
+
+    advances[advanceIndex] = {
+        ...advances[advanceIndex],
+        date,
+        type,
+        employee,
+        amount,
+        description,
+        status
+    };
+
+    await saveToFirebase('advances', advances);
+    renderAdvances();
+    updateAdvanceStats();
+    clearAdvanceForm();
+
+    // إعادة زر الإضافة
+    const addButton = document.querySelector('#advances .btn-add');
+    addButton.textContent = '➕ إضافة عهدة/سلفة';
+    addButton.onclick = addAdvance;
+
+    showNotification('✅ تم التحديث', 'تم تحديث السلفة/العهدة بنجاح', 'success');
+}
+// دالة حذف عهدة/سلفة
+async function deleteAdvance(id) {
+    const confirmed = await showConfirmDialog({
+        title: '⚠️ تأكيد الحذف',
+        message: 'هل أنت متأكد من حذف هذه السلفة/العهدة؟',
+        type: 'danger',
+        confirmText: 'نعم، احذف',
+        cancelText: 'إلغاء'
+    });
+
+    if (!confirmed) return;
+
+    const advanceIndex = advances.findIndex(a => a.id === id);
+    if (advanceIndex === -1) return;
+
+    // نقل إلى سلة المحذوفات
+    moveToTrash('advances', advances[advanceIndex]);
+    
+    advances.splice(advanceIndex, 1);
+    await saveToFirebase('advances', advances);
+    
+    renderAdvances();
+    updateAdvanceStats();
+    
+    showNotification('✅ تم الحذف', 'تم حذف السلفة/العهدة بنجاح', 'success');
+}
+
+// دالة البحث في العهد والسلف
+function setupAdvanceSearch() {
+    const searchInput = document.getElementById('searchAdvances');
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const filteredAdvances = advances.filter(advance => 
+                advance.employee.toLowerCase().includes(searchTerm) ||
+                advance.type.toLowerCase().includes(searchTerm) ||
+                advance.description.toLowerCase().includes(searchTerm) ||
+                advance.status.toLowerCase().includes(searchTerm)
+            );
+            renderFilteredAdvances(filteredAdvances);
+        });
+    }
+}
+
+// دالة عرض نتائج البحث
+function renderFilteredAdvances(filteredAdvances) {
+    const advancesList = document.getElementById('advancesList');
+    if (!advancesList) return;
+
+    advancesList.innerHTML = filteredAdvances.map(advance => `
+        <tr>
+            <td>${advance.date}</td>
+            <td>${advance.type}</td>
+            <td>${advance.employee}</td>
+            <td>${advance.amount.toFixed(2)}</td>
+            <td>${getStatusBadge(advance.status)}</td>
+            <td>${advance.description || '-'}</td>
+            <td class="action-buttons">
+                <button class="btn-warning edit-btn" onclick="editAdvance(${advance.id})">✏️</button>
+                <button class="btn-danger" onclick="deleteAdvance(${advance.id})">🗑️</button>
+            </td>
+        </tr>
+    `).join('');
+}
+
 // === دوال حذف المرتجعات ===
 
 // --- حذف مرتجعات المبيعات ---
@@ -11957,7 +12264,6 @@ async function deletePurchaseReturn(returnId) {
     updateDashboard();
     showNotification('✅ تم النقل', 'تم نقل مرتجع المشتريات إلى سلة المحذوفات', 'success');
 }
-
 
     </script>
 
