@@ -3442,26 +3442,55 @@ textarea.input-success:focus {
     </div>
 </div>
 <!-- ضع الكود هنا -->
- <div id="accounts" class="section">
+<div id="accounts" class="section">
     <h2>🧾 كشوف الحسابات</h2>
     
+    <!-- تبويبات الحسابات -->
     <div class="tabs">
         <button class="tab-button active" onclick="showAccountTab('client')">👥 كشف حساب عميل</button>
         <button class="tab-button" onclick="showAccountTab('supplier')">🏢 كشف حساب مورد</button>
         <button class="tab-button" onclick="showAccountTab('bank')">🏦 كشف حساب بنك</button>
     </div>
-
-    <div id="clientAccountTab" class="tab-content active">
-        <div class="form-grid grid-3">
-            <select id="accountClientSelect" onchange="loadClientAccount()">
-                <option value="">اختر العميل</option>
-            </select>
-            <input type="date" id="accountClientFromDate" onchange="loadClientAccount()">
-            <input type="date" id="accountClientToDate" onchange="loadClientAccount()">
-        </div>
-        <div id="clientAccountSummary" class="account-summary" style="display: none;">
-            </div>
-        
+<!-- محتوى كشف حساب العميل -->
+<div id="clientAccountTab" class="tab-content active">
+    <div class="form-grid grid-3">
+        <select id="accountClientSelect" onchange="loadClientAccount()">
+            <option value="">اختر العميل</option>
+        </select>
+        <input type="date" id="accountClientFromDate" onchange="loadClientAccount()">
+        <input type="date" id="accountClientToDate" onchange="loadClientAccount()">
+    </div>
+    <div id="clientAccountSummary" class="account-summary">
+        <!-- سيتم تعبئته بالبيانات -->
+    </div>
+    
+   <table id="supplierAccountStatement">
+            <thead>
+                <tr>
+                    <th>التاريخ</th>
+                    <th>البيان</th>
+                    <th>فاتورة الشراء</th>
+                    <th>مدين (دفعاتنا)</th>
+                    <th>دائن (مشترياتنا)</th>
+                    <th>الرصيد</th>
+                </tr>
+            </thead>
+            <tbody id="supplierAccountDetails">
+                </tbody>
+        </table>
+</div>
+        <!-- محتوى كشف حساب المورد -->
+<div id="supplierAccountTab" class="tab-content">
+    <div class="form-grid grid-3">
+        <select id="accountSupplierSelect" onchange="loadSupplierAccount()">
+            <option value="">اختر المورد</option>
+        </select>
+        <input type="date" id="accountSupplierFromDate" onchange="loadSupplierAccount()">
+        <input type="date" id="accountSupplierToDate" onchange="loadSupplierAccount()">
+    </div>
+    <div id="supplierAccountSummary" class="account-summary">
+        <!-- سيتم تعبئته بالبيانات -->
+    </div>
         <table id="clientAccountStatement">
             <thead>
                 <tr>
@@ -3474,71 +3503,44 @@ textarea.input-success:focus {
                 </tr>
             </thead>
             <tbody id="clientAccountDetails">
-                <tr><td colspan="6" style="text-align: center;">يرجى اختيار عميل لعرض كشف الحساب</td></tr>
+                <!-- سيتم تعبئته بالبيانات -->
             </tbody>
         </table>
     </div>
-
-    <div id="supplierAccountTab" class="tab-content">
-        <div class="form-grid grid-3">
-            <select id="accountSupplierSelect" onchange="loadSupplierAccount()">
-                <option value="">اختر المورد</option>
-            </select>
-            <input type="date" id="accountSupplierFromDate" onchange="loadSupplierAccount()">
-            <input type="date" id="accountSupplierToDate" onchange="loadSupplierAccount()">
-        </div>
-        <div id="supplierAccountSummary" class="account-summary" style="display: none;">
-            </div>
-        
-        <table id="supplierAccountStatement">
-            <thead>
-                <tr>
-                    <th>التاريخ</th>
-                    <th>البيان</th>
-                    <th>فاتورة الشراء</th>
-                    <th>مدين (دفعاتنا)</th>
-                    <th>دائن (مشترياتنا)</th>
-                    <th>الرصيد</th>
-                </tr>
-            </thead>
-            <tbody id="supplierAccountDetails">
-                 <tr><td colspan="6" style="text-align: center;">يرجى اختيار مورد لعرض كشف الحساب</td></tr>
-            </tbody>
-        </table>
+<!-- محتوى كشف حساب البنك -->
+<div id="bankAccountTab" class="tab-content">
+    <div class="form-grid grid-3">
+        <select id="accountBankSelect" onchange="loadBankAccount()">
+            <option value="">اختر حساب البنك</option>
+            <option value="cash">البنك الأهلي</option>
+            <option value="alrajhi">البنك الراجحي</option>
+            <option value="albilad">بنك البلاد</option>
+            <option value="other">بنك آخر</option>
+        </select>
+        <input type="date" id="accountBankFromDate" onchange="loadBankAccount()">
+        <input type="date" id="accountBankToDate" onchange="loadBankAccount()">
     </div>
-
-    <div id="bankAccountTab" class="tab-content">
-        <div class="form-grid grid-3">
-            <select id="accountBankSelect" onchange="loadBankAccount()">
-                <option value="">اختر حساب البنك</option>
-                <option value="cash">البنك الأهلي</option>
-                <option value="alrajhi">البنك الراجحي</option>
-                <option value="albilad">بنك البلاد</option>
-                <option value="other">بنك آخر</option>
-            </select>
-            <input type="date" id="accountBankFromDate" onchange="loadBankAccount()">
-            <input type="date" id="accountBankToDate" onchange="loadBankAccount()">
-        </div>
-        
-        <div id="bankAccountSummary" class="account-summary" style="display: none;">
-            </div>
-        
-        <table id="bankAccountStatement">
-            <thead>
-                <tr>
-                    <th>التاريخ</th>
-                    <th>البيان</th>
-                    <th>المرجع</th>
-                    <th>إيداع</th>
-                    <th>سحب</th>
-                    <th>الرصيد</th>
-                </tr>
-            </thead>
-            <tbody id="bankAccountDetails">
-                 <tr><td colspan="6" style="text-align: center;">يرجى اختيار بنك لعرض كشف الحساب</td></tr>
-            </tbody>
-        </table>
+    
+    <div id="bankAccountSummary" class="account-summary">
+        <!-- سيتم تعبئته بالبيانات -->
     </div>
+    
+    <table id="bankAccountStatement">
+        <thead>
+            <tr>
+                <th>التاريخ</th>
+                <th>البيان</th>
+                <th>المرجع</th>
+                <th>إيداع</th>
+                <th>سحب</th>
+                <th>الرصيد</th>
+            </tr>
+        </thead>
+        <tbody id="bankAccountDetails">
+            <!-- سيتم تعبئته بالبيانات -->
+        </tbody>
+    </table>
+</div>
 </div>
 <div id="expenses" class="section">
     <h2>💸 إدارة المصروفات <span class="title-stat-card"><span class="stat-mini-label">الإجمالي:</span><span id="miniStatExpenses" class="stat-mini-number">0</span></span></h2>
@@ -12769,9 +12771,7 @@ function setDefaultDates(fromId, toId) {
     document.getElementById(toId).value = today.toISOString().split('T')[0];
 }
 
-// دوال قسم الحسابات// دوال قسم الحسابات (نسخة نظيفة - جاهزة للبرمجة)
-
-// دالة التنقل بين التبويبات (تعمل)
+// دوال قسم الحسابات
 function showAccountTab(tabName) {
     // إخفاء جميع المحتويات
     document.querySelectorAll('#accounts .tab-content').forEach(tab => {
@@ -12795,70 +12795,366 @@ function showAccountTab(tabName) {
         activeTabButton.classList.add('active');
     }
     
-    // تحميل البيانات (سيتم تفعيله لاحقاً)
+    // تحميل البيانات حسب التبويب
     if (tabName === 'client') {
-        loadClientAccounts(); // (سيتم برمجتها)
+        loadClientAccounts();
     } else if (tabName === 'supplier') {
-        loadSupplierAccounts(); // (سيتم برمجتها)
+        loadSupplierAccounts();
     } else if (tabName === 'bank') {
-        loadBankAccounts(); // (سيتم برمجتها)
+        loadBankAccounts();
     }
 }
 
-// دالة تهيئة القسم (تعمل)
 function initializeAccountsSection() {
-    // تعيين التواريخ الافتراضية إلى "فارغ" كما طلبت
-    setDefaultDates('accountClientFromDate', 'accountClientToDate');
-    setDefaultDates('accountSupplierFromDate', 'accountSupplierToDate');
-    setDefaultDates('accountBankFromDate', 'accountBankToDate');
-    
-    // تحميل القائمة الأولى
+    // هذه الدالة يتم استدعاؤها عند فتح قسم كشوف الحسابات
+    // وظيفتها هي ملء القائمة المنسدلة للعملاء
     loadClientAccounts();
 }
 
-// دالة مساعدة لتعيين تواريخ فارغة (تعمل)
+// دالة مساعدة لتعيين التواريخ الافتراضية
 function setDefaultDates(fromId, toId) {
+    const today = new Date();
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(today.getDate() - 30);
+    
     const fromEl = document.getElementById(fromId);
     const toEl = document.getElementById(toId);
 
-    if (fromEl) fromEl.value = ''; // فارغ
-    if (toEl) toEl.value = '';   // فارغ
+    if (fromEl) {
+        fromEl.value = thirtyDaysAgo.toISOString().split('T')[0];
+    }
+    if (toEl) {
+        toEl.value = today.toISOString().split('T')[0];
+    }
 }
 
-// --- دوال فارغة وجاهزة للبرمجة ---
 
-// دوال تحميل القوائم (فارغة الآن)
-function loadClientAccounts() {
-    // الخطوة 1: سنقوم بملء قائمة العملاء هنا
-    console.log('سيتم تحميل قائمة العملاء هنا...');
-}
-
-function loadSupplierAccounts() {
-    // الخطوة 2: سنقوم بملء قائمة الموردين هنا
-    console.log('سيتم تحميل قائمة الموردين هنا...');
-}
-
-function loadBankAccounts() {
-    // الخطوة 3: سنقوم بملء قائمة البنوك هنا
-    console.log('سيتم تحميل قائمة البنوك هنا...');
-}
-
-// دوال استدعاء الكشوفات (فارغة الآن)
+// دوال تحميل كشوف الحسابات
 function loadClientAccount() {
-    showNotification('ℹ️ معلومة', 'كشف حساب العميل قيد الإنشاء', 'info');
-    // الخطوة 4: سنقوم بتفعيل كشف حساب العميل هنا
+    const clientId = document.getElementById('accountClientSelect').value;
+    const fromDate = document.getElementById('accountClientFromDate').value;
+    const toDate = document.getElementById('accountClientToDate').value;
+    
+    if (!clientId) {
+        showNotification('⚠️ تنبيه', 'يرجى اختيار عميل', 'warning');
+        return;
+    }
+    
+    showLoading('جاري تحميل كشف حساب العميل...');
+    setTimeout(() => {
+        generateClientAccountStatement(clientId, fromDate, toDate);
+        hideLoading();
+    }, 500);
 }
 
 function loadSupplierAccount() {
-    showNotification('ℹ️ معلومة', 'كشف حساب المورد قيد الإنشاء', 'info');
-    // الخطوة 5: سنقوم بتفعيل كشف حساب المورد هنا
+    const supplierId = document.getElementById('accountSupplierSelect').value;
+    const fromDate = document.getElementById('accountSupplierFromDate').value;
+    const toDate = document.getElementById('accountSupplierToDate').value;
+    
+    if (!supplierId) {
+        // إخفاء الملخص والجدول
+        document.getElementById('supplierAccountSummary').style.display = 'none';
+        document.getElementById('supplierAccountDetails').innerHTML = '<tr><td colspan="6" style="text-align: center;">يرجى اختيار مورد لعرض كشف الحساب</td></tr>';
+        return;
+    }
+    
+    showLoading('جاري تحميل كشف حساب المورد...');
+    setTimeout(() => {
+        // 💡 تم التفعيل الآن
+        generateSupplierAccountStatement(supplierId, fromDate, toDate);
+        hideLoading();
+    }, 500);
+}
+/**
+ * 💡 الخطوة الثانية: الدالة الجديدة لكشف حساب المورد
+ */
+function generateSupplierAccountStatement(supplierId, fromDate, toDate) {
+    const supplier = suppliers.find(s => s.id == supplierId);
+    if (!supplier) return;
+
+    // 1. حساب الرصيد الافتتاحي (كل شيء قبل fromDate)
+    const openingPurchases = purchases.filter(p => p.supplierId == supplierId && p.date < fromDate);
+    const openingReturns = purchaseReturns.filter(r => r.supplierId == supplierId && r.date < fromDate);
+    
+    let openingBalance = 0;
+    openingPurchases.forEach(p => {
+        openingBalance += (p.total || 0); // المشتريات (دائن)
+        openingBalance -= (p.paidAmount || 0); // الدفعات (مدين)
+    });
+    openingReturns.forEach(r => {
+        openingBalance -= (r.total || 0); // المرتجعات (مدين)
+    });
+
+    // 2. تجميع حركات الفترة المحددة
+    const periodPurchases = purchases.filter(p => p.supplierId == supplierId && p.date >= fromDate && p.date <= toDate);
+    const periodReturns = purchaseReturns.filter(r => r.supplierId == supplierId && r.date >= fromDate && r.date <= toDate);
+
+    let transactions = [];
+    
+    periodPurchases.forEach(purchase => {
+        // الفاتورة (دائن)
+        transactions.push({
+            date: purchase.date,
+            description: `فاتورة مشتريات رقم ${purchase.number}`,
+            invoiceId: `PUR${purchase.number}`,
+            debit: 0,
+            credit: (purchase.total || 0)
+        });
+        // الدفعة (مدين) - إذا كانت موجودة
+        if ((purchase.paidAmount || 0) > 0) {
+             transactions.push({
+                date: purchase.date, // نفترض أن الدفعة بنفس تاريخ الفاتورة
+                description: `دفعة لفاتورة رقم ${purchase.number}`,
+                invoiceId: `PUR${purchase.number}`,
+                debit: (purchase.paidAmount || 0),
+                credit: 0
+            });
+        }
+    });
+
+    periodReturns.forEach(ret => {
+        transactions.push({
+            date: ret.date,
+            description: `مرتجع مشتريات رقم ${ret.number}`,
+            invoiceId: `PR${ret.number}`,
+            debit: (ret.total || 0),
+            credit: 0
+        });
+    });
+
+    // 3. فرز الحركات حسب التاريخ
+    transactions.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    // 4. عرض الجدول
+    const tbody = document.getElementById('supplierAccountDetails');
+    tbody.innerHTML = '';
+    let runningBalance = openingBalance;
+
+    // صف الرصيد الافتتاحي
+    tbody.innerHTML = `
+        <tr style="background-color: #f8f9fa; font-weight: bold;">
+            <td>قبل ${fromDate}</td>
+            <td>رصيد افتتاحي</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>${runningBalance.toFixed(2)}</td>
+        </tr>
+    `;
+
+    let totalDebit = 0;
+    let totalCredit = 0;
+
+    transactions.forEach(t => {
+        runningBalance = runningBalance - t.debit + t.credit;
+        totalDebit += t.debit;
+        totalCredit += t.credit;
+        
+        tbody.innerHTML += `
+            <tr>
+                <td>${t.date}</td>
+                <td>${t.description}</td>
+                <td>${t.invoiceId}</td>
+                <td style="color: var(--success-color);">${t.debit.toFixed(2)}</td>
+                <td style="color: var(--primary-color);">${t.credit.toFixed(2)}</td>
+                <td style="font-weight: bold;">${runningBalance.toFixed(2)}</td>
+            </tr>
+        `;
+    });
+
+    // 5. عرض الملخص
+    const summaryDiv = document.getElementById('supplierAccountSummary');
+    summaryDiv.style.display = 'block'; // إظهار الملخص
+    
+    // تحديد لون الرصيد الختامي
+    // للمورد: موجب يعني (لهم فلوس) = أحمر
+    // سالب يعني (لنا فلوس) = أخضر
+    let balanceClass = 'gosi-deduction'; // أحمر (لهم رصيد)
+    if (runningBalance < 0) {
+        balanceClass = 'net-salary'; // أخضر (لنا رصيد/دفعة مقدمة)
+    } else if (runningBalance === 0) {
+         balanceClass = ''; // عادي
+    }
+    
+    summaryDiv.innerHTML = `
+        <div class="summary-item"><span>الرصيد الافتتاحي (قبل ${fromDate}):</span> <span>${openingBalance.toFixed(2)}</span></div>
+        <div class="summary-item"><span>إجمالي مدين (دفعاتنا):</span> <span>${totalDebit.toFixed(2)}</span></div>
+        <div class="summary-item"><span>إجمالي دائن (مشترياتنا):</span> <span>${totalCredit.toFixed(2)}</span></div>
+        <div class="summary-item summary-total"><span>الرصيد الختامي:</span> <span class="${balanceClass}">${runningBalance.toFixed(2)}</span></div>
+    `;
+}
+function loadBankAccount() {
+    const bankId = document.getElementById('accountBankSelect').value;
+    const fromDate = document.getElementById('accountBankFromDate').value;
+    const toDate = document.getElementById('accountBankToDate').value;
+    
+    if (!bankId) {
+        showNotification('⚠️ تنبيه', 'يرجى اختيار بنك', 'warning');
+        return;
+    }
+    
+    showLoading('جاري تحميل كشف حساب البنك...');
+    setTimeout(() => {
+        // سننفذ generateBankAccountStatement لاحقاً
+        showNotification('ℹ️ معلومة', 'سيتم تنفيذ كشف حساب البنك قريباً', 'info');
+        hideLoading();
+    }, 500);
+}
+
+// دوال تحميل كشوف الحسابات
+function loadClientAccount() {
+    const clientId = document.getElementById('accountClientSelect').value;
+    const fromDate = document.getElementById('accountClientFromDate').value;
+    const toDate = document.getElementById('accountClientToDate').value;
+    
+    if (!clientId) {
+        // إخفاء الملخص والجدول إذا لم يتم اختيار عميل
+        document.getElementById('clientAccountSummary').style.display = 'none';
+        document.getElementById('clientAccountDetails').innerHTML = '<tr><td colspan="5" style="text-align: center;">يرجى اختيار عميل لعرض كشف الحساب</td></tr>';
+        return;
+    }
+    
+    showLoading('جاري تحميل كشف حساب العميل...');
+    setTimeout(() => {
+        generateClientAccountStatement(clientId, fromDate, toDate);
+        hideLoading();
+    }, 500);
 }
 
 function loadBankAccount() {
-    showNotification('ℹ️ معلومة', 'كشف حساب البنك قيد الإنشاء', 'info');
-    // الخطوة 6: سنقوم بتفعيل كشف حساب البنك هنا
+    const bankId = document.getElementById('accountBankSelect').value;
+    const fromDate = document.getElementById('accountBankFromDate').value;
+    const toDate = document.getElementById('accountBankToDate').value;
+    
+    if (!bankId) {
+        showNotification('⚠️ تنبيه', 'يرجى اختيار بنك', 'warning');
+        return;
+    }
+    
+    showLoading('جاري تحميل كشف حساب البنك...');
+    setTimeout(() => {
+        // سننفذ generateBankAccountStatement لاحقاً
+        showNotification('ℹ️ معلومة', 'سيتم تنفيذ كشف حساب البنك قريباً', 'info');
+        hideLoading();
+    }, 500);
 }
 
+/**
+ * 💡 الخطوة الأولى: الدالة الجديدة لكشف حساب العميل
+ * هذه الدالة تقوم بإنشاء كشف حساب العميل
+ */
+function generateClientAccountStatement(clientId, fromDate, toDate) {
+    const client = customers.find(c => c.id == clientId);
+    if (!client) return;
+
+    // 1. حساب الرصيد الافتتاحي (كل شيء قبل fromDate)
+    const openingSales = sales.filter(s => s.customerId == clientId && s.date < fromDate);
+    const openingReturns = salesReturns.filter(r => r.customerId == clientId && r.date < fromDate);
+    
+    let openingBalance = 0;
+    openingSales.forEach(s => {
+        openingBalance += (s.total || 0); // المبيعات (مدين)
+        openingBalance -= (s.paidAmount || 0); // الدفعات (دائن)
+    });
+    openingReturns.forEach(r => {
+        openingBalance -= (r.total || 0); // المرتجعات (دائن)
+    });
+
+    // 2. تجميع حركات الفترة المحددة
+    const periodSales = sales.filter(s => s.customerId == clientId && s.date >= fromDate && s.date <= toDate);
+    const periodReturns = salesReturns.filter(r => r.customerId == clientId && r.date >= fromDate && r.date <= toDate);
+
+    let transactions = [];
+    
+    periodSales.forEach(sale => {
+        // الفاتورة (مدين)
+        transactions.push({
+            date: sale.date,
+            description: `فاتورة مبيعات رقم ${sale.number}`,
+            invoiceId: `SAL${sale.number}`,
+            debit: (sale.total || 0),
+            credit: 0
+        });
+        // الدفعة (دائن) - إذا كانت موجودة
+        if ((sale.paidAmount || 0) > 0) {
+             transactions.push({
+                date: sale.date, // نفترض أن الدفعة بنفس تاريخ الفاتورة
+                description: `دفعة لفاتورة رقم ${sale.number}`,
+                invoiceId: `SAL${sale.number}`,
+                debit: 0,
+                credit: (sale.paidAmount || 0)
+            });
+        }
+    });
+
+    periodReturns.forEach(ret => {
+        transactions.push({
+            date: ret.date,
+            description: `مرتجع مبيعات رقم ${ret.number}`,
+            invoiceId: `SR${ret.number}`,
+            debit: 0,
+            credit: (ret.total || 0)
+        });
+    });
+
+    // 3. فرز الحركات حسب التاريخ
+    transactions.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    // 4. عرض الجدول
+    const tbody = document.getElementById('clientAccountDetails');
+    tbody.innerHTML = '';
+    let runningBalance = openingBalance;
+
+    // صف الرصيد الافتتاحي
+    tbody.innerHTML = `
+        <tr style="background-color: #f8f9fa; font-weight: bold;">
+            <td>قبل ${fromDate}</td>
+            <td>رصيد افتتاحي</td>
+            <td>-</td>
+            <td>-</td>
+            <td>${runningBalance.toFixed(2)}</td>
+        </tr>
+    `;
+
+    let totalDebit = 0;
+    let totalCredit = 0;
+
+    transactions.forEach(t => {
+        runningBalance = runningBalance + t.debit - t.credit;
+        totalDebit += t.debit;
+        totalCredit += t.credit;
+        
+        tbody.innerHTML += `
+            <tr>
+                <td>${t.date}</td>
+                <td>${t.description}</td>
+                <td style="color: var(--primary-color);">${t.debit.toFixed(2)}</td>
+                <td style="color: var(--success-color);">${t.credit.toFixed(2)}</td>
+                <td style="font-weight: bold;">${runningBalance.toFixed(2)}</td>
+            </tr>
+        `;
+    });
+
+    // 5. عرض الملخص
+    const summaryDiv = document.getElementById('clientAccountSummary');
+    summaryDiv.style.display = 'block'; // إظهار الملخص
+    
+    // تحديد لون الرصيد الختامي
+    let balanceClass = 'net-salary'; // أخضر (له رصيد)
+    if (runningBalance > 0) {
+        balanceClass = 'gosi-deduction'; // أحمر (عليه رصيد)
+    } else if (runningBalance === 0) {
+         balanceClass = ''; // عادي
+    }
+    
+    summaryDiv.innerHTML = `
+        <div class="summary-item"><span>الرصيد الافتتاحي (قبل ${fromDate}):</span> <span>${openingBalance.toFixed(2)}</span></div>
+        <div class="summary-item"><span>إجمالي مدين (الفترة):</span> <span>${totalDebit.toFixed(2)}</span></div>
+        <div class="summary-item"><span>إجمالي دائن (الفترة):</span> <span>${totalCredit.toFixed(2)}</span></div>
+        <div class="summary-item summary-total"><span>الرصيد الختامي:</span> <span class="${balanceClass}">${runningBalance.toFixed(2)}</span></div>
+    `;
+}
 function loadRecentActivities() {
     // دالة مؤقتة لحل الخطأ
     console.log('جاري تحميل الأنشطة الحديثة...');
