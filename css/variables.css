@@ -553,3 +553,32 @@ body {
     width: 100% !important;
 }
 }
+function showSection(sectionId) {
+    // إخفاء جميع الأقسام
+    document.querySelectorAll('.section').forEach(section => {
+        section.classList.remove('active');
+    });
+    
+    // إظهار القسم المطلوب فقط
+    const targetSection = document.getElementById(sectionId);
+    if (targetSection) {
+        targetSection.classList.add('active');
+    }
+    
+    // تحديث القائمة الجانبية
+    document.querySelectorAll('.sidebar-nav button').forEach(button => {
+        button.classList.remove('active');
+    });
+    
+    const activeButton = Array.from(document.querySelectorAll('.sidebar-nav button'))
+        .find(btn => btn.getAttribute('onclick')?.includes(`showSection('${sectionId}')`));
+    
+    if (activeButton) {
+        activeButton.classList.add('active');
+    }
+    
+    // إغلاق القائمة في الجوال
+    if (window.innerWidth <= 768) {
+        document.getElementById('sidebar').classList.remove('open');
+    }
+}

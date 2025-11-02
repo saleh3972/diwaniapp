@@ -76,9 +76,11 @@
     
     <!-- إضافة Firebase - بدون defer لأن الكود الداخلي يعتمد عليه -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script> 
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    
+
 
     <style>
         /* تنسيقات لوحة التحكم المتقدمة */
@@ -3401,6 +3403,108 @@ textarea.input-success:focus {
         </table>
     </div>
 </div>
+<!-- ضع الكود هنا -->
+<div id="accounts" class="section">
+    <h2>🧾 كشوف الحسابات</h2>
+    
+    <!-- تبويبات الحسابات -->
+    <div class="tabs">
+        <button class="tab-button active" onclick="showAccountTab('client')">👥 كشف حساب عميل</button>
+        <button class="tab-button" onclick="showAccountTab('supplier')">🏢 كشف حساب مورد</button>
+        <button class="tab-button" onclick="showAccountTab('bank')">🏦 كشف حساب بنك</button>
+    </div>
+<!-- محتوى كشف حساب العميل -->
+<div id="clientAccountTab" class="tab-content active">
+    <div class="form-grid grid-3">
+        <select id="accountClientSelect" onchange="loadClientAccount()">
+            <option value="">اختر العميل</option>
+        </select>
+        <input type="date" id="accountClientFromDate" onchange="loadClientAccount()">
+        <input type="date" id="accountClientToDate" onchange="loadClientAccount()">
+    </div>
+    <div id="clientAccountSummary" class="account-summary">
+        <!-- سيتم تعبئته بالبيانات -->
+    </div>
+    
+    <table id="clientAccountStatement">
+        <thead>
+            <tr>
+                <th>التاريخ</th>
+                <th>البيان</th>
+                <th>فاتورة البيع</th>
+                <th>مدين</th>
+                <th>دائن</th>
+                <th>الرصيد</th>
+            </tr>
+        </thead>
+        <tbody id="clientAccountDetails">
+            <!-- سيتم تعبئته بالبيانات -->
+        </tbody>
+    </table>
+</div>
+        <!-- محتوى كشف حساب المورد -->
+<div id="supplierAccountTab" class="tab-content">
+    <div class="form-grid grid-3">
+        <select id="accountSupplierSelect" onchange="loadSupplierAccount()">
+            <option value="">اختر المورد</option>
+        </select>
+        <input type="date" id="accountSupplierFromDate" onchange="loadSupplierAccount()">
+        <input type="date" id="accountSupplierToDate" onchange="loadSupplierAccount()">
+    </div>
+    <div id="supplierAccountSummary" class="account-summary">
+        <!-- سيتم تعبئته بالبيانات -->
+    </div>
+        <table id="clientAccountStatement">
+            <thead>
+                <tr>
+                    <th>التاريخ</th>
+                    <th>البيان</th>
+                    <th>فاتورة البيع</th>
+                    <th>مدين</th>
+                    <th>دائن</th>
+                    <th>الرصيد</th>
+                </tr>
+            </thead>
+            <tbody id="clientAccountDetails">
+                <!-- سيتم تعبئته بالبيانات -->
+            </tbody>
+        </table>
+    </div>
+<!-- محتوى كشف حساب البنك -->
+<div id="bankAccountTab" class="tab-content">
+    <div class="form-grid grid-3">
+        <select id="accountBankSelect" onchange="loadBankAccount()">
+            <option value="">اختر حساب البنك</option>
+            <option value="cash">البنك الأهلي</option>
+            <option value="alrajhi">البنك الراجحي</option>
+            <option value="albilad">بنك البلاد</option>
+            <option value="other">بنك آخر</option>
+        </select>
+        <input type="date" id="accountBankFromDate" onchange="loadBankAccount()">
+        <input type="date" id="accountBankToDate" onchange="loadBankAccount()">
+    </div>
+    
+    <div id="bankAccountSummary" class="account-summary">
+        <!-- سيتم تعبئته بالبيانات -->
+    </div>
+    
+    <table id="bankAccountStatement">
+        <thead>
+            <tr>
+                <th>التاريخ</th>
+                <th>البيان</th>
+                <th>المرجع</th>
+                <th>إيداع</th>
+                <th>سحب</th>
+                <th>الرصيد</th>
+            </tr>
+        </thead>
+        <tbody id="bankAccountDetails">
+            <!-- سيتم تعبئته بالبيانات -->
+        </tbody>
+    </table>
+</div>
+</div>
 <div id="expenses" class="section">
     <h2>💸 إدارة المصروفات <span class="title-stat-card"><span class="stat-mini-label">الإجمالي:</span><span id="miniStatExpenses" class="stat-mini-number">0</span></span></h2>
     <p>💰 هنا يمكنك إدارة وتصنيف المصروفات اليومية</p>
@@ -4231,10 +4335,10 @@ function debugLog(...args) {
 }
 
 // === إعداد Firebase ===
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyDtm443qVDGFOH7NIFgaxVWPhhW5Ezrfrw",
+  apiKey: "AIzaSyDtm443qYDGFOH7NIFgaxVWPhhW5Ezrfrw",
   authDomain: "diwani-bc43f.firebaseapp.com",
-  // -->> هذا هو الرابط الصحيح من شاشتك <<--
   databaseURL: "https://diwani-bc43f-default-rtdb.europe-west1.firebasedatabase.app",
   projectId: "diwani-bc43f",
   storageBucket: "diwani-bc43f.firebasestorage.app",
@@ -4245,6 +4349,7 @@ const firebaseConfig = {
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
+        const auth = firebase.auth(); //  <-- ⬇️ أضف هذا
 
         // === متغيرات النظام ===
 let activities = [];
@@ -5425,13 +5530,18 @@ let emailJsConfig = { ...EMAILJS_DEFAULTS };
             await firebaseSet('diwan_users', users);
         }
 
-        async function loadUsers() {
-            users = (await firebaseGet('diwan_users')) || [];
-            if (users.length === 0) {
-                users.push({ id: 1, name: 'مدير النظام', email: 'msafr3972@gmail.com', phone: '', password: 'A711858322', role: 'admin', activityId: null });
-                await saveUsers();
-            }
-        }
+       async function loadUsers() {
+    users = (await firebaseGet('diwan_users')) || [];
+    
+    // ⬇️ تم تعديل هذا الجزء ⬇️
+    // أصبح هذا الكود للرجوع إليه فقط في حال لم يتم إنشاء حساب مدير
+    // يجب إنشاء حساب المدير يدوياً في المرة الأولى
+    if (users.length === 0) {
+        console.warn("لا يوجد مستخدمون. يرجى إنشاء حساب 'مدير نظام' (admin) جديد.");
+        // يمكنك توجيه المستخدم لإنشاء حساب إداري إذا لم يكن هناك أي مستخدمين
+        // في الوقت الحالي، سنتركها فارغة ليتم إنشاؤها من واجهة المستخدم
+    }
+}
 
         // === دوال تخصيص الواجهة ===
         function toggleControlPanel() {
@@ -5547,6 +5657,7 @@ let emailJsConfig = { ...EMAILJS_DEFAULTS };
                 { id: 'sadaqa', label: '🤲 حساب الصدقة' },
                 { id: 'salaries', label: '💼 إدارة الرواتب' },
                 { id: 'reports', label: '📑 التقارير' },
+                { id: 'accounts', label: '🧾 كشوف الحسابات' },
                 { id: 'settings', label: '⚙️ الإعدادات والنظام' }
             ];
 
@@ -5712,138 +5823,125 @@ let emailJsConfig = { ...EMAILJS_DEFAULTS };
         }
 
         // === دوال التطبيق الأساسية ===
-        async function showSection(sectionId) {
-            if (editingSaleId || editingPurchaseId) {
-                if (!confirm('لديك فاتورة قيد التعديل، هل تريد إلغاء التعديلات والانتقال؟')) {
-                    return;
-                }
-                resetInvoiceForms();
-            }
-
-            document.querySelectorAll('.section').forEach(section => section.classList.remove('active'));
-            document.querySelectorAll('.sidebar-nav button').forEach(button => button.classList.remove('active'));
-            document.getElementById(sectionId).classList.add('active');
-            const activeButton = Array.from(document.querySelectorAll('.sidebar-nav button')).find(
-                btn => btn.getAttribute('onclick') === `showSection('${sectionId}')`
-            );
-            if(activeButton) activeButton.classList.add('active');
-
-            if (window.innerWidth <= 768) {
-                document.getElementById('sidebar').classList.remove('open');
-            }
-            
-            // Update mini stats based on section
-            if (sectionId === 'items') {
-                const miniStatItemsEl = document.getElementById('miniStatItems');
-                if (miniStatItemsEl) miniStatItemsEl.textContent = items.length;
-                renderItems();
-                generateItemCode(); // توليد الكود تلقائياً عند فتح صفحة الأصناف
-            }
-            else if (sectionId === 'customers') {
-                const miniStatCustomersEl = document.getElementById('miniStatCustomers');
-                if (miniStatCustomersEl) miniStatCustomersEl.textContent = customers.length;
-                renderCustomers();
-                generateCustomerCode(); // توليد الكود تلقائياً عند فتح صفحة العملاء
-            }
-            else if (sectionId === 'suppliers') {
-                const miniStatSuppliersEl = document.getElementById('miniStatSuppliers');
-                if (miniStatSuppliersEl) miniStatSuppliersEl.textContent = suppliers.length;
-                renderSuppliers();
-                generateSupplierCode(); // توليد الكود تلقائياً عند فتح صفحة الموردين
-            }
-            else if (sectionId === 'purchases') {
-                const miniStatPurchasesEl = document.getElementById('miniStatPurchases');
-                if (miniStatPurchasesEl) miniStatPurchasesEl.textContent = purchases.length;
-                updatePurchaseDropdowns();
-                generatePurchaseCode(); // توليد كود المشتريات تلقائياً
-                const purchaseDateEl = document.getElementById('purchaseDate');
-                if (purchaseDateEl) purchaseDateEl.value = new Date().toISOString().split('T')[0];
-            }
-            else if (sectionId === 'sales') {
-                const miniStatSalesEl = document.getElementById('miniStatSales');
-                if (miniStatSalesEl) miniStatSalesEl.textContent = sales.length;
-                updateSaleDropdowns();
-                generateSaleCode(); // توليد كود المبيعات تلقائياً
-                const saleDateEl = document.getElementById('saleDate');
-                if (saleDateEl) saleDateEl.value = new Date().toISOString().split('T')[0];
-            }
-            else if (sectionId === 'expenses') {
-                const miniStatExpensesEl = document.getElementById('miniStatExpenses');
-                if (miniStatExpensesEl) miniStatExpensesEl.textContent = expenses.length;
-                updateExpenseStats();
-                renderExpenses();
-                const expenseDateEl = document.getElementById('expenseDate');
-                if (expenseDateEl) expenseDateEl.value = new Date().toISOString().split('T')[0];
-            } else if (sectionId === 'revenues') {
-                const miniStatRevenuesEl = document.getElementById('miniStatRevenues');
-                if (miniStatRevenuesEl) miniStatRevenuesEl.textContent = revenues.length;
-                updateRevenueStats();
-                renderRevenues();
-                const revenueDateEl = document.getElementById('revenueDate');
-                if (revenueDateEl) revenueDateEl.value = new Date().toISOString().split('T')[0];
-            } else if (sectionId === 'salaries') {
-                renderSalaries();
-                updateSalarySummary();
-            }
-           else if (sectionId === 'advances') {
-           const miniStatAdvancesEl = document.getElementById('miniStatAdvances');
-    if (miniStatAdvancesEl) miniStatAdvancesEl.textContent = advances.length;
-    renderAdvances();
-    updateAdvanceStats();
-    setupAdvanceSearch();
-    const advanceDateEl = document.getElementById('advanceDate');
-    if (advanceDateEl) advanceDateEl.value = new Date().toISOString().split('T')[0];
-}
-
-            else if (sectionId === 'advanced-dashboard') initAdvancedDashboard();
-            else if (sectionId === 'returns') showReturnTab('sales');
-            else if (sectionId === 'settings') {
-                const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
-                updateLoggedInUserDisplay(loggedInUser);
-
-                // Show/hide admin sections
-                const userRole = loggedInUser ? loggedInUser.role : null;
-                const isAdmin = userRole === 'admin';
-                const isManager = userRole === 'manager';
-                
-                debugLog('⚙️ فتح صفحة الإعدادات - الدور:', userRole, 'مدير نشاط؟', isManager);
-                
-                const userMgmt = document.getElementById('userManagementSection');
-                const activityMgmt = document.getElementById('activityManagementSection');
-                const activityLogoSection = document.getElementById('activityLogoSection');
-                const programLogoSection = document.getElementById('programLogoSection');
-                
-                debugLog('🔍 عنصر قسم شعار النشاط:', activityLogoSection ? 'موجود' : 'غير موجود');
-                
-                if (userMgmt) {
-                    userMgmt.style.display = (isAdmin || isManager) ? 'block' : 'none';
-                }
-                if (activityMgmt) {
-                    activityMgmt.style.display = isAdmin ? 'block' : 'none';
-                }
-                if (activityLogoSection) {
-                    activityLogoSection.style.display = (isAdmin || isManager) ? 'block' : 'none';
-                    debugLog('✅ تم ضبط عرض قسم شعار النشاط:', (isAdmin || isManager) ? 'مرئي' : 'مخفي');
-                }
-                if (programLogoSection) {
-                    programLogoSection.style.display = isAdmin ? 'block' : 'none';
-                    debugLog('✅ تم ضبط عرض قسم شعار البرنامج:', isAdmin ? 'مرئي (مدير نظام فقط)' : 'مخفي');
-                }
-                
-                updateDataStats();
-                renderActivitiesInSettings();
-                renderUsersInSettings();
-                loadEmailJsSettings();
-                loadActivityLogo();
-            } else if (sectionId === 'account-info') {
-                const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
-                updateAccountInfoSection(loggedInUser);
-            } else if (sectionId === 'reports') {
-                updateReportItemFilter();
-                changeReportType();
-            }
+       function showSection(sectionId) {
+    if (editingSaleId || editingPurchaseId) {
+        if (!confirm('لديك فاتورة قيد التعديل، هل تريد إلغاء التعديلات والانتقال؟')) {
+            return;
         }
-        
+        resetInvoiceForms();
+    }
+
+    // إخفاء جميع الأقسام
+    document.querySelectorAll('.section').forEach(section => {
+        section.classList.remove('active');
+    });
+    
+    // إخفاء جميع أزرار القائمة الجانبية
+    document.querySelectorAll('.sidebar-nav button').forEach(button => {
+        button.classList.remove('active');
+    });
+    
+    // إظهار القسم المطلوب فقط
+    const targetSection = document.getElementById(sectionId);
+    if (targetSection) {
+        targetSection.classList.add('active');
+    }
+    
+    // تفعيل الزر النشط في القائمة الجانبية
+    const activeButton = Array.from(document.querySelectorAll('.sidebar-nav button')).find(
+        btn => btn.getAttribute('onclick') === `showSection('${sectionId}')`
+    );
+    if(activeButton) activeButton.classList.add('active');
+
+    // إغلاق القائمة في الجوال
+    if (window.innerWidth <= 768) {
+        document.getElementById('sidebar').classList.remove('open');
+    }
+    
+    // تحديث الإحصائيات المصغرة حسب القسم
+    if (sectionId === 'items') {
+        const miniStatItemsEl = document.getElementById('miniStatItems');
+        if (miniStatItemsEl) miniStatItemsEl.textContent = items.length;
+        renderItems();
+        generateItemCode();
+    }
+    else if (sectionId === 'customers') {
+        const miniStatCustomersEl = document.getElementById('miniStatCustomers');
+        if (miniStatCustomersEl) miniStatCustomersEl.textContent = customers.length;
+        renderCustomers();
+        generateCustomerCode();
+    }
+    else if (sectionId === 'suppliers') {
+        const miniStatSuppliersEl = document.getElementById('miniStatSuppliers');
+        if (miniStatSuppliersEl) miniStatSuppliersEl.textContent = suppliers.length;
+        renderSuppliers();
+        generateSupplierCode();
+    }
+    else if (sectionId === 'purchases') {
+        const miniStatPurchasesEl = document.getElementById('miniStatPurchases');
+        if (miniStatPurchasesEl) miniStatPurchasesEl.textContent = purchases.length;
+        updatePurchaseDropdowns();
+        generatePurchaseCode();
+        const purchaseDateEl = document.getElementById('purchaseDate');
+        if (purchaseDateEl) purchaseDateEl.value = new Date().toISOString().split('T')[0];
+    }
+    else if (sectionId === 'sales') {
+        const miniStatSalesEl = document.getElementById('miniStatSales');
+        if (miniStatSalesEl) miniStatSalesEl.textContent = sales.length;
+        updateSaleDropdowns();
+        generateSaleCode();
+        const saleDateEl = document.getElementById('saleDate');
+        if (saleDateEl) saleDateEl.value = new Date().toISOString().split('T')[0];
+    }
+    else if (sectionId === 'expenses') {
+        const miniStatExpensesEl = document.getElementById('miniStatExpenses');
+        if (miniStatExpensesEl) miniStatExpensesEl.textContent = expenses.length;
+        updateExpenseStats();
+        renderExpenses();
+        const expenseDateEl = document.getElementById('expenseDate');
+        if (expenseDateEl) expenseDateEl.value = new Date().toISOString().split('T')[0];
+    } else if (sectionId === 'revenues') {
+        const miniStatRevenuesEl = document.getElementById('miniStatRevenues');
+        if (miniStatRevenuesEl) miniStatRevenuesEl.textContent = revenues.length;
+        updateRevenueStats();
+        renderRevenues();
+        const revenueDateEl = document.getElementById('revenueDate');
+        if (revenueDateEl) revenueDateEl.value = new Date().toISOString().split('T')[0];
+    } else if (sectionId === 'salaries') {
+        renderSalaries();
+        updateSalarySummary();
+    } else if (sectionId === 'advances') {
+        const miniStatAdvancesEl = document.getElementById('miniStatAdvances');
+        if (miniStatAdvancesEl) miniStatAdvancesEl.textContent = advances.length;
+        renderAdvances();
+        updateAdvanceStats();
+        setupAdvanceSearch();
+        const advanceDateEl = document.getElementById('advanceDate');
+        if (advanceDateEl) advanceDateEl.value = new Date().toISOString().split('T')[0];
+    } else if (sectionId === 'accounts') {
+        initializeAccountsSection();
+    } else if (sectionId === 'advanced-dashboard') {
+        initAdvancedDashboard();
+    } else if (sectionId === 'returns') {
+        showReturnTab('sales');
+    } else if (sectionId === 'settings') {
+        const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
+        if (loggedInUser && loggedInUser.role === 'admin') {
+            document.getElementById('userManagementSection').style.display = 'block';
+            document.getElementById('activityManagementSection').style.display = 'block';
+            loadUsersDropdown();
+            loadActivitiesDropdown();
+        } else {
+            document.getElementById('userManagementSection').style.display = 'none';
+            document.getElementById('activityManagementSection').style.display = 'none';
+        }
+        if (loggedInUser && (loggedInUser.role === 'admin' || loggedInUser.role === 'manager')) {
+            document.getElementById('activityLogoSection').style.display = 'block';
+        } else {
+            document.getElementById('activityLogoSection').style.display = 'none';
+        }
+    }
+}
         // ===== Activity and Header Functions =====
         function updateHeaderForActivity(activity) {
             if (activity) {
@@ -6452,6 +6550,20 @@ function searchCustomers() {
             }
         }
 
+function loadCustomersToSelect() {
+    const select = document.getElementById('accountClientSelect');
+    if (!select) return;
+    
+    select.innerHTML = '<option value="">اختر العميل</option>';
+    
+    customers.forEach(customer => {
+        const option = document.createElement('option');
+        option.value = customer.id;
+        option.textContent = customer.name + ' - ' + (customer.code || '');
+        select.appendChild(option);
+    });
+}
+
         function renderItems() {
             const tbody = document.getElementById('itemsList');
             tbody.innerHTML = '';
@@ -6796,6 +6908,8 @@ function searchCustomers() {
                     clearCustomerForm();
                     renderCustomers();
                     showNotification('✅ نجاح', 'تم إضافة العميل بنجاح!', 'success');
+                    loadCustomersToSelect();
+
                 } else {
                     customers.pop();
                     showNotification('❌ خطأ', 'حدث خطأ في حفظ البيانات', 'error');
@@ -10082,113 +10196,84 @@ if (data.length > 0) {
 }
         
         // ===== Login System Functions =====
-        async function handleLogin() {
-            const errorMsg = document.getElementById('login-error');
-            const emailInput = document.getElementById('loginEmail');
-            const passwordInput = document.getElementById('loginPassword');
-            if (!emailInput || !passwordInput) {
-                showNotification('❌ خطأ', 'تعذر العثور على حقول تسجيل الدخول', 'error');
-                return;
-            }
+     async function handleLogin() {
+    const errorMsg = document.getElementById('login-error');
+    const email = document.getElementById('loginEmail').value.trim();
+    const pass = document.getElementById('loginPassword').value;
 
-            const email = emailInput.value.trim();
-            const pass = passwordInput.value;
-            if (!email || !pass) {
-                showNotification('⚠️ بيانات ناقصة', 'يرجى إدخال البريد الإلكتروني وكلمة المرور', 'warning');
-                return;
-            }
+    if (!email || !pass) {
+        showNotification('⚠️ بيانات ناقصة', 'يرجى إدخال البريد الإلكتروني وكلمة المرور', 'warning');
+        return;
+    }
 
-            showLoading('جاري تسجيل الدخول...');
+    showLoading('جاري تسجيل الدخول...');
+    errorMsg.style.display = 'none';
 
-            try {
-                let user = null;
-                
-                // البحث عن المستخدم والتحقق من كلمة المرور
-                for (const u of users) {
-                    if (u.email === email) {
-                        // التحقق من كلمة المرور المشفرة أو العادية (للتوافق مع البيانات القديمة)
-                        if (u.passwordHash) {
-                            // استخدام كلمة المرور المشفرة
-                            const isValid = await verifyPassword(pass, u.passwordHash);
-                            if (isValid) {
-                                user = u;
-                                break;
-                            }
-                        } else if (u.password === pass) {
-                            // كلمة مرور قديمة غير مشفرة - نقوم بتشفيرها الآن
-                            user = u;
-                            user.passwordHash = await hashPassword(pass);
-                            delete user.password; // حذف كلمة المرور غير المشفرة
-                            await saveUsers(); // حفظ التحديث
-                            break;
-                        }
-                    }
-                }
+    try {
+        // --- ⬇️ هذا هو الكود الجديد الذي يستخدم Firebase Auth ---
 
-                if (user) {
-                    if (user.role === 'manager') {
-                        if (!user.activityId) {
-                            hideLoading();
-                            showNotification('⚠️ غير معين', 'لم يتم تعيين نشاط لهذا المدير. يرجى التواصل مع مدير النظام', 'warning');
-                            errorMsg.style.display = 'block';
-                            return;
-                        }
-                        const assignedActivity = activities.find(a => a.id == user.activityId);
-                        if (!assignedActivity) {
-                            hideLoading();
-                            showNotification('⚠️ نشاط غير موجود', 'لا يمكن فتح الحساب لأن النشاط المرتبط به غير موجود. الرجاء التواصل مع مدير النظام', 'error');
-                            errorMsg.style.display = 'block';
-                            return;
-                        }
-                    } else if (user.role === 'user') {
-                        if (!user.activityId) {
-                            hideLoading();
-                            showNotification('⚠️ غير معين', 'لم يتم تعيين نشاط لهذا المستخدم. يرجى التواصل مع مدير النظام', 'warning');
-                            errorMsg.style.display = 'block';
-                            return;
-                        }
-                        const allowedActivity = activities.find(a => a.id == user.activityId);
-                        if (!allowedActivity) {
-                            hideLoading();
-                            showNotification('⚠️ نشاط غير موجود', 'لا يمكن فتح الحساب لأن النشاط المرتبط به غير موجود. الرجاء التواصل مع مدير النظام', 'error');
-                            errorMsg.style.display = 'block';
-                            return;
-                        }
-                    }
+        // 1. تسجيل الدخول باستخدام Auth
+        const userCredential = await auth.signInWithEmailAndPassword(email, pass);
+        const firebaseUser = userCredential.user;
 
-                    sessionStorage.setItem('isLoggedIn', 'true');
-                    sessionStorage.setItem('loggedInUser', JSON.stringify(user));
-                    updateLoggedInUserDisplay(user);
-                    errorMsg.style.display = 'none';
-                    document.getElementById('login-overlay').style.display = 'none';
-                    const appContainer = document.querySelector('.app-container');
-                    if (appContainer) appContainer.style.display = 'flex';
+        // 2. جلب بيانات المستخدم (الصلاحيات) من قاعدة بياناتنا
+        const user = users.find(u => u.id === firebaseUser.uid || u.email === email);
 
-                    if (user.role === 'admin') {
-                        currentActivityId = sessionStorage.getItem('currentActivityId');
-                        if (currentActivityId && activities.find(a => a.id == currentActivityId)) {
-                            await selectActivity(currentActivityId);
-                        } else {
-                            enterAdminWithoutActivity();
-                        }
-                    } else if (user.role === 'manager') {
-                        await selectActivity(user.activityId);
-                    } else {
-                        await selectActivity(user.activityId);
-                    }
-                    
-                    hideLoading();
-                } else {
-                    hideLoading();
-                    errorMsg.textContent = 'البريد الإلكتروني أو كلمة المرور غير صحيحة';
-                    errorMsg.style.display = 'block';
-                }
-            } catch (error) {
-                hideLoading();
-                logError('Login', error);
-            }
+        if (!user) {
+            hideLoading();
+            logError('Login', 'الحساب موجود ولكن ملف المستخدم مفقود', false);
+            errorMsg.textContent = 'خطأ في بيانات الحساب. يرجى مراجعة المدير.';
+            errorMsg.style.display = 'block';
+            auth.signOut(); 
+            return;
         }
 
+        // 3. التحقق من الصلاحيات (كما كان)
+        if ((user.role === 'manager' || user.role === 'user') && (!user.activityId || !activities.find(a => a.id == user.activityId))) {
+            hideLoading();
+            showNotification('⚠️ نشاط غير صالح', 'النشاط المرتبط بحسابك غير موجود. راجع المدير.', 'warning');
+            errorMsg.textContent = 'النشاط المرتبط بحسابك غير صالح.';
+            errorMsg.style.display = 'block';
+            auth.signOut(); 
+            return;
+        }
+
+        // 4. حفظ بيانات المستخدم في Session
+        sessionStorage.setItem('loggedInUser', JSON.stringify(user));
+
+        // --- ⬆️ نهاية الكود الجديد ---
+
+        updateLoggedInUserDisplay(user);
+        document.getElementById('login-overlay').style.display = 'none';
+        document.querySelector('.app-container').style.display = 'flex';
+
+        if (user.role === 'admin') {
+            currentActivityId = sessionStorage.getItem('currentActivityId');
+            if (currentActivityId && activities.find(a => a.id == currentActivityId)) {
+                await selectActivity(currentActivityId);
+            } else {
+                enterAdminWithoutActivity();
+            }
+        } else {
+            await selectActivity(user.activityId);
+        }
+
+        hideLoading();
+
+    } catch (error) {
+        hideLoading();
+        // معالجة أخطاء Firebase Auth
+        if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+            logError('Login', 'بيانات دخول غير صحيحة', false);
+            errorMsg.textContent = 'البريد الإلكتروني أو كلمة المرور غير صحيحة';
+            errorMsg.style.display = 'block';
+        } else {
+            logError('Login', error);
+            errorMsg.textContent = 'حدث خطأ غير متوقع. حاول مرة أخرى.';
+            errorMsg.style.display = 'block';
+        }
+    }
+}
         function enterAdminWithoutActivity() {
             currentActivityId = null;
             sessionStorage.removeItem('currentActivityId');
@@ -10264,14 +10349,9 @@ if (data.length > 0) {
             renderUsersInSettings();
         }
         
-        async function logout() {
+       async function logout() {
             const confirmed = await showConfirmDialog({
-                title: '👋 تسجيل الخروج',
-                message: 'هل أنت متأكد من رغبتك في تسجيل الخروج؟',
-                type: 'info',
-                confirmText: 'نعم، سجل خروجي',
-                cancelText: 'إلغاء',
-                icon: '🚪'
+                // ... (خيارات الحوار) ...
             });
             
             if (confirmed) {
@@ -10279,91 +10359,6 @@ if (data.length > 0) {
                 location.reload();
             }
         }
-
-        async function addUser() {
-            const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
-            const name = document.getElementById('newUserName').value.trim();
-            const email = document.getElementById('newUserEmail').value.trim();
-            const phone = document.getElementById('newUserPhone').value.trim();
-            const password = document.getElementById('newUserPassword').value;
-            let role = document.getElementById('newUserRole').value;
-            let activityId = document.getElementById('newUserActivity').value;
-            const phonePattern = /^[+\d]{6,20}$/;
-
-            if (loggedInUser && loggedInUser.role === 'manager') {
-                role = 'user';
-                activityId = loggedInUser.activityId;
-            }
-
-            if (!name) {
-                showNotification('⚠️ اسم مطلوب', 'يرجى إدخال اسم المستخدم', 'warning');
-                return;
-            }
-            if (!email || !password) {
-                showNotification('⚠️ بيانات ناقصة', 'يرجى إدخال البريد الإلكتروني وكلمة المرور', 'warning');
-                return;
-            }
-            if (!phone) {
-                showNotification('⚠️ جوال مطلوب', 'يرجى إدخال رقم الجوال', 'warning');
-                return;
-            }
-            if (!phonePattern.test(phone)) {
-                showNotification('⚠️ رقم غير صحيح', 'رقم الجوال يجب أن يحتوي على أرقام فقط ويمكن أن يبدأ بعلامة +', 'warning');
-                return;
-            }
-            if ((role === 'user' || role === 'manager') && !activityId) {
-                showNotification('⚠️ نشاط مطلوب', 'الرجاء تعيين نشاط للمستخدم', 'warning');
-                return;
-            }
-            if (users.some(u => u.email === email)) {
-                showNotification('❌ بريد مكرر', 'هذا البريد الإلكتروني مستخدم بالفعل', 'error');
-                return;
-            }
-
-            showLoading('جاري إنشاء المستخدم...');
-
-            try {
-                // تشفير كلمة المرور
-                const passwordHash = await hashPassword(password);
-                
-                const normalizedActivityId = (role === 'user' || role === 'manager') ? activityId : null;
-                const newUser = { 
-                    id: Date.now(), 
-                    name, 
-                    email, 
-                    phone, 
-                    passwordHash, // استخدام كلمة المرور المشفرة
-                    role, 
-                    activityId: normalizedActivityId 
-                };
-                
-                users.push(newUser);
-                await saveUsers();
-                
-                hideLoading();
-                
-                renderUsersInSettings();
-                document.getElementById('newUserName').value = '';
-                document.getElementById('newUserEmail').value = '';
-                document.getElementById('newUserPhone').value = '';
-                document.getElementById('newUserPassword').value = '';
-                const roleField = document.getElementById('newUserRole');
-                const activityField = document.getElementById('newUserActivity');
-                if (loggedInUser && loggedInUser.role === 'manager') {
-                    if (roleField) roleField.value = 'user';
-                    if (activityField) activityField.value = loggedInUser.activityId || '';
-                } else {
-                    if (roleField) roleField.value = 'admin';
-                    if (activityField) activityField.value = '';
-                }
-                
-                showNotification('✅ تم الإضافة', 'تم إضافة المستخدم بنجاح', 'success');
-            } catch (error) {
-                hideLoading();
-                logError('Add User', error);
-            }
-        }
-
         function renderUsersInSettings() {
             const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
             const isAdmin = loggedInUser && loggedInUser.role === 'admin';
@@ -10428,6 +10423,81 @@ if (data.length > 0) {
 
             handleUserSelection();
         }
+
+// ** الدالة 1: محاكاة جلب البيانات من الخادم (يجب استبدالها بـ API call)**
+function fetchSupplierTransactions(supplierId, fromDate, toDate) {
+    // هنا يجب أن تضع دالة AJAX/Fetch الحقيقية التي تتصل بمسار:
+    // '/api/statements/supplier?id=' + supplierId + '&from=' + fromDate + '&to=' + toDate
+
+    return new Promise(resolve => {
+        setTimeout(() => {
+            // بيانات وهمية للاختبار
+            const transactions = [
+                { date: '2025-05-01', description: 'رصيد افتتاحي', debit: 0, credit: 0, balance: 15000 },
+                { date: '2025-05-05', description: 'فاتورة مشتريات #1001', debit: 10000, credit: 0, balance: 25000 },
+                { date: '2025-05-15', description: 'سند صرف رقم #250', debit: 0, credit: 8000, balance: 17000 },
+                { date: '2025-05-22', description: 'فاتورة مشتريات #1002', debit: 5500, credit: 0, balance: 22500 },
+                { date: '2025-05-30', description: 'سند صرف رقم #251', debit: 0, credit: 15000, balance: 7500 },
+            ];
+            resolve(transactions);
+        }, 800); // 800ms لمحاكاة وقت استجابة الخادم
+    });
+}
+
+// ** الدالة 2: إنشاء جدول كشف الحساب وعرضه **
+function generateSupplierAccountStatement(transactions) {
+    const resultsDiv = document.getElementById('supplierStatementResults');
+    if (!resultsDiv) {
+        console.error("لم يتم العثور على عنصر 'supplierStatementResults'.");
+        return;
+    }
+
+    if (transactions.length === 0) {
+        resultsDiv.innerHTML = '<p class="no-data-message">لا توجد حركات لعرضها في الفترة المحددة.</p>';
+        return;
+    }
+    
+    let html = `
+        <table class="statement-table">
+            <thead>
+                <tr>
+                    <th>التاريخ</th>
+                    <th>الوصف/البيان</th>
+                    <th>مدين (Debit)</th>
+                    <th>دائن (Credit)</th>
+                    <th>الرصيد (Balance)</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+    
+    // بناء صفوف الجدول
+    transactions.forEach(t => {
+        // يمكنك استخدام دالة لتنسيق الأرقام مثل formatCurrency(t.debit)
+        html += `
+            <tr>
+                <td>${t.date}</td>
+                <td>${t.description}</td>
+                <td class="amount debit">${t.debit.toFixed(2)}</td>
+                <td class="amount credit">${t.credit.toFixed(2)}</td>
+                <td class="amount balance">${t.balance.toFixed(2)}</td>
+            </tr>
+        `;
+    });
+
+    html += `
+            </tbody>
+        </table>
+    `;
+
+    resultsDiv.innerHTML = html;
+}
+
+
+
+
+
+
 
         function handleUserSelection() {
             const userSelect = document.getElementById('usersDropdown');
@@ -11050,6 +11120,47 @@ function emailSaleInvoice(saleId) {
         showNotification('❌ لا يوجد بريد إلكتروني مسجل لهذا العميل.', 'error');
         return;
     }
+// دوال قسم الحسابات
+function showAccountTab(tabName) {
+    // إخفاء جميع المحتويات
+    document.querySelectorAll('#accounts .tab-content').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    
+    // إلغاء تنشيط جميع الأزرار
+    document.querySelectorAll('#accounts .tab-button').forEach(button => {
+        button.classList.remove('active');
+    });
+    
+    // إظهار المحتوى المحدد
+    document.getElementById(tabName + 'AccountTab').classList.add('active');
+    event.target.classList.add('active');
+    
+    // تحميل البيانات حسب التبويب
+    if (tabName === 'client') {
+        loadClientAccounts();
+    } else if (tabName === 'supplier') {
+        loadSupplierAccounts();
+    } else if (tabName === 'bank') {
+        loadBankAccounts();
+    }
+}
+
+function initializeAccountsSection() {
+    loadClientAccounts();
+}
+
+// دوال الإعدادات
+function loadUsersDropdown() {
+    // دالة مؤقتة
+    console.log('تحميل قائمة المستخدمين...');
+}
+
+function loadActivitiesDropdown() {
+    // دالة مؤقتة  
+    console.log('تحميل قائمة الأنشطة...');
+}
+
 
     // الحصول على اسم النشاط الحالي
     const currentActivity = activities.find(a => a.id == currentActivityId);
@@ -12577,6 +12688,107 @@ async function deletePurchaseReturn(returnId) {
     renderItems();
     updateDashboard();
     showNotification('✅ تم النقل', 'تم نقل مرتجع المشتريات إلى سلة المحذوفات', 'success');
+}// دوال تحميل القوائم للتبويبات
+function loadClientAccounts() {
+    const select = document.getElementById('accountClientSelect');
+    select.innerHTML = '<option value="">اختر العميل</option>';
+    
+    customers.forEach(client => {
+        const option = document.createElement('option');
+        option.value = client.id;
+        option.textContent = `${client.name} - ${client.code || ''}`;
+        select.appendChild(option);
+    });
+    
+    // تعيين التواريخ الافتراضية
+    setDefaultDates('accountClientFromDate', 'accountClientToDate');
+}
+
+function loadSupplierAccounts() {
+    const select = document.getElementById('accountSupplierSelect');
+    select.innerHTML = '<option value="">اختر المورد</option>';
+    
+    suppliers.forEach(supplier => {
+        const option = document.createElement('option');
+        option.value = supplier.id;
+        option.textContent = `${supplier.name} - ${supplier.code || ''}`;
+        select.appendChild(option);
+    });
+    
+    setDefaultDates('accountSupplierFromDate', 'accountSupplierToDate');
+}
+
+function loadBankAccounts() {
+    // تعيين التواريخ للبنك
+    setDefaultDates('accountBankFromDate', 'accountBankToDate');
+}
+
+// دالة مساعدة لتعيين التواريخ الافتراضية
+function setDefaultDates(fromId, toId) {
+    const today = new Date();
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(today.getDate() - 30);
+    
+    document.getElementById(fromId).value = thirtyDaysAgo.toISOString().split('T')[0];
+    document.getElementById(toId).value = today.toISOString().split('T')[0];
+}
+// دوال تحميل كشوف الحسابات
+function loadClientAccount() {
+    const clientId = document.getElementById('accountClientSelect').value;
+    const fromDate = document.getElementById('accountClientFromDate').value;
+    const toDate = document.getElementById('accountClientToDate').value;
+    
+    if (!clientId) {
+        showNotification('⚠️ تنبيه', 'يرجى اختيار عميل', 'warning');
+        return;
+    }
+    
+    showLoading('جاري تحميل كشف حساب العميل...');
+    setTimeout(() => {
+        generateClientAccountStatement(clientId, fromDate, toDate);
+        hideLoading();
+    }, 500);
+}
+
+function loadSupplierAccount() {
+    const supplierId = document.getElementById('accountSupplierSelect').value;
+    const fromDate = document.getElementById('accountSupplierFromDate').value;
+    const toDate = document.getElementById('accountSupplierToDate').value;
+    
+    if (!supplierId) {
+        showNotification('⚠️ تنبيه', 'يرجى اختيار مورد', 'warning');
+        return;
+    }
+    
+    showLoading('جاري تحميل كشف حساب المورد...');
+    setTimeout(() => {
+        // سننفذ generateSupplierAccountStatement لاحقاً
+        showNotification('ℹ️ معلومة', 'سيتم تنفيذ كشف حساب المورد قريباً', 'info');
+        hideLoading();
+    }, 500);
+}
+
+function loadBankAccount() {
+    const bankId = document.getElementById('accountBankSelect').value;
+    const fromDate = document.getElementById('accountBankFromDate').value;
+    const toDate = document.getElementById('accountBankToDate').value;
+    
+    if (!bankId) {
+        showNotification('⚠️ تنبيه', 'يرجى اختيار بنك', 'warning');
+        return;
+    }
+    
+    showLoading('جاري تحميل كشف حساب البنك...');
+    setTimeout(() => {
+        // سننفذ generateBankAccountStatement لاحقاً
+        showNotification('ℹ️ معلومة', 'سيتم تنفيذ كشف حساب البنك قريباً', 'info');
+        hideLoading();
+    }, 500);
+}
+function loadRecentActivities() {
+    // دالة مؤقتة لحل الخطأ
+    console.log('جاري تحميل الأنشطة الحديثة...');
+    return [];
 }
 
     </script>
