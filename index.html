@@ -193,46 +193,7 @@
             --sidebar-text: #ecf0f1;
             --header-bg: linear-gradient(135deg, #2c5aa0 0%, #34495e 100%);
         }
-    
-/* ===== تنسيقات ملخص كشف الحساب ===== */
-.account-summary {
-    margin-top: 15px;
-    margin-bottom: 25px;
-    padding: 20px;
-    background: white;
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow);
-    border-left: 5px solid var(--primary-color);
-}
-
-.account-summary .summary-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 12px 0;
-    border-bottom: 1px solid #eee;
-    font-size: 1.05em;
-}
-
-.account-summary .summary-item:last-child {
-    border-bottom: none;
-}
-
-.account-summary .summary-item span:first-child {
-    font-weight: 600;
-    color: var(--secondary-color);
-}
-
-.account-summary .summary-item span:last-child {
-    font-weight: bold;
-}
-
-.account-summary .summary-total {
-    font-size: 1.3em;
-    color: var(--primary-color);
-    border-top: 2px solid var(--primary-color);
-    margin-top: 10px;
-    padding-top: 15px;
-}
+ 
 /* ===== تحسينات لوحة التحكم المتقدمة ===== */
 .chart-card {
     background: white;
@@ -3441,105 +3402,7 @@ textarea.input-success:focus {
         </table>
     </div>
 </div>
-<!-- ضع الكود هنا -->
- <div id="accounts" class="section">
-    <h2>🧾 كشوف الحسابات</h2>
-    
-    <div class="tabs">
-        <button class="tab-button active" onclick="showAccountTab('client')">👥 كشف حساب عميل</button>
-        <button class="tab-button" onclick="showAccountTab('supplier')">🏢 كشف حساب مورد</button>
-        <button class="tab-button" onclick="showAccountTab('bank')">🏦 كشف حساب بنك</button>
-    </div>
 
-    <div id="clientAccountTab" class="tab-content active">
-        <div class="form-grid grid-3">
-            <select id="accountClientSelect" onchange="loadClientAccount()">
-                <option value="">اختر العميل</option>
-            </select>
-            <input type="date" id="accountClientFromDate" onchange="loadClientAccount()">
-            <input type="date" id="accountClientToDate" onchange="loadClientAccount()">
-        </div>
-        <div id="clientAccountSummary" class="account-summary" style="display: none;">
-            </div>
-        
-        <table id="clientAccountStatement">
-            <thead>
-                <tr>
-                    <th>التاريخ</th>
-                    <th>البيان</th>
-                    <th>فاتورة البيع</th>
-                    <th>مدين</th>
-                    <th>دائن</th>
-                    <th>الرصيد</th>
-                </tr>
-            </thead>
-            <tbody id="clientAccountDetails">
-                <tr><td colspan="6" style="text-align: center;">يرجى اختيار عميل لعرض كشف الحساب</td></tr>
-            </tbody>
-        </table>
-    </div>
-
-    <div id="supplierAccountTab" class="tab-content">
-        <div class="form-grid grid-3">
-            <select id="accountSupplierSelect" onchange="loadSupplierAccount()">
-                <option value="">اختر المورد</option>
-            </select>
-            <input type="date" id="accountSupplierFromDate" onchange="loadSupplierAccount()">
-            <input type="date" id="accountSupplierToDate" onchange="loadSupplierAccount()">
-        </div>
-        <div id="supplierAccountSummary" class="account-summary" style="display: none;">
-            </div>
-        
-        <table id="supplierAccountStatement">
-            <thead>
-                <tr>
-                    <th>التاريخ</th>
-                    <th>البيان</th>
-                    <th>فاتورة الشراء</th>
-                    <th>مدين (دفعاتنا)</th>
-                    <th>دائن (مشترياتنا)</th>
-                    <th>الرصيد</th>
-                </tr>
-            </thead>
-            <tbody id="supplierAccountDetails">
-                 <tr><td colspan="6" style="text-align: center;">يرجى اختيار مورد لعرض كشف الحساب</td></tr>
-            </tbody>
-        </table>
-    </div>
-
-    <div id="bankAccountTab" class="tab-content">
-        <div class="form-grid grid-3">
-            <select id="accountBankSelect" onchange="loadBankAccount()">
-                <option value="">اختر حساب البنك</option>
-                <option value="cash">البنك الأهلي</option>
-                <option value="alrajhi">البنك الراجحي</option>
-                <option value="albilad">بنك البلاد</option>
-                <option value="other">بنك آخر</option>
-            </select>
-            <input type="date" id="accountBankFromDate" onchange="loadBankAccount()">
-            <input type="date" id="accountBankToDate" onchange="loadBankAccount()">
-        </div>
-        
-        <div id="bankAccountSummary" class="account-summary" style="display: none;">
-            </div>
-        
-        <table id="bankAccountStatement">
-            <thead>
-                <tr>
-                    <th>التاريخ</th>
-                    <th>البيان</th>
-                    <th>المرجع</th>
-                    <th>إيداع</th>
-                    <th>سحب</th>
-                    <th>الرصيد</th>
-                </tr>
-            </thead>
-            <tbody id="bankAccountDetails">
-                 <tr><td colspan="6" style="text-align: center;">يرجى اختيار بنك لعرض كشف الحساب</td></tr>
-            </tbody>
-        </table>
-    </div>
-</div>
 <div id="expenses" class="section">
     <h2>💸 إدارة المصروفات <span class="title-stat-card"><span class="stat-mini-label">الإجمالي:</span><span id="miniStatExpenses" class="stat-mini-number">0</span></span></h2>
     <p>💰 هنا يمكنك إدارة وتصنيف المصروفات اليومية</p>
@@ -5692,7 +5555,6 @@ let emailJsConfig = { ...EMAILJS_DEFAULTS };
                 { id: 'sadaqa', label: '🤲 حساب الصدقة' },
                 { id: 'salaries', label: '💼 إدارة الرواتب' },
                 { id: 'reports', label: '📑 التقارير' },
-                { id: 'accounts', label: '🧾 كشوف الحسابات' },
                 { id: 'settings', label: '⚙️ الإعدادات والنظام' }
             ];
 
@@ -5953,8 +5815,6 @@ let emailJsConfig = { ...EMAILJS_DEFAULTS };
         setupAdvanceSearch();
         const advanceDateEl = document.getElementById('advanceDate');
         if (advanceDateEl) advanceDateEl.value = new Date().toISOString().split('T')[0];
-    } else if (sectionId === 'accounts') {
-        initializeAccountsSection();
     } else if (sectionId === 'advanced-dashboard') {
         initAdvancedDashboard();
     } else if (sectionId === 'returns') {
@@ -6585,20 +6445,6 @@ function searchCustomers() {
             }
         }
 
-function loadCustomersToSelect() {
-    const select = document.getElementById('accountClientSelect');
-    if (!select) return;
-    
-    select.innerHTML = '<option value="">اختر العميل</option>';
-    
-    customers.forEach(customer => {
-        const option = document.createElement('option');
-        option.value = customer.id;
-        option.textContent = customer.name + ' - ' + (customer.code || '');
-        select.appendChild(option);
-    });
-}
-
         function renderItems() {
             const tbody = document.getElementById('itemsList');
             tbody.innerHTML = '';
@@ -6943,7 +6789,7 @@ function loadCustomersToSelect() {
                     clearCustomerForm();
                     renderCustomers();
                     showNotification('✅ نجاح', 'تم إضافة العميل بنجاح!', 'success');
-                    loadCustomersToSelect();
+    
 
                 } else {
                     customers.pop();
@@ -10460,78 +10306,6 @@ if (data.length > 0) {
             handleUserSelection();
         }
 
-// ** الدالة 1: محاكاة جلب البيانات من الخادم (يجب استبدالها بـ API call)**
-function fetchSupplierTransactions(supplierId, fromDate, toDate) {
-    // هنا يجب أن تضع دالة AJAX/Fetch الحقيقية التي تتصل بمسار:
-    // '/api/statements/supplier?id=' + supplierId + '&from=' + fromDate + '&to=' + toDate
-
-    return new Promise(resolve => {
-        setTimeout(() => {
-            // بيانات وهمية للاختبار
-            const transactions = [
-                { date: '2025-05-01', description: 'رصيد افتتاحي', debit: 0, credit: 0, balance: 15000 },
-                { date: '2025-05-05', description: 'فاتورة مشتريات #1001', debit: 10000, credit: 0, balance: 25000 },
-                { date: '2025-05-15', description: 'سند صرف رقم #250', debit: 0, credit: 8000, balance: 17000 },
-                { date: '2025-05-22', description: 'فاتورة مشتريات #1002', debit: 5500, credit: 0, balance: 22500 },
-                { date: '2025-05-30', description: 'سند صرف رقم #251', debit: 0, credit: 15000, balance: 7500 },
-            ];
-            resolve(transactions);
-        }, 800); // 800ms لمحاكاة وقت استجابة الخادم
-    });
-}
-
-// ** الدالة 2: إنشاء جدول كشف الحساب وعرضه **
-function generateSupplierAccountStatement(transactions) {
-    const resultsDiv = document.getElementById('supplierStatementResults');
-    if (!resultsDiv) {
-        console.error("لم يتم العثور على عنصر 'supplierStatementResults'.");
-        return;
-    }
-
-    if (transactions.length === 0) {
-        resultsDiv.innerHTML = '<p class="no-data-message">لا توجد حركات لعرضها في الفترة المحددة.</p>';
-        return;
-    }
-    
-    let html = `
-        <table class="statement-table">
-            <thead>
-                <tr>
-                    <th>التاريخ</th>
-                    <th>الوصف/البيان</th>
-                    <th>مدين (Debit)</th>
-                    <th>دائن (Credit)</th>
-                    <th>الرصيد (Balance)</th>
-                </tr>
-            </thead>
-            <tbody>
-    `;
-    
-    // بناء صفوف الجدول
-    transactions.forEach(t => {
-        // يمكنك استخدام دالة لتنسيق الأرقام مثل formatCurrency(t.debit)
-        html += `
-            <tr>
-                <td>${t.date}</td>
-                <td>${t.description}</td>
-                <td class="amount debit">${t.debit.toFixed(2)}</td>
-                <td class="amount credit">${t.credit.toFixed(2)}</td>
-                <td class="amount balance">${t.balance.toFixed(2)}</td>
-            </tr>
-        `;
-    });
-
-    html += `
-            </tbody>
-        </table>
-    `;
-
-    resultsDiv.innerHTML = html;
-}
-
-
-
-
 
 
 
@@ -11156,35 +10930,6 @@ function emailSaleInvoice(saleId) {
         showNotification('❌ لا يوجد بريد إلكتروني مسجل لهذا العميل.', 'error');
         return;
     }
-// دوال قسم الحسابات
-function showAccountTab(tabName) {
-    // إخفاء جميع المحتويات
-    document.querySelectorAll('#accounts .tab-content').forEach(tab => {
-        tab.classList.remove('active');
-    });
-    
-    // إلغاء تنشيط جميع الأزرار
-    document.querySelectorAll('#accounts .tab-button').forEach(button => {
-        button.classList.remove('active');
-    });
-    
-    // إظهار المحتوى المحدد
-    document.getElementById(tabName + 'AccountTab').classList.add('active');
-    event.target.classList.add('active');
-    
-    // تحميل البيانات حسب التبويب
-    if (tabName === 'client') {
-        loadClientAccounts();
-    } else if (tabName === 'supplier') {
-        loadSupplierAccounts();
-    } else if (tabName === 'bank') {
-        loadBankAccounts();
-    }
-}
-
-function initializeAccountsSection() {
-    loadClientAccounts();
-}
 
 // دوال الإعدادات
 function loadUsersDropdown() {
@@ -11905,7 +11650,6 @@ function initAdvancedDashboard() {
     updateLiveStats();
     renderCharts();
     updatePerformanceIndicators();
-    loadRecentActivities();
 }
 
 function updateLiveStats() {
@@ -12724,147 +12468,7 @@ async function deletePurchaseReturn(returnId) {
     renderItems();
     updateDashboard();
     showNotification('✅ تم النقل', 'تم نقل مرتجع المشتريات إلى سلة المحذوفات', 'success');
-}// دوال تحميل القوائم للتبويبات
-function loadClientAccounts() {
-    const select = document.getElementById('accountClientSelect');
-    select.innerHTML = '<option value="">اختر العميل</option>';
-    
-    customers.forEach(client => {
-        const option = document.createElement('option');
-        option.value = client.id;
-        option.textContent = `${client.name} - ${client.code || ''}`;
-        select.appendChild(option);
-    });
-    
-    // تعيين التواريخ الافتراضية
-    setDefaultDates('accountClientFromDate', 'accountClientToDate');
 }
-
-function loadSupplierAccounts() {
-    const select = document.getElementById('accountSupplierSelect');
-    select.innerHTML = '<option value="">اختر المورد</option>';
-    
-    suppliers.forEach(supplier => {
-        const option = document.createElement('option');
-        option.value = supplier.id;
-        option.textContent = `${supplier.name} - ${supplier.code || ''}`;
-        select.appendChild(option);
-    });
-    
-    setDefaultDates('accountSupplierFromDate', 'accountSupplierToDate');
-}
-
-function loadBankAccounts() {
-    // تعيين التواريخ للبنك
-    setDefaultDates('accountBankFromDate', 'accountBankToDate');
-}
-
-// دالة مساعدة لتعيين التواريخ الافتراضية
-function setDefaultDates(fromId, toId) {
-    const today = new Date();
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(today.getDate() - 30);
-    
-    document.getElementById(fromId).value = thirtyDaysAgo.toISOString().split('T')[0];
-    document.getElementById(toId).value = today.toISOString().split('T')[0];
-}
-
-// دوال قسم الحسابات// دوال قسم الحسابات (نسخة نظيفة - جاهزة للبرمجة)
-
-// دالة التنقل بين التبويبات (تعمل)
-function showAccountTab(tabName) {
-    // إخفاء جميع المحتويات
-    document.querySelectorAll('#accounts .tab-content').forEach(tab => {
-        tab.classList.remove('active');
-    });
-    
-    // إلغاء تنشيط جميع الأزرار
-    document.querySelectorAll('#accounts .tab-button').forEach(button => {
-        button.classList.remove('active');
-    });
-    
-    // إظهار المحتوى المحدد
-    const activeTabContent = document.getElementById(tabName + 'AccountTab');
-    if (activeTabContent) {
-        activeTabContent.classList.add('active');
-    }
-    
-    // تنشيط الزر
-    const activeTabButton = document.querySelector(`#accounts .tab-button[onclick="showAccountTab('${tabName}')"]`);
-    if (activeTabButton) {
-        activeTabButton.classList.add('active');
-    }
-    
-    // تحميل البيانات (سيتم تفعيله لاحقاً)
-    if (tabName === 'client') {
-        loadClientAccounts(); // (سيتم برمجتها)
-    } else if (tabName === 'supplier') {
-        loadSupplierAccounts(); // (سيتم برمجتها)
-    } else if (tabName === 'bank') {
-        loadBankAccounts(); // (سيتم برمجتها)
-    }
-}
-
-// دالة تهيئة القسم (تعمل)
-function initializeAccountsSection() {
-    // تعيين التواريخ الافتراضية إلى "فارغ" كما طلبت
-    setDefaultDates('accountClientFromDate', 'accountClientToDate');
-    setDefaultDates('accountSupplierFromDate', 'accountSupplierToDate');
-    setDefaultDates('accountBankFromDate', 'accountBankToDate');
-    
-    // تحميل القائمة الأولى
-    loadClientAccounts();
-}
-
-// دالة مساعدة لتعيين تواريخ فارغة (تعمل)
-function setDefaultDates(fromId, toId) {
-    const fromEl = document.getElementById(fromId);
-    const toEl = document.getElementById(toId);
-
-    if (fromEl) fromEl.value = ''; // فارغ
-    if (toEl) toEl.value = '';   // فارغ
-}
-
-// --- دوال فارغة وجاهزة للبرمجة ---
-
-// دوال تحميل القوائم (فارغة الآن)
-function loadClientAccounts() {
-    // الخطوة 1: سنقوم بملء قائمة العملاء هنا
-    console.log('سيتم تحميل قائمة العملاء هنا...');
-}
-
-function loadSupplierAccounts() {
-    // الخطوة 2: سنقوم بملء قائمة الموردين هنا
-    console.log('سيتم تحميل قائمة الموردين هنا...');
-}
-
-function loadBankAccounts() {
-    // الخطوة 3: سنقوم بملء قائمة البنوك هنا
-    console.log('سيتم تحميل قائمة البنوك هنا...');
-}
-
-// دوال استدعاء الكشوفات (فارغة الآن)
-function loadClientAccount() {
-    showNotification('ℹ️ معلومة', 'كشف حساب العميل قيد الإنشاء', 'info');
-    // الخطوة 4: سنقوم بتفعيل كشف حساب العميل هنا
-}
-
-function loadSupplierAccount() {
-    showNotification('ℹ️ معلومة', 'كشف حساب المورد قيد الإنشاء', 'info');
-    // الخطوة 5: سنقوم بتفعيل كشف حساب المورد هنا
-}
-
-function loadBankAccount() {
-    showNotification('ℹ️ معلومة', 'كشف حساب البنك قيد الإنشاء', 'info');
-    // الخطوة 6: سنقوم بتفعيل كشف حساب البنك هنا
-}
-
-function loadRecentActivities() {
-    // دالة مؤقتة لحل الخطأ
-    console.log('جاري تحميل الأنشطة الحديثة...');
-    return [];
-}
-
     </script>
 
 <!-- نظام الحوار الاحترافي -->
