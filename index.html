@@ -12530,6 +12530,175 @@ function loadRecentActivities() {
 }
 }
 
+// ==================== نظام رفع شعارات البرنامج والنشاط ====================
+
+/**
+ * معالجة رفع شعار النشاط التجاري
+ */
+async function handleActivityLogoUpload(input) {
+    const file = input.files[0];
+    if (!file) return;
+
+    // تحقق من أن الملف صورة
+    if (!file.type.startsWith('image/')) {
+        showNotification('❌ خطأ', 'الملف يجب أن يكون صورة (PNG, JPG, etc.)', 'error');
+        return;
+    }
+
+    // تحقق من الحجم (2MB كحد أقصى)
+    if (file.size > 2 * 1024 * 1024) {
+        showNotification('❌ خطأ', 'حجم الصورة يجب ألا يتجاوز 2 ميجابايت', 'error');
+        return;
+    }
+
+    // استخدم الدالة الموجودة لرفع الملف
+    const imageUrl = await uploadFile(file, 'activity_logos');
+    
+    if (imageUrl) {
+        // حفظ رابط الصورة في بيانات النشاط
+        const activityIndex = activities.findIndex(a => a.id == currentActivityId);
+        if (activityIndex !== -1) {
+            activities[activityIndex].logoUrl = imageUrl;
+            await saveActivities();
+            
+            // تحديث الشعار في الواجهة
+            updateActivityLogo(imageUrl);
+            showNotification('✅ نجاح', 'تم تحديث شعار النشاط بنجاح', 'success');
+        }
+    }
+}
+
+/**
+ * معالجة رفع شعار البرنامج الرئيسي
+ */
+async function handleProgramLogoUpload(input) {
+    const file = input.files[0];
+    if (!file) return;
+
+    // تحقق من أن الملف صورة
+    if (!file.type.startsWith('image/')) {
+        showNotification('❌ خطأ', 'الملف يجب أن يكون صورة (PNG, JPG, etc.)', 'error');
+        return;
+    }
+
+    // تحقق من الحجم (2MB كحد أقصى)
+    if (file.size > 2 * 1024 * 1024) {
+        showNotification('❌ خطأ', 'حجم الصورة يجب ألا يتجاوز 2 ميجابايت', 'error');
+        return;
+    }
+
+    // استخدم الدالة الموجودة لرفع الملف
+    const imageUrl = await uploadFile(file, 'program_logos');
+    
+    if (imageUrl) {
+        // حفظ رابط الصورة
+        await saveProgramLogo(imageUrl);
+        showNotification('✅ نجاح', 'تم تحديث شعار البرنامج بنجاح', 'success');
+    }
+}
+
+/**
+ * تحديث شعار النشاط في جميع أنحاء الواجهة
+ */
+function updateActivityLogo(logoUrl) {
+    // 1. تحديث في الهيدر الرئيسي
+    const activityHeaderLogo = document.getElementById('activityHeaderLogo');
+    if (activityHeaderLogo) {
+        activityHeaderLogo.src = logoUrl;
+        activityHeaderLogo.style.display = 'block';
+    }
+    
+    // 2. تحديث في فواتير الشراء
+    const printPurchaseLogo = document.getElementById('printPurchaseActivityLogo');
+    if (printPurchaseLogo) {
+        printPurchaseLogo.src = logoUrl;
+        printPurchaseLogo.style.display = 'block';
+    }
+    
+    // 3. تحديث في فواتير المبيعات
+    const printSaleLogo = document.getElementById('printSaleActivityLogo');
+    if (printSaleLogo) {
+        printSaleLogo.src = logoUrl;
+        printSaleLogo.style.display = 'block';
+    }
+    
+    // 4. حفظ في الإعدادات المحلية
+    const settings = JSON.parse(localStorage.getItem('diwani_settings') || '{}');
+    settings.activityLogo = logoUrl;
+    localStorage.setItem('diwani_settings', JSON.stringify(settings));
+}
+
+/**
+ * حفظ شعار البرنامج في جميع أنحاء الواجهة
+ */
+async function saveProgramLogo(logoUrl) {
+    // 1. تحديث في شاشة الدخول
+    const loginLogo = document.getElementById('loginLogo');
+    if (loginLogo) {
+        loginLogo.src = logoUrl;
+        loginLogo.style.display = 'block';
+    }
+    
+    // 2. تحديث في القائمة الجانبية
+    const sidebarLogo = document.getElementById('sidebarLogo');
+    if (sidebarLogo) {
+        sidebarLogo.src = logoUrl;
+        sidebarLogo.style.display = 'block';
+    }
+    
+    // 3. حفظ في الإعدادات المحلية
+    const settings = JSON.parse(localStorage.getItem('diwani_settings') || '{}');
+    settings.programLogo = logoUrl;
+    localStorage.setItem('diwani_settings', JSON.stringify(settings));
+}
+
+/**
+ * حذف شعار النشاط
+ */
+async function removeActivityLogo() {
+    const confirmed = await showConfirmDialog({
+        title: '🗑️ حذف شعار النشاط',
+        message: 'هل أنت متأكد من حذف شعار النشاط الحالي؟',
+        type: 'warning'
+    });
+    
+    if (confirmed) {
+        const activityIndex = activities.findIndex(a => a.id == currentActivityId);
+        if (activityIndex !== -1) {
+            delete activities[activityIndex].logoUrl;
+            await saveActivities();
+            
+            // إخفاء الشعار في الواجهة
+            updateActivityLogo('');
+            showNotification('✅ تم الحذف', 'تم حذف شعار النشاط بنجاح', 'success');
+        }
+    }
+}
+
+/**
+ * حذف شعار البرنامج
+ */
+async function removeProgramLogo() {
+    const confirmed = await showConfirmDialog({
+        title: '🗑️ حذف شعار البرنامج',
+        message: 'هل أنت متأكد من حذف شعار البرنامج الحالي؟',
+        type: 'warning'
+    });
+    
+    if (confirmed) {
+        // حذف من الإعدادات
+        const settings = JSON.parse(localStorage.getItem('diwani_settings') || '{}');
+        delete settings.programLogo;
+        localStorage.setItem('diwani_settings', JSON.stringify(settings));
+        
+        // إخفاء الشعار في الواجهة
+        await saveProgramLogo('');
+        showNotification('✅ تم الحذف', 'تم حذف شعار البرنامج بنجاح', 'success');
+    }
+}
+
+// ==================== نهاية نظام رفع الشعارات ====================
+
     </script>
 
 <!-- نظام الحوار الاحترافي -->
