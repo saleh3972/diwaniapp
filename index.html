@@ -2520,8 +2520,11 @@ textarea.input-success:focus {
             <img src="logo/logo.png" alt="شعار نظام ديواني" class="login-logo" id="loginLogo" style="display: none;" onerror="this.style.display='none'">
             
             <h2>ديواني<br><span style="font-size: 0.8em; font-weight: normal; color: #1e3a5f;">نظام محاسبي متكامل</span></h2>
-            <input type="email" id="loginEmail" class="login-input" placeholder="البريد الإلكتروني" onkeypress="if(event.key==='Enter')handleLogin()">
-            <input type="password" id="loginPassword" class="login-input" placeholder="كلمة المرور" onkeypress="if(event.key==='Enter')handleLogin()">
+           <input type="email" id="loginEmail" class="login-input" placeholder="البريد الإلكتروني" 
+       onkeypress="if(event.key==='Enter')handleLogin()" autocomplete="off"> 
+
+<input type="password" id="loginPassword" class="login-input" placeholder="كلمة المرور" 
+       onkeypress="if(event.key==='Enter')handleLogin()" autocomplete="new-password">
             <button class="btn-primary" onclick="handleLogin()" style="width: 100%;">تسجيل الدخول</button>
             <a class="back-to-roles" onclick="openForgotPasswordModal()">نسيت كلمة المرور؟</a>
             <p id="login-error">بيانات الدخول غير صحيحة أو غير مصرح لك بالدخول.</p>
