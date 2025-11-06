@@ -1388,14 +1388,6 @@
     .form-grid { display: grid; gap: 20px; margin-bottom: 30px; }
     .grid-5 { grid-template-columns: repeat(5, 1fr); }
     .grid-users { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
-    .account-info-grid { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-top: 20px; }
-    .account-info-card { background: white; padding: 20px; border-radius: var(--border-radius); box-shadow: var(--shadow); display: flex; flex-direction: column; }
-    .account-info-card h3 { color: var(--primary-color); margin-bottom: 15px; font-size: 1.1em; }
-    .account-info-field { margin-bottom: 12px; font-size: 0.95em; }
-    .account-info-field strong { color: var(--secondary-color); display: inline-block; min-width: 110px; }
-    .account-info-actions { display: flex; gap: 10px; margin-top: auto; padding-top: 15px; flex-wrap: wrap; }
-    .account-info-actions button { flex: 1 1 160px; background: #1b4f72; color: #ffffff; border: 1px solid #143b55; box-shadow: 0 2px 6px rgba(20, 59, 85, 0.2); }
-    .account-info-actions button:hover { background: #163d59; color: #ffffff; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(20, 59, 85, 0.3); }
     .data-actions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
     @media (min-width: 768px) {
         .data-actions-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -3107,12 +3099,7 @@ textarea.input-success:focus {
 <input type="password" id="loginPassword" class="login-input" placeholder="كلمة المرور" 
        onkeypress="if(event.key==='Enter')handleLogin()" autocomplete="new-password">
        
-            <div style="text-align: right; margin-bottom: 15px; display: flex; align-items: center; justify-content: flex-start;">
-                <input type="checkbox" id="rememberMe" style="width: auto; margin: 0; margin-left: 8px;">
-                <span style="font-size: 0.9em; color: #666;">تذكرني</span>
-            </div>
-            
-            <button class="btn-primary" onclick="handleLogin()" style="width: 100%;">تسجيل الدخول</button>
+            <button class="btn-primary" onclick="handleLogin()" style="width: 100%; margin-top: 15px;">تسجيل الدخول</button>
             <a class="back-to-roles" onclick="openForgotPasswordModal()">نسيت كلمة المرور؟</a>
             <p id="login-error">بيانات الدخول غير صحيحة أو غير مصرح لك بالدخول.</p>
         </div>
@@ -3209,7 +3196,6 @@ textarea.input-success:focus {
 
             <div class="user-section">
                 <div class="current-user" id="currentUserDisplay"></div>
-                <button class="btn-secondary" onclick="showSection('account-info')" style="width: 100%; margin-top: 10px;">👤 معلومات الحساب</button>
                 <button class="btn-danger" onclick="logout()" style="width: 100%; margin-top: 10px;">تسجيل الخروج</button>
             </div>
         </div>
@@ -4590,6 +4576,35 @@ textarea.input-success:focus {
     <div class="settings-grid">
         <div id="userManagementSection" class="user-management settings-card" style="display: none;">
             <h3>👥 إدارة المستخدمين</h3>
+            
+            <!-- بيانات المستخدم الحالي -->
+            <div class="current-user-info" style="background: #f0f7ff; padding: 20px; border-radius: 8px; margin-bottom: 25px; border-right: 4px solid var(--primary-color);">
+                <h4 style="color: var(--primary-color); margin-bottom: 15px; font-size: 1.1em;">👤 المستخدم الحالي</h4>
+                <div class="form-grid grid-2" style="margin-bottom: 15px;">
+                    <div>
+                        <strong>الاسم:</strong> <span id="currentUserNameDisplay">-</span>
+                    </div>
+                    <div>
+                        <strong>البريد الإلكتروني:</strong> <span id="currentUserEmailDisplay">-</span>
+                    </div>
+                    <div>
+                        <strong>رقم الجوال:</strong> <span id="currentUserPhoneDisplay">-</span>
+                    </div>
+                    <div>
+                        <strong>الصلاحية:</strong> <span id="currentUserRoleDisplay">-</span>
+                    </div>
+                </div>
+                <div id="currentActivityDisplay" style="background: white; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
+                    <strong>🏢 النشاط الحالي:</strong> <span id="currentActivityNameDisplay">لم يتم تحديد نشاط</span>
+                </div>
+                <div class="form-grid grid-3">
+                    <button class="btn-primary" onclick="openSelfEditUserModal()">✏️ تعديل بياناتي</button>
+                    <button class="btn-warning" id="changeActivityBtn" onclick="showActivityModal()" style="display: none;">🔄 تغيير النشاط</button>
+                    <button class="btn-warning" onclick="openChangePasswordModal()">🔒 تغيير كلمة المرور</button>
+                </div>
+            </div>
+            
+            <h4 style="color: var(--secondary-color); margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #e0e0e0;">➕ إضافة مستخدم جديد</h4>
             <div class="form-grid grid-3">
                 <input type="text" id="newUserName" placeholder="اسم المستخدم *">
                 <select id="newUserRole">
@@ -4818,37 +4833,6 @@ textarea.input-success:focus {
                 <br>- قالب إعادة كلمة المرور يجب أن يحتوي على: <code>{{to_email}}</code>, <code>{{reset_link}}</code>, <code>{{app_name}}</code>.
             </p>
         </div>
-        </div>
-    </div>
-</div>
-
-<div id="account-info" class="section">
-    <h2>👤 معلومات الحساب</h2>
-    <p>استعرض بيانات حسابك وحدد الإجراءات المتعلقة بأمان الدخول.</p>
-    <div class="account-info-grid">
-        <div class="account-info-card">
-            <h3>بيانات المستخدم</h3>
-            <div class="account-info-field"><strong>الاسم:</strong> <span id="accountInfoName">غير متوفر</span></div>
-            <div class="account-info-field"><strong>البريد الإلكتروني:</strong> <span id="accountInfoEmail">غير متوفر</span></div>
-            <div class="account-info-field"><strong>رقم الجوال:</strong> <span id="accountInfoPhone">غير متوفر</span></div>
-            <div class="account-info-field"><strong>الصلاحية:</strong> <span id="accountInfoRole">غير متوفر</span></div>
-            <div class="account-info-actions">
-                <button class="btn-primary" id="accountInfoEditBtn" onclick="openSelfEditUserModal()">✏️ تعديل بياناتي</button>
-            </div>
-        </div>
-        <div class="account-info-card">
-            <h3>النشاط الحالي</h3>
-            <div class="account-info-field"><strong>النشاط الحالي:</strong> <span id="accountInfoActivity">لم يتم تحديد نشاط</span></div>
-            <div class="account-info-actions">
-                <button class="btn-warning" id="accountInfoChangeActivityBtn" onclick="showActivityModal()">🔄 تغيير النشاط</button>
-            </div>
-        </div>
-        <div class="account-info-card">
-            <h3>إدارة كلمة المرور</h3>
-            <p style="margin-bottom: 15px;">ننصح بتغيير كلمة المرور بشكل دوري للحفاظ على أمان بياناتك.</p>
-            <div class="account-info-actions">
-                <button class="btn-warning" onclick="openChangePasswordModal()">🔒 تغيير كلمة المرور</button>
-            </div>
         </div>
     </div>
 </div>
@@ -6378,56 +6362,48 @@ let emailJsConfig = { ...EMAILJS_DEFAULTS };
         }
 
         function updateAccountInfoSection(user) {
-            const nameEl = document.getElementById('accountInfoName');
-            const emailEl = document.getElementById('accountInfoEmail');
-            const phoneEl = document.getElementById('accountInfoPhone');
-            const roleEl = document.getElementById('accountInfoRole');
-            const activityEl = document.getElementById('accountInfoActivity');
-            const changeActivityAccountBtn = document.getElementById('accountInfoChangeActivityBtn');
-            const editAccountBtn = document.getElementById('accountInfoEditBtn');
+            // تحديث بيانات المستخدم الحالي في صفحة الإعدادات
+            const currentUserNameEl = document.getElementById('currentUserNameDisplay');
+            const currentUserEmailEl = document.getElementById('currentUserEmailDisplay');
+            const currentUserPhoneEl = document.getElementById('currentUserPhoneDisplay');
+            const currentUserRoleEl = document.getElementById('currentUserRoleDisplay');
+            const currentActivityNameEl = document.getElementById('currentActivityNameDisplay');
+            const changeActivityBtn = document.getElementById('changeActivityBtn');
 
             const fallbackText = 'غير متوفر';
             const fallbackActivity = 'لم يتم تحديد نشاط';
-            if (nameEl) {
+            
+            if (currentUserNameEl) {
                 const hasName = user && user.name && user.name.trim();
-                nameEl.textContent = hasName ? user.name : (user && user.email ? user.email : fallbackText);
+                currentUserNameEl.textContent = hasName ? user.name : (user && user.email ? user.email : fallbackText);
             }
-            if (emailEl) {
-                emailEl.textContent = user && user.email ? user.email : fallbackText;
+            if (currentUserEmailEl) {
+                currentUserEmailEl.textContent = user && user.email ? user.email : fallbackText;
             }
-            if (phoneEl) {
+            if (currentUserPhoneEl) {
                 const hasPhone = user && user.phone && user.phone.trim();
-                phoneEl.textContent = hasPhone ? user.phone : fallbackText;
+                currentUserPhoneEl.textContent = hasPhone ? user.phone : fallbackText;
             }
-            if (roleEl) {
+            if (currentUserRoleEl) {
                 if (user && user.role) {
-                    const roleNames = { admin: 'مدير النظام', manager: 'مدير نشاط', user: 'مستخدم' };
-                    roleEl.textContent = roleNames[user.role] || 'دور غير معروف';
+                    const roleNames = { admin: '🔑 مدير النظام', manager: '🧭 مدير نشاط', user: '👨‍💼 مستخدم' };
+                    currentUserRoleEl.textContent = roleNames[user.role] || 'دور غير معروف';
                 } else {
-                    roleEl.textContent = fallbackText;
+                    currentUserRoleEl.textContent = fallbackText;
                 }
             }
-            if (activityEl) {
+            if (currentActivityNameEl) {
                 let activityName = fallbackActivity;
                 if (currentActivityId) {
                     const activity = activities.find(a => a.id == currentActivityId);
                     activityName = activity ? activity.name : 'نشاط غير معروف';
                 }
-                activityEl.textContent = activityName;
+                currentActivityNameEl.textContent = activityName;
             }
-            if (changeActivityAccountBtn) {
+            // إظهار زر تغيير النشاط فقط للمدير
+            if (changeActivityBtn) {
                 const showChange = (user && user.role === 'admin');
-                changeActivityAccountBtn.style.display = showChange ? 'block' : 'none';
-                if (changeActivityAccountBtn.parentElement) {
-                    changeActivityAccountBtn.parentElement.style.display = showChange ? 'flex' : 'none';
-                }
-            }
-            if (editAccountBtn) {
-                const showEdit = Boolean(user);
-                editAccountBtn.style.display = showEdit ? 'block' : 'none';
-                if (editAccountBtn.parentElement) {
-                    editAccountBtn.parentElement.style.display = showEdit ? 'flex' : 'none';
-                }
+                changeActivityBtn.style.display = showChange ? 'inline-block' : 'none';
             }
         }
 
@@ -11871,22 +11847,13 @@ if (data.length > 0) {
             return;
         }
 
-        // 4. حفظ بيانات المستخدم في Session أو LocalStorage حسب خيار "تذكرني"
-        const rememberMe = document.getElementById('rememberMe').checked;
-        const storage = rememberMe ? localStorage : sessionStorage;
+        // 4. حفظ بيانات المستخدم في Session فقط (تم إلغاء ميزة تذكرني لأسباب أمنية)
+        sessionStorage.setItem('loggedInUser', JSON.stringify(user));
+        sessionStorage.setItem('isLoggedIn', 'true');
         
-        storage.setItem('loggedInUser', JSON.stringify(user));
-        storage.setItem('isLoggedIn', 'true');
-        
-        // إذا كان المستخدم اختار عدم التذكر، تأكد من حذف البيانات من localStorage
-        if (!rememberMe) {
-            localStorage.removeItem('loggedInUser');
-            localStorage.removeItem('isLoggedIn');
-        }
-
-        // --- ⬆️ نهاية الكود الجديد ---
-
-        // حذف علامة تسجيل الخروج عند تسجيل دخول ناجح
+        // التأكد من حذف أي بيانات قديمة من localStorage
+        localStorage.removeItem('loggedInUser');
+        localStorage.removeItem('isLoggedIn');
         localStorage.removeItem('justLoggedOut');
 
         updateLoggedInUserDisplay(user);
@@ -12001,12 +11968,8 @@ if (data.length > 0) {
             });
             
             if (confirmed) {
-                // وضع علامة أن المستخدم سجل خروج في localStorage (تبقى حتى بعد إعادة التحميل)
-                localStorage.setItem('justLoggedOut', 'true');
-                
-                // حذف جميع بيانات الجلسة من كلا النوعين من التخزين
-                sessionStorage.removeItem('loggedInUser');
-                sessionStorage.removeItem('isLoggedIn');
+                // حذف جميع بيانات الجلسة من التخزين
+                sessionStorage.clear();
                 localStorage.removeItem('loggedInUser');
                 localStorage.removeItem('isLoggedIn');
                 
@@ -12525,7 +12488,7 @@ if (data.length > 0) {
                 
                 // Get current activity
                 let currentActivity = JSON.parse(sessionStorage.getItem('currentActivity'));
-                debugLog('🏢 النشاط الحالي:', currentActivity);
+                debugLog('النشاط الحالي:', currentActivity);
                 
                 if (!currentActivity) {
                     showNotification('❌ لا يوجد نشاط محدد', 'error');
@@ -13186,6 +13149,11 @@ function loadActivitiesDropdown() {
         }
 
         document.addEventListener('DOMContentLoaded', async function() {
+            // تنظيف بيانات تسجيل الدخول القديمة من localStorage (إجراء أمني)
+            localStorage.removeItem('loggedInUser');
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('justLoggedOut');
+            
             // تحميل الشعار المحفوظ
             loadSavedLogo();
             
@@ -13325,18 +13293,16 @@ function loadActivitiesDropdown() {
             console.log('عدد المستخدمين:', users.length);
             console.log('عدد الأنشطة:', activities.length);
             
-            // التحقق من وجود جلسة نشطة
+            // التحقق من وجود جلسة نشطة في sessionStorage فقط
             const sessionUser = sessionStorage.getItem('loggedInUser');
             const sessionLogin = sessionStorage.getItem('isLoggedIn');
-            const localUser = localStorage.getItem('loggedInUser');
-            const localLogin = localStorage.getItem('isLoggedIn');
             
-            console.log('بيانات الجلسة:', { sessionLogin, sessionUser, localLogin, localUser });
+            console.log('بيانات الجلسة:', { sessionLogin, sessionUser });
             
             let user = null;
             let isLoggedIn = false;
             
-            // إعطاء الأولوية لجلسة sessionStorage
+            // التحقق من sessionStorage فقط
             if (sessionLogin === 'true' && sessionUser) {
                 try {
                     user = JSON.parse(sessionUser);
@@ -13344,19 +13310,6 @@ function loadActivitiesDropdown() {
                     console.log('تم العثور على مستخدم في sessionStorage:', user);
                 } catch (e) {
                     console.error('خطأ في تحليل بيانات المستخدم من sessionStorage:', e);
-                }
-            }
-            // إذا لم توجد جلسة، تحقق من localStorage
-            else if (localLogin === 'true' && localUser) {
-                try {
-                    user = JSON.parse(localUser);
-                    isLoggedIn = true;
-                    console.log('تم العثور على مستخدم في localStorage:', user);
-                    // نسخ البيانات إلى sessionStorage للجلسة الحالية
-                    sessionStorage.setItem('loggedInUser', localUser);
-                    sessionStorage.setItem('isLoggedIn', 'true');
-                } catch (e) {
-                    console.error('خطأ في تحليل بيانات المستخدم من localStorage:', e);
                 }
             }
             
@@ -13382,32 +13335,6 @@ function loadActivitiesDropdown() {
                 }
             } else {
                 console.log('لا توجد جلسة صحيحة');
-                
-                // حل مؤقت: إذا لم تكن هناك جلسة ولكن يوجد مستخدم مدير، قم بتسجيل دخول تلقائي
-                // لكن فقط إذا لم يكن المستخدم قد سجل خروج مؤخراً
-                const justLoggedOut = localStorage.getItem('justLoggedOut');
-                if (users.length > 0 && !justLoggedOut) {
-                    const adminUser = users.find(u => u.role === 'admin');
-                    if (adminUser) {
-                        console.log('تسجيل دخول تلقائي للمدير:', adminUser.email);
-                        sessionStorage.setItem('loggedInUser', JSON.stringify(adminUser));
-                        sessionStorage.setItem('isLoggedIn', 'true');
-                        
-                        // إخفاء شاشة تسجيل الدخول وإظهار التطبيق
-                        document.getElementById('login-overlay').style.display = 'none';
-                        document.querySelector('.app-container').style.display = 'flex';
-                        
-                        // تحديث واجهة المستخدم
-                        updateLoggedInUserDisplay(adminUser);
-                        
-                        // دخول بدون نشاط للمدير
-                        enterAdminWithoutActivity();
-                        return;
-                    }
-                }
-                
-                // إزالة علامة تسجيل الخروج إذا كانت موجودة (فقط عند عرض شاشة تسجيل الدخول)
-                // localStorage.removeItem('justLoggedOut'); // لا نحذفها هنا!
                 
                 // إظهار شاشة تسجيل الدخول
                 document.getElementById('login-overlay').style.display = 'flex';
