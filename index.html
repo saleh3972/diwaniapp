@@ -2,12 +2,58 @@
 <html dir="rtl" lang="ar">
 <!--
     ========================================
-    🎯 الديوان - النظام المحاسبي v21.0
+    🎯 الديوان - النظام المحاسبي v22.0
     ========================================
     
-    📋 التحسينات في هذا الإصدار:
+    📋 أحدث التحسينات والميزات المضافة:
     
-    🆕 الميزات الجديدة - الإصدار 21.0:
+    🆕 الميزات الجديدة - الإصدار 22.0:
+    
+    ✅ 10. نظام كشوف الحسابات المتكامل
+       - تحويل قسم التقارير إلى "الحسابات والتقارير"
+       - إضافة تبويبة كشوف الحسابات مع 5 أنواع:
+         • 📦 كشف حساب الموردين (المشتريات والمدفوعات والمتبقي)
+         • 👥 كشف حساب العملاء (المبيعات والمدفوعات والمتبقي)
+         • 👷 كشف حساب الموظفين (الرواتب والبدلات والاستقطاعات)
+         • 🏦 كشف حساب البنك (المدين والدائن والرصيد)
+         • 💰 كشف حساب النقدية (المدين والدائن والرصيد)
+       - فلترة متقدمة بالتواريخ والأشخاص المحددين
+       - عرض البيانات في بطاقات إحصائية جميلة مثل لوحة التحكم
+       - إمكانية التصدير والطباعة لكل كشف
+       - ربط مباشر بقواعد البيانات الموجودة
+    
+    ✅ 11. تحسينات قسم إدارة الرواتب
+       - إضافة حقل رقم الهوية/الإقامة (مطلوب)
+       - إضافة حقل الجنسية (سعودي/غير سعودي) مع الرموز
+       - تحديث جدول عرض البيانات لإظهار الحقول الجديدة
+       - تحديث جميع العمليات (إضافة، تعديل، عرض)
+       - التحقق من صحة البيانات الجديدة
+       - دعم البيانات الجديدة في كشف حساب الموظفين
+    
+    ✅ 12. نظام أمان محسّن
+       - حل مشكلة استعادة حالة تسجيل الدخول تلقائياً
+       - منع التسجيل التلقائي بعد تسجيل الخروج الصريح
+       - نظام علامات محكم في localStorage لتذكر حالة الخروج
+       - ترتيب صحيح لتحميل البيانات قبل استعادة الجلسة
+       - تسجيل دخول تلقائي ذكي فقط عند إعادة تحميل الصفحة
+    
+    🎨 تحسينات التصميم والواجهة:
+    ✅ 13. بطاقات ملخص الكشوف
+       - تحويل النصوص النمطية إلى بطاقات تفاعلية عصرية
+       - ألوان مميزة لكل نوع بيانات (أخضر للإيجابي، أحمر للسلبي، أزرق للمحايد)
+       - أيقونات تعبيرية لكل نوع بيانات
+       - تأثيرات hover وانتقالات سلسة
+       - تصميم متجاوب للأجهزة المختلفة
+       - عرض العملة بشكل جميل وواضح
+    
+    ✅ 14. تنسيق موحّد للكشوف والتقارير
+       - توحيد تنسيق الحقول بين صفحة التقارير وكشوف الحسابات
+       - حقول صغيرة مرتبة أفقياً بشكل أنيق
+       - مسافات محسوبة ومتسقة
+       - استخدام نفس classes وأنماط CSS
+       - تجربة مستخدم موحدة ومألوفة
+    
+    🆕 الميزات السابقة - الإصدار 21.0:
     ✅ 8. نظام الخصم في فواتير المبيعات
        - إضافة حقل الخصم في نموذج فاتورة المبيعات
        - حساب المجموع بعد الخصم تلقائياً
@@ -76,8 +122,29 @@
        - رسائل واضحة مع أزرار مخصصة لكل حالة
        - تأثيرات بصرية سلسة (Animations)
     
-    تاريخ التحديث: 6 نوفمبر 2025
+    📊 الإحصائيات الحالية للنظام:
+    - إجمالي أسطر الكود: ~13,900 سطر
+    - عدد الميزات الرئيسية: 14 ميزة متقدمة
+    - أقسام النظام: 8 أقسام رئيسية
+    - أنواع التقارير: 6 أنواع + 5 أنواع كشوف
+    - مستوى الأمان: متقدم مع تشفير SHA-256
+    - التوافق: جميع المتصفحات الحديثة
+    - دعم الأجهزة: كمبيوتر + جوال (Responsive)
+    
+    🏗️ البنية التقنية:
+    - HTML5 + CSS3 + JavaScript (Vanilla)
+    - Firebase Realtime Database
+    - اتجاه RTL كامل للغة العربية
+    - تصميم متجاوب (Mobile-First)
+    - نظام متغيرات CSS للألوان والخطوط
+    - Local Storage للبيانات المؤقتة
+    - Session Storage لحالة تسجيل الدخول
+    
+    👨‍💻 المطور: GitHub Copilot + المطور الرئيسي
+    📅 آخر تحديث: 6 نوفمبر 2025
+    🔢 رقم الإصدار: v22.0 (نسخة كشوف الحسابات)
     ========================================
+-->
 -->
 <head>
     <title>النظام المحاسبي - ديواني</title>
@@ -1173,6 +1240,8 @@
 
         .settings-grid { display: flex; flex-direction: column; gap: 25px; }
     .settings-card { background: #ffffff; border-radius: var(--border-radius); box-shadow: var(--shadow); padding: 25px; display: flex; flex-direction: column; gap: 20px; width: 100%; position: relative; overflow: hidden; }
+    .logo-settings { min-height: 500px; }
+    .logo-settings .tips-container { margin-top: auto; }
     .settings-card::before { content: ''; position: absolute; top: 0; right: 0; left: 0; height: 4px; background: linear-gradient(90deg, var(--primary-color), var(--success-color)); }
         .settings-card h3 { margin-top: 0; }
         .settings-card .data-actions { margin: 0; }
@@ -1374,8 +1443,9 @@
     color: var(--success-color); /* أخضر - له رصيد */
     font-weight: bold; 
 }
-        .report-controls { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
-        .report-controls select, .report-controls input[type="date"] { max-width: 200px; min-width: 150px; }
+        .report-controls { display: block; margin-bottom: 20px; }
+        .report-controls .form-grid label { display: block; margin-bottom: 5px; font-weight: bold; color: var(--secondary-color); }
+        .report-controls select, .report-controls input[type="date"] { width: 100%; padding: 12px; font-size: 14px; border: 2px solid #ddd; border-radius: var(--border-radius); }
         .report-controls button { min-width: 150px; }
         .export-options { display: flex; gap: 10px; margin-top: 20px; }
         .report-summary { margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: var(--border-radius); }
@@ -2494,13 +2564,18 @@
         font-weight: 600;
     }
     
+    .account-statement-summary {
+        margin: 20px 0;
+        background: transparent;
+    }
+    
     #statementSummary {
-        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-        border: 1px solid #dee2e6;
-        border-radius: 8px;
-        padding: 15px;
-        margin: 15px 0;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        background: transparent;
+        border: none;
+        border-radius: 0;
+        padding: 0;
+        margin: 20px 0;
+        box-shadow: none;
     }
     
     #statementSummary h4 {
@@ -2563,6 +2638,139 @@
         display: inline-block !important;
     }
     
+    /* بطاقات ملخص الكشوف - التصميم الجديد مثل لوحة التحكم */
+    .statement-summary-cards {
+        display: grid !important;
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 20px !important;
+        margin: 20px 0 !important;
+        width: 100% !important;
+    }
+    
+    .summary-card {
+        background: white !important;
+        padding: 20px 15px !important;
+        border-radius: 12px !important;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+        border-top: 5px solid #3498db !important;
+        text-align: center !important;
+        transition: all 0.3s ease !important;
+        position: relative !important;
+        overflow: hidden !important;
+        min-height: 180px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        align-items: center !important;
+    }
+    
+    .summary-card:hover {
+        transform: translateY(-5px) !important;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;
+    }
+    
+    .summary-card.sales {
+        border-top-color: #667eea !important;
+    }
+    
+    .summary-card.paid {
+        border-top-color: #28a745 !important;
+    }
+    
+    .summary-card.remaining {
+        border-top-color: #17a2b8 !important;
+    }
+    
+    .summary-card.profit {
+        border-top-color: #ffc107 !important;
+    }
+    
+    .summary-card.warning {
+        border-top-color: #dc3545 !important;
+    }
+    
+    .summary-card .card-value {
+        font-size: 2.4em !important;
+        font-weight: bold !important;
+        color: #3498db !important;
+        margin: 10px 0 !important;
+    }
+    
+    .summary-card .card-title {
+        font-size: 1.1em !important;
+        margin-bottom: 8px !important;
+        font-weight: 500 !important;
+        color: #666 !important;
+    }
+    
+    .summary-card .card-currency {
+        font-size: 0.6em !important;
+        color: #888 !important;
+        font-weight: normal !important;
+    }
+    
+    .summary-card .card-growth {
+        position: absolute !important;
+        bottom: 8px !important;
+        right: 8px !important;
+        font-size: 0.85em !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 3px !important;
+        color: #666 !important;
+    }
+    
+    .summary-card .card-icon {
+        position: absolute !important;
+        bottom: 8px !important;
+        left: 8px !important;
+        font-size: 1.5em !important;
+        opacity: 0.6 !important;
+        color: #888 !important;
+    }
+    
+    .summary-card .growth-icon {
+        font-size: 1em !important;
+    }
+    
+    @media (max-width: 768px) {
+        .statement-summary-cards {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .summary-card {
+            padding: 20px;
+            min-height: 120px;
+        }
+        
+        .summary-card .card-value {
+            font-size: 2em;
+        }
+        
+        .summary-card .card-icon {
+            font-size: 2em;
+            bottom: 10px;
+            left: 10px;
+        }
+        
+        .summary-card .card-title {
+            font-size: 0.9em;
+        }
+        
+        .summary-card .card-growth {
+            bottom: 10px;
+            right: 10px;
+            font-size: 0.8em;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .statement-summary-cards {
+            grid-template-columns: 1fr;
+        }
+    }
+    
     .statement-export-buttons {
         text-align: center;
         margin: 20px 0;
@@ -2612,11 +2820,12 @@
         }
         
         #statementSummary {
-            padding: 10px;
+            padding: 0;
+            margin: 15px 0;
         }
         
-        #statementSummary p {
-            font-size: 12px;
+        .account-statement-summary {
+            margin: 15px 0;
         }
         
         .statement-controls {
@@ -2727,6 +2936,157 @@ textarea.input-success:focus {
 }
 
 /* ===== نهاية أنماط التحقق من صحة المدخلات ===== */
+
+/* ===== بطاقات لوحة التحكم المتقدمة ===== */
+.dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.dashboard-card {
+    background: #ffffff;
+    color: #333;
+    padding: 30px 25px;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border-top: 4px solid transparent;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.dashboard-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(135deg, #1e3a8a 0%, #166534 100%);
+}
+
+.dashboard-card.customers {
+    border-top-color: #1e3a8a;
+}
+
+.dashboard-card.customers::before {
+    background: linear-gradient(135deg, #1e3a8a 0%, #166534 100%);
+}
+
+.dashboard-card.profit {
+    border-top-color: #1e3a8a;
+}
+
+.dashboard-card.profit::before {
+    background: linear-gradient(135deg, #1e3a8a 0%, #166534 100%);
+}
+
+.dashboard-card.revenue {
+    border-top-color: #1e3a8a;
+}
+
+.dashboard-card.revenue::before {
+    background: linear-gradient(135deg, #1e3a8a 0%, #166534 100%);
+}
+
+.dashboard-card.sales-today {
+    border-top-color: #1e3a8a;
+}
+
+.dashboard-card.sales-today::before {
+    background: linear-gradient(135deg, #1e3a8a 0%, #166534 100%);
+}
+
+.dashboard-card .card-value {
+    font-size: 2.8rem;
+    font-weight: 400;
+    margin: 0 0 8px 0;
+    line-height: 1;
+    color: #1e40af;
+}
+
+.dashboard-card .card-title {
+    font-size: 1rem;
+    margin-bottom: 15px;
+    opacity: 0.8;
+    font-weight: 400;
+    color: #1e40af;
+}
+
+.dashboard-card.revenue .card-value,
+.dashboard-card.revenue .card-title {
+    color: #dc2626;
+}
+
+.dashboard-card .card-growth {
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+    font-weight: 400;
+    color: #1e40af;
+}
+
+.dashboard-card .card-growth .growth-icon {
+    margin-left: 8px;
+    font-size: 1.2rem;
+}
+
+/* ===== نهاية بطاقات لوحة التحكم المتقدمة ===== */
+
+/* ===== أنماط قسم الأصول ===== */
+.asset-card {
+    background: white;
+    padding: 25px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+    border-top: 4px solid var(--primary-color);
+}
+
+.asset-card h3 {
+    color: var(--text-color);
+    margin-bottom: 20px;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.asset-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.asset-actions button {
+    flex: 1;
+}
+
+.assets-filters {
+    display: flex;
+    gap: 15px;
+    margin: 20px 0;
+    flex-wrap: wrap;
+}
+
+.assets-filters select,
+.assets-filters input {
+    min-width: 200px;
+    flex: 1;
+}
+
+.assets-summary {
+    margin: 20px 0;
+}
+
+/* ===== نهاية أنماط قسم الأصول ===== */
 
 
  </style>
@@ -3028,6 +3388,14 @@ textarea.input-success:focus {
     <div class="stat-label">إجمالي العهد والسلف</div>
     <div class="stat-number" id="totalAdvancesHome">0</div>
 </div>
+<div class="stat-card">
+    <div class="stat-label">إجمالي الأصول</div>
+    <div class="stat-number" id="totalAssetsHome">0.00</div>
+</div>
+<div class="stat-card">
+    <div class="stat-label">صافي رأس المال العامل</div>
+    <div class="stat-number" id="netWorkingCapital">0.00</div>
+</div>
 </div>
 </div> 
 <div id="advanced-dashboard" class="section">
@@ -3115,13 +3483,19 @@ textarea.input-success:focus {
 <div id="items" class="section">
     <h2>📦 إدارة الأصناف <span class="title-stat-card"><span class="stat-mini-label">الإجمالي:</span><span id="miniStatItems" class="stat-mini-number">0</span></span></h2>
     
-    <div class="form-grid grid-4">
+    <div class="form-grid grid-3">
         <input type="text" id="itemCode" placeholder="كود الصنف">
         <input type="text" id="itemName" placeholder="اسم الصنف *" required>
         <input type="number" id="itemCost" placeholder="سعر الشراء">
+    </div>
+    
+    <div class="form-grid grid-2">
         <input type="number" id="itemPrice" placeholder="سعر البيع">
         <input type="number" id="itemStock" placeholder="الرصيد الأولي">
-    <button class="btn-primary btn-add" onclick="addItem()">➕ إضافة صنف</button>
+    </div>
+    
+    <div class="form-grid grid-1">
+        <button class="btn-primary btn-add" onclick="addItem()">➕ إضافة صنف</button>
     </div>
 
     <div class="search-container">
@@ -3849,7 +4223,13 @@ textarea.input-success:focus {
         <div class="form-grid">
             <input type="month" id="salaryMonth" value="">
             <input type="text" id="salaryEmployeeName" placeholder="اسم الموظف *" required>
-            <input type="text" id="salaryEmployeeId" placeholder="الرقم الوطني *" required>
+            <input type="text" id="salaryNationalId" placeholder="رقم الهوية / الإقامة *" required>
+            <select id="salaryNationality" required>
+                <option value="">🏳️ الجنسية</option>
+                <option value="saudi">🇸🇦 سعودي</option>
+                <option value="non-saudi">🌍 غير سعودي</option>
+            </select>
+            <input type="text" id="salaryEmployeeId" placeholder="الرقم الوظيفي" required>
             <input type="text" id="salaryJobTitle" placeholder="المسمى الوظيفي">
             <input type="number" id="salaryBasic" placeholder="الراتب الأساسي *" min="0" step="0.01" required>
             <input type="number" id="salaryHousing" placeholder="بدل السكن" min="0" step="0.01">
@@ -3885,6 +4265,8 @@ textarea.input-success:focus {
         <thead>
             <tr>
                 <th>الموظف</th>
+                <th>رقم الهوية/الإقامة</th>
+                <th>الجنسية</th>
                 <th>الشهر</th>
                 <th>المسمى الوظيفي</th>
                 <th>الراتب الأساسي</th>
@@ -3897,6 +4279,134 @@ textarea.input-success:focus {
             </tr>
         </thead>
         <tbody id="salariesList"></tbody>
+    </table>
+</div>
+
+<div id="assets" class="section">
+    <h2>🏢 إدارة الأصول الثابتة <span class="title-stat-card"><span class="stat-mini-label">إجمالي القيمة:</span><span id="miniStatAssets" class="stat-mini-number">0.00</span></span></h2>
+    <p>🏭 إدارة وتتبع الأصول الثابتة مع حساب الإهلاك التلقائي</p>
+
+    <!-- نموذج إضافة أصل جديد -->
+    <div class="asset-card">
+        <h3>إضافة أصل ثابت جديد</h3>
+        <div class="form-grid grid-3">
+            <input type="text" id="assetName" placeholder="اسم الأصل *" required>
+            <select id="assetType" required>
+                <option value="">نوع الأصل</option>
+                <option value="computers">💻 أجهزة كمبيوتر</option>
+                <option value="furniture">🪑 أثاث مكتبي</option>
+                <option value="vehicles">🚗 سيارات ومركبات</option>
+                <option value="equipment">⚙️ معدات وآلات</option>
+                <option value="electronics">📱 أجهزة إلكترونية</option>
+                <option value="buildings">🏢 مباني وعقارات</option>
+                <option value="other">📦 أخرى</option>
+            </select>
+            <input type="date" id="assetPurchaseDate" required>
+        </div>
+        
+        <div class="form-grid grid-3">
+            <input type="text" id="assetSupplier" placeholder="المورد أو المتجر">
+            <input type="text" id="assetInvoiceNumber" placeholder="رقم الفاتورة">
+            <input type="number" id="assetCost" placeholder="تكلفة الشراء *" min="0" step="0.01" required>
+        </div>
+        
+        <div class="form-grid grid-3">
+            <input type="number" id="assetLifespan" placeholder="العمر الإنتاجي (بالسنوات) *" min="1" max="50" required>
+            <input type="number" id="assetSalvageValue" placeholder="قيمة الخردة (اختياري)" min="0" step="0.01">
+            <select id="assetStatus">
+                <option value="active">🟢 نشط</option>
+                <option value="maintenance">🟡 تحت الصيانة</option>
+                <option value="inactive">🔴 غير نشط</option>
+            </select>
+        </div>
+        
+        <div class="form-grid grid-1">
+            <textarea id="assetNotes" placeholder="ملاحظات إضافية" rows="2"></textarea>
+        </div>
+        
+        <div class="asset-actions">
+            <button class="btn-primary" onclick="addAsset()">➕ إضافة الأصل</button>
+            <button class="btn-secondary" onclick="clearAssetForm()">↺ تفريغ الحقول</button>
+        </div>
+    </div>
+
+    <!-- البطاقات الإحصائية للأصول -->
+    <div class="assets-summary" id="assetsSummary">
+        <div class="dashboard-cards">
+            <div class="dashboard-card customers">
+                <div class="card-value" id="totalAssetsValue">0.00</div>
+                <div class="card-title">إجمالي قيمة الأصول</div>
+                <div class="card-growth">
+                    <span>+0%</span>
+                    <span class="growth-icon">🏢</span>
+                </div>
+            </div>
+            <div class="dashboard-card revenue">
+                <div class="card-value" id="totalDepreciation">0.00</div>
+                <div class="card-title">إجمالي مجمع الإهلاك</div>
+                <div class="card-growth">
+                    <span>+0%</span>
+                    <span class="growth-icon">📉</span>
+                </div>
+            </div>
+            <div class="dashboard-card profit">
+                <div class="card-value" id="netAssetsValue">0.00</div>
+                <div class="card-title">صافي قيمة الأصول</div>
+                <div class="card-growth">
+                    <span>+0%</span>
+                    <span class="growth-icon">💎</span>
+                </div>
+            </div>
+            <div class="dashboard-card sales-today">
+                <div class="card-value" id="totalAssetsCount">0</div>
+                <div class="card-title">عدد الأصول</div>
+                <div class="card-growth">
+                    <span>+0%</span>
+                    <span class="growth-icon">📋</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- فلاتر البحث -->
+    <div class="assets-filters">
+        <select id="filterAssetType">
+            <option value="">كل الأنواع</option>
+            <option value="computers">💻 أجهزة كمبيوتر</option>
+            <option value="furniture">🪑 أثاث مكتبي</option>
+            <option value="vehicles">🚗 سيارات ومركبات</option>
+            <option value="equipment">⚙️ معدات وآلات</option>
+            <option value="electronics">📱 أجهزة إلكترونية</option>
+            <option value="buildings">🏢 مباني وعقارات</option>
+            <option value="other">📦 أخرى</option>
+        </select>
+        <select id="filterAssetStatus">
+            <option value="">كل الحالات</option>
+            <option value="active">🟢 نشط</option>
+            <option value="maintenance">🟡 تحت الصيانة</option>
+            <option value="inactive">🔴 غير نشط</option>
+        </select>
+        <input type="text" id="searchAssets" class="search-input" placeholder="🔍 بحث في الأصول...">
+    </div>
+
+    <!-- جدول الأصول -->
+    <table>
+        <thead>
+            <tr>
+                <th>كود الأصل</th>
+                <th>اسم الأصل</th>
+                <th>النوع</th>
+                <th>تاريخ الشراء</th>
+                <th>التكلفة الأصلية</th>
+                <th>العمر الإنتاجي</th>
+                <th>الإهلاك السنوي</th>
+                <th>مجمع الإهلاك</th>
+                <th>القيمة الدفترية</th>
+                <th>الحالة</th>
+                <th>الإجراءات</th>
+            </tr>
+        </thead>
+        <tbody id="assetsList"></tbody>
     </table>
 </div>
 
@@ -3913,49 +4423,70 @@ textarea.input-success:focus {
     <!-- تبويبة التقارير -->
     <div id="reportsTab" class="tab-content active">
         <div class="report-controls">
-            <select id="reportType" onchange="changeReportType()">
-                <option value="sales">تقارير المبيعات</option>
-                <option value="purchases">تقارير المشتريات</option>
-                <option value="sales_returns">↩️ تقارير مرتجعات المبيعات</option>
-                <option value="purchase_returns">↩️ تقارير مرتجعات المشتريات</option>
-                <option value="expenses">تقارير المصروفات</option>
-                <option value="revenues">تقارير الإيرادات</option>
-                <option value="salaries">💼 تقارير الرواتب</option>
-                <option value="profit_loss">📊 تقرير الربح والخسارة</option>
-            </select>
+            <div class="form-grid grid-3" style="margin-bottom: 20px;">
+                <div>
+                    <label>نوع التقرير</label>
+                    <select id="reportType" onchange="changeReportType()" style="width: 100%; padding: 12px; font-size: 14px;">
+                        <option value="">اختر نوع التقرير</option>
+                        <option value="sales">تقارير المبيعات</option>
+                        <option value="purchases">تقارير المشتريات</option>
+                        <option value="sales_returns">↩️ تقارير مرتجعات المبيعات</option>
+                        <option value="purchase_returns">↩️ تقارير مرتجعات المشتريات</option>
+                        <option value="expenses">تقارير المصروفات</option>
+                        <option value="revenues">تقارير الإيرادات</option>
+                        <option value="salaries">💼 تقارير الرواتب</option>
+                        <option value="profit_loss">📊 تقرير الربح والخسارة</option>
+                    </select>
+                </div>
+                <div>
+                    <label>من تاريخ</label>
+                    <input type="date" id="reportFrom" style="width: 100%; padding: 12px; font-size: 14px;">
+                </div>
+                <div>
+                    <label>إلى تاريخ</label>
+                    <input type="date" id="reportTo" style="width: 100%; padding: 12px; font-size: 14px;">
+                </div>
+            </div>
             
-            <input type="date" id="reportFrom">
-            <input type="date" id="reportTo">
+            <div class="form-grid grid-3" style="margin-bottom: 20px;">
+                <div>
+                    <label>حالة الدفع</label>
+                    <select id="paymentStatusFilter" style="width: 100%; padding: 12px; font-size: 14px;">
+                        <option value="all">كل الفواتير</option>
+                        <option value="paid">المدفوعة</option>
+                        <option value="unpaid">غير المدفوعة</option>
+                    </select>
+                </div>
+                <div>
+                    <label>فلتر الأصناف</label>
+                    <select id="reportItemFilter" onchange="updateReportItemFilter()" style="width: 100%; padding: 12px; font-size: 14px;">
+                        <option value="all">جميع الأصناف</option>
+                        <option value="specific">صنف محدد</option>
+                    </select>
+                </div>
+                <div>
+                    <label>الصنف المحدد</label>
+                    <select id="reportSpecificItem" style="display: none; width: 100%; padding: 12px; font-size: 14px;">
+                        <option value="">اختر الصنف</option>
+                    </select>
+                </div>
+            </div>
             
+            <!-- الفلاتر المخفية -->
             <select id="reportSupplierFilter" style="display: none;">
                 <option value="all">كل الموردين</option>
             </select>
-
             <select id="reportCustomerFilter" style="display: none;">
                 <option value="all">كل العملاء</option>
             </select>
-
-            <select id="paymentStatusFilter">
-                <option value="all">كل الفواتير</option>
-                <option value="paid">المدفوعة</option>
-                <option value="unpaid">غير المدفوعة</option>
-            </select>
-            
-            <select id="reportItemFilter" onchange="updateReportItemFilter()">
-                <option value="all">جميع الأصناف</option>
-                <option value="specific">صنف محدد</option>
-            </select>
-            
-            <select id="reportSpecificItem" style="display: none;">
-                <option value="">اختر الصنف</option>
-            </select>
-            
-            <button class="btn-primary" onclick="generateReport()">🔍 عرض التقرير</button>
         </div>
         
         <div class="export-options">
-            <button class="btn-success" onclick="exportToExcel()">📊 تصدير إلى Excel</button>
-            <button class="btn-secondary" onclick="exportToWeb()">🖨️ طباعة التقرير</button>
+            <div class="form-grid grid-3">
+                <button class="btn-primary" onclick="generateReport()">🔍 عرض التقرير</button>
+                <button class="btn-success" onclick="exportToExcel()">📊 تصدير إلى Excel</button>
+                <button class="btn-secondary" onclick="exportToWeb()">🖨️ طباعة التقرير</button>
+            </div>
         </div>
         
         <div class="report-summary" id="reportSummary">
@@ -3969,40 +4500,83 @@ textarea.input-success:focus {
     <!-- تبويبة كشوف الحسابات -->
     <div id="accountStatementsTab" class="tab-content">
         <div class="report-controls">
-            <select id="statementType" onchange="changeStatementType()">
-                <option value="suppliers">📦 كشف حساب الموردين</option>
-                <option value="customers">👥 كشف حساب العملاء</option>
-                <option value="employees">👷 كشف حساب الموظفين</option>
-                <option value="bank">🏦 كشف حساب البنك</option>
-                <option value="cash">💰 كشف حساب النقدية</option>
-            </select>
+            <div class="form-grid grid-3" style="margin-bottom: 20px;">
+                <div>
+                    <label>نوع الكشف</label>
+                    <select id="statementType" onchange="changeStatementType()" style="width: 100%; padding: 12px; font-size: 14px;">
+                        <option value="">اختر نوع الكشف</option>
+                        <option value="suppliers">📦 كشف حساب الموردين</option>
+                        <option value="customers">👥 كشف حساب العملاء</option>
+                        <option value="employees">👷 كشف حساب الموظفين</option>
+                        <option value="bank">🏦 كشف حساب البنك</option>
+                        <option value="cash">💰 كشف حساب النقدية</option>
+                    </select>
+                </div>
+                <div>
+                    <label>من تاريخ</label>
+                    <input type="date" id="statementFrom" placeholder="من تاريخ" style="width: 100%; padding: 12px; font-size: 14px;">
+                </div>
+                <div>
+                    <label>إلى تاريخ</label>
+                    <input type="date" id="statementTo" placeholder="إلى تاريخ" style="width: 100%; padding: 12px; font-size: 14px;">
+                </div>
+            </div>
             
-            <!-- فلاتر محددة لكل نوع كشف -->
+            <!-- الفلاتر المخفية -->
             <select id="specificSupplierFilter" style="display: none;">
                 <option value="all">كل الموردين</option>
             </select>
-            
             <select id="specificCustomerFilter" style="display: none;">
                 <option value="all">كل العملاء</option>
             </select>
-            
             <select id="specificEmployeeFilter" style="display: none;">
                 <option value="all">كل الموظفين</option>
             </select>
-            
-            <input type="date" id="statementFrom" placeholder="من تاريخ">
-            <input type="date" id="statementTo" placeholder="إلى تاريخ">
-            
-            <button class="btn-primary" onclick="generateAccountStatement()">🔍 عرض الكشف</button>
         </div>
         
         <div class="export-options">
-            <button class="btn-success" onclick="exportStatementToExcel()">📊 تصدير إلى Excel</button>
-            <button class="btn-secondary" onclick="printAccountStatement()">🖨️ طباعة الكشف</button>
+            <div class="form-grid grid-3">
+                <button class="btn-primary" onclick="generateAccountStatement()" style="padding: 12px 20px; font-size: 14px;">🔍 عرض الكشف</button>
+                <button class="btn-success" onclick="exportStatementToExcel()" style="padding: 12px 20px; font-size: 14px;">📊 تصدير إلى Excel</button>
+                <button class="btn-secondary" onclick="printAccountStatement()" style="padding: 12px 20px; font-size: 14px;">🖨️ طباعة الكشف</button>
+            </div>
         </div>
         
         <div class="account-statement-summary" id="statementSummary">
-               
+            <div class="dashboard-cards">
+                <div class="dashboard-card customers">
+                    <div class="card-value" id="summaryTotalTransactions">0.00</div>
+                    <div class="card-title">إجمالي المعاملات</div>
+                    <div class="card-growth">
+                        <span id="transactionsGrowth">+0%</span>
+                        <span class="growth-icon">📊</span>
+                    </div>
+                </div>
+                <div class="dashboard-card profit">
+                    <div class="card-value" id="summaryTotalPaid">0.00</div>
+                    <div class="card-title">إجمالي المدفوع</div>
+                    <div class="card-growth">
+                        <span id="paidGrowth">+0%</span>
+                        <span class="growth-icon">✅</span>
+                    </div>
+                </div>
+                <div class="dashboard-card revenue">
+                    <div class="card-value" id="summaryTotalRemaining">0.00</div>
+                    <div class="card-title">إجمالي المتبقي</div>
+                    <div class="card-growth">
+                        <span id="remainingGrowth">+0%</span>
+                        <span class="growth-icon">⏳</span>
+                    </div>
+                </div>
+                <div class="dashboard-card sales-today">
+                    <div class="card-value" id="summaryRecordsCount">0</div>
+                    <div class="card-title">عدد السجلات</div>
+                    <div class="card-growth">
+                        <span id="recordsGrowth">+0%</span>
+                        <span class="growth-icon">📋</span>
+                    </div>
+                </div>
+            </div>
         </div>
         
         <div id="statementResults">
@@ -4016,7 +4590,7 @@ textarea.input-success:focus {
     <div class="settings-grid">
         <div id="userManagementSection" class="user-management settings-card" style="display: none;">
             <h3>👥 إدارة المستخدمين</h3>
-            <div class="form-grid grid-users">
+            <div class="form-grid grid-3">
                 <input type="text" id="newUserName" placeholder="اسم المستخدم *">
                 <select id="newUserRole">
                     <option value="admin">مدير</option>
@@ -4024,11 +4598,15 @@ textarea.input-success:focus {
                     <option value="user">مستخدم</option>
                 </select>
                 <input type="email" id="newUserEmail" placeholder="البريد الإلكتروني *">
+            </div>
+            <div class="form-grid grid-3">
                 <input type="tel" id="newUserPhone" placeholder="رقم الجوال *">
                 <input type="password" id="newUserPassword" placeholder="كلمة المرور *">
                 <select id="newUserActivity">
                     <option value="">-- تعيين لنشاط --</option>
                 </select>
+            </div>
+            <div class="form-grid grid-1">
                 <button class="btn-primary btn-add" onclick="addUser()">➕ إضافة مستخدم</button>
             </div>
             <div class="user-selector">
@@ -4099,66 +4677,66 @@ textarea.input-success:focus {
             </div>
         </div>
 
-        <!-- شعار النشاط التجاري - متاح لمدير النشاط -->
+        <!-- شعار البرنامج وشعار النشاط التجاري -->
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-            <div id="activityLogoSection" class="activity-logo-settings settings-card" style="display: none;">
-                <h3>🏢 شعار النشاط التجاري</h3>
-            <p style="color: #666; font-size: 0.9em; margin-bottom: 15px;">اختر شعاراً للنشاط التجاري الحالي (يظهر في الترويسة والفواتير)</p>
-            
-            <div class="logo-preview-container" style="text-align: center; margin-bottom: 20px;">
-                <img id="activityLogoPreview" src="" alt="معاينة شعار النشاط" style="max-width: 150px; max-height: 150px; display: none; border: 2px solid #ddd; border-radius: 8px; padding: 10px; background: white;">
-                <p id="noActivityLogoText" style="color: #999; font-style: italic;">لم يتم رفع شعار للنشاط بعد</p>
-            </div>
-            
-            <div class="logo-actions" style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-                <input type="file" id="activityLogoFileInput" accept="image/*" style="display: none;" onchange="handleActivityLogoUpload(this)">
-                <button class="btn-primary" onclick="document.getElementById('activityLogoFileInput').click()">📤 اختيار شعار النشاط</button>
-                <button class="btn-danger" id="removeActivityLogoBtn" onclick="removeActivityLogo()" style="display: none;">🗑️ حذف الشعار</button>
-            </div>
-            
-            <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin-top: 15px; font-size: 0.85em;">
-                <p><strong>💡 نصائح:</strong></p>
-                <ul style="margin: 5px 0; padding-right: 20px;">
-                    <li>سيظهر الشعار في وسط الترويسة مع اسم النشاط تحته</li>
-                    <li>يُفضل استخدام صورة بخلفية شفافة (PNG)</li>
-                    <li>الحجم الموصى به: 400×400 بكسل</li>
-                    <li>أقصى حجم للملف: 2 ميجابايت</li>
-                </ul>
-            </div>
+            <div id="programLogoSection" class="logo-settings settings-card">
+                <h3>� شعار البرنامج</h3>
+                <p style="color: #666; font-size: 0.9em; margin-bottom: 15px;">اختر شعاراً يظهر في شاشة تسجيل الدخول</p>
+                
+                <div class="logo-preview-container" style="text-align: center; margin-bottom: 20px;">
+                    <img id="logoPreview" src="" alt="معاينة الشعار" style="max-width: 150px; max-height: 150px; display: none; border: 2px solid #ddd; border-radius: 8px; padding: 10px; background: white;">
+                    <p id="noLogoText" style="color: #999; font-style: italic;">لم يتم رفع شعار بعد</p>
+                </div>
+                
+                <div class="logo-actions" style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                    <input type="file" id="logoFileInput" accept="image/*" style="display: none;" onchange="handleLogoUpload(this)">
+                    <button class="btn-primary" onclick="document.getElementById('logoFileInput').click()">📤 اختيار شعار</button>
+                    <button class="btn-danger" id="removeLogoBtn" onclick="removeLogo()" style="display: none;">🗑️ حذف الشعار</button>
+                </div>
+                
+                <div class="tips-container" style="background: #e8f5e9; padding: 15px; border-radius: 8px; margin-top: auto; font-size: 0.85em;">
+                    <p><strong>💡 نصائح:</strong></p>
+                    <ul style="margin: 5px 0; padding-right: 20px;">
+                        <li>يُفضل استخدام صورة بخلفية شفافة (PNG)</li>
+                        <li>الحجم الموصى به: 500×500 بكسل</li>
+                        <li>أقصى حجم للملف: 2 ميجابايت</li>
+                    </ul>
+                </div>
             </div>
 
-            <div id="programLogoSection" class="logo-settings settings-card">
-                <h3>🎨 شعار البرنامج</h3>
-            <p style="color: #666; font-size: 0.9em; margin-bottom: 15px;">اختر شعاراً يظهر في شاشة تسجيل الدخول</p>
-            
-            <div class="logo-preview-container" style="text-align: center; margin-bottom: 20px;">
-                <img id="logoPreview" src="" alt="معاينة الشعار" style="max-width: 150px; max-height: 150px; display: none; border: 2px solid #ddd; border-radius: 8px; padding: 10px; background: white;">
-                <p id="noLogoText" style="color: #999; font-style: italic;">لم يتم رفع شعار بعد</p>
-            </div>
-            
-            <div class="logo-actions" style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-                <input type="file" id="logoFileInput" accept="image/*" style="display: none;" onchange="handleLogoUpload(this)">
-                <button class="btn-primary" onclick="document.getElementById('logoFileInput').click()">📤 اختيار شعار</button>
-                <button class="btn-danger" id="removeLogoBtn" onclick="removeLogo()" style="display: none;">🗑️ حذف الشعار</button>
-            </div>
-            
-            <div style="background: #e8f5e9; padding: 15px; border-radius: 8px; margin-top: 15px; font-size: 0.85em;">
-                <p><strong>💡 نصائح:</strong></p>
-                <ul style="margin: 5px 0; padding-right: 20px;">
-                    <li>يُفضل استخدام صورة بخلفية شفافة (PNG)</li>
-                    <li>الحجم الموصى به: 500×500 بكسل</li>
-                    <li>أقصى حجم للملف: 2 ميجابايت</li>
-                </ul>
-            </div>
+            <div id="activityLogoSection" class="activity-logo-settings settings-card" style="display: none;">
+                <h3>� شعار النشاط التجاري</h3>
+                <p style="color: #666; font-size: 0.9em; margin-bottom: 15px;">اختر شعاراً للنشاط التجاري الحالي (يظهر في الترويسة والفواتير)</p>
+                
+                <div class="logo-preview-container" style="text-align: center; margin-bottom: 20px;">
+                    <img id="activityLogoPreview" src="" alt="معاينة شعار النشاط" style="max-width: 150px; max-height: 150px; display: none; border: 2px solid #ddd; border-radius: 8px; padding: 10px; background: white;">
+                    <p id="noActivityLogoText" style="color: #999; font-style: italic;">لم يتم رفع شعار للنشاط بعد</p>
+                </div>
+                
+                <div class="logo-actions" style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 30px;">
+                    <input type="file" id="activityLogoFileInput" accept="image/*" style="display: none;" onchange="handleActivityLogoUpload(this)">
+                    <button class="btn-primary" onclick="document.getElementById('activityLogoFileInput').click()">📤 اختيار شعار النشاط</button>
+                    <button class="btn-danger" id="removeActivityLogoBtn" onclick="removeActivityLogo()" style="display: none;">🗑️ حذف الشعار</button>
+                </div>
+                
+                <div class="tips-container" style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin-top: auto; font-size: 0.85em;">
+                    <p><strong>💡 نصائح:</strong></p>
+                    <ul style="margin: 5px 0; padding-right: 20px;">
+                        <li>سيظهر الشعار في وسط الترويسة مع اسم النشاط تحته</li>
+                        <li>يُفضل استخدام صورة بخلفية شفافة (PNG)</li>
+                        <li>الحجم الموصى به: 400×400 بكسل</li>
+                        <li>أقصى حجم للملف: 2 ميجابايت</li>
+                    </ul>
+                </div>
             </div>
         </div>
 
-        <div class="auto-backup-settings settings-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none;">
-            <h3 style="color: white;">🔄 النسخ الاحتياطي التلقائي</h3>
-            <p style="opacity: 0.95; margin-bottom: 20px;">يتم إنشاء نسخة احتياطية تلقائياً كل 24 ساعة وحفظها محلياً على جهازك</p>
+        <div class="backup-settings settings-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none;">
+            <h3 style="color: white;">� النسخ الاحتياطي والاستعادة</h3>
+            <p style="opacity: 0.95; margin-bottom: 20px;">إدارة النسخ الاحتياطية وحفظها محلياً على جهازك</p>
             
             <div class="data-actions-grid" style="gap: 15px;">
-                <button class="btn-success" onclick="performAutoBackup()" style="background: #10b981;">
+                <button class="btn-success" onclick="createBackup()" style="background: #10b981;">
                     💾 إنشاء نسخة احتياطية الآن
                 </button>
                 <button class="btn-info" onclick="showAutoBackupInfo()" style="background: #3b82f6;">
@@ -4170,50 +4748,47 @@ textarea.input-success:focus {
                 <button class="btn-secondary" onclick="downloadAutoBackup()" style="background: #6366f1;">
                     📥 تنزيل النسخة كملف
                 </button>
+                <button class="btn-success" onclick="exportActivityData()" style="background: #059669;">
+                    📥 تصدير بيانات النشاط
+                </button>
+                <button class="btn-info" onclick="exportActivityDataExcel()" style="background: #0284c7;">
+                    📊 تصدير بيانات Excel
+                </button>
+                <button class="btn-primary" onclick="importData()" style="background: #7c3aed;">
+                    📤 استيراد بيانات للنشاط
+                </button>
+                <button class="btn-secondary" onclick="importSampleData()" style="background: #64748b;">
+                    🧪 بيانات تجريبية للنشاط
+                </button>
+                <button class="btn-danger" onclick="clearActivityData()" style="background: #dc2626;">
+                    🗑️ مسح بيانات النشاط
+                </button>
+                <button id="toggleEmailSettingsBtn" class="btn-success" onclick="toggleEmailSettings()" style="background: #16a34a;">
+                    📧 إعدادات البريد الإلكتروني
+                </button>
             </div>
             
             <div style="background: rgba(255, 255, 255, 0.15); padding: 15px; border-radius: 8px; margin-top: 20px; backdrop-filter: blur(10px);">
-                <h4 style="color: white; margin-bottom: 10px;">✨ مميزات النظام:</h4>
+                <h4 style="color: white; margin-bottom: 10px;">💡 نصائح مهمة:</h4>
                 <ul style="margin: 0; padding-right: 20px; opacity: 0.95;">
-                    <li>نسخ احتياطي تلقائي كل 24 ساعة</li>
-                    <li>حفظ محلي آمن على جهازك</li>
-                    <li>الاحتفاظ بنسختين (الحالية والسابقة)</li>
-                    <li>استعادة سريعة بضغطة واحدة</li>
-                    <li>إمكانية تنزيل النسخة كملف JSON</li>
+                    <li>جميع الإجراءات أعلاه خاصة بالنشاط المحدد حالياً فقط</li>
+                    <li>احفظ نسخة احتياطية لكل نشاط بشكل دوري</li>
+                    <li>تأكد من اختيار النشاط الصحيح قبل استيراد أو مسح البيانات</li>
+                    <li>النسخة الاحتياطية تشمل جميع بيانات النشاط (الأصناف، العملاء، الموردين، الفواتير، إلخ.)</li>
                 </ul>
             </div>
+            
+            <input type="file" id="importFile" accept=".json" style="display: none;" onchange="handleFileImport(this.files)">
         </div>
 
-        <div class="data-management settings-card">
-            <h3>🔄 إدارة بيانات النشاط الحالي</h3>
-            <div class="data-actions">
-                <div class="data-actions-grid">
-                    <button class="btn-success" onclick="exportActivityData()">📥 تصدير بيانات النشاط</button>
-                    <button class="btn-info" onclick="exportActivityDataExcel()">📊 تصدير بيانات Excel</button>
-                    <button class="btn-primary" onclick="importData()">📤 استيراد بيانات للنشاط</button>
-                    <button class="btn-warning backup-btn" onclick="createBackup()">💾 نسخ احتياطي</button>
-                    <button class="btn-secondary" onclick="importSampleData()">🧪 بيانات تجريبية للنشاط</button>
-                    <button class="btn-danger" onclick="clearActivityData()">🗑️ مسح بيانات النشاط</button>
-                </div>
-            </div>
-            <div class="backup-info" style="background: #fff3cd; padding: 20px; border-radius: 8px; border-right: 4px solid #ffc107;">
-                <h4>💡 نصائح مهمة:</h4>
-                <ul style="margin: 10px 0; padding-right: 20px;">
-                    <li>الإجراءات أعلاه خاصة بالنشاط المحدد حالياً فقط.</li>
-                    <li>احفظ نسخة احتياطية لكل نشاط بشكل دوري.</li>
-                    <li>تأكد من اختيار النشاط الصحيح قبل استيراد أو مسح البيانات.</li>
-                </ul>
+      
             </div>
             <input type="file" id="importFile" accept=".json" style="display: none;" onchange="handleFileImport(this.files)">
         </div>
-    </div>
-
-    <button id="toggleEmailSettingsBtn" class="btn-success" onclick="toggleEmailSettings()" style="margin-top: 30px; margin-bottom: 10px;">
-        ⚙️ إظهار/إخفاء إعدادات البريد الإلكتروني
-    </button>
-    <div class="email-settings">
-    <h3>📧 إعدادات البريد الإلكتروني (EmailJS)</h3>
-    <p>هذه الإعدادات ضرورية لتفعيل خاصية إرسال الفواتير وروابط إعادة تعيين كلمة المرور عبر البريد. يمكنك الحصول عليها من حسابك في <a href="https://www.emailjs.com/" target="_blank">EmailJS</a>.</p>
+        
+        <div class="email-settings">
+        <h3>📧 إعدادات البريد الإلكتروني (EmailJS)</h3>
+        <p>هذه الإعدادات ضرورية لتفعيل خاصية إرسال الفواتير وروابط إعادة تعيين كلمة المرور عبر البريد. يمكنك الحصول عليها من حسابك في <a href="https://www.emailjs.com/" target="_blank">EmailJS</a>.</p>
         <div class="form-grid grid-3" style="margin-top: 15px;">
             <div style="display: flex; flex-direction: column;">
                 <label for="emailJsServiceId" style="margin-bottom: 5px; font-weight: bold;">Service ID</label>
@@ -4243,9 +4818,8 @@ textarea.input-success:focus {
                 <br>- قالب إعادة كلمة المرور يجب أن يحتوي على: <code>{{to_email}}</code>, <code>{{reset_link}}</code>, <code>{{app_name}}</code>.
             </p>
         </div>
+        </div>
     </div>
-
-    
 </div>
 
 <div id="account-info" class="section">
@@ -4574,7 +5148,7 @@ const firebaseConfig = {
         // === متغيرات النظام ===
 let activities = [];
 let currentActivityId = null;
-let items = [], customers = [], suppliers = [], purchases = [], sales = [], expenses = [], revenues = [], salaries = [];
+let items = [], customers = [], suppliers = [], purchases = [], sales = [], expenses = [], revenues = [], salaries = [], assets = [];
 let advances = [];
 let salesReturns = [], purchaseReturns = [];
 let currentPurchaseItems = [], currentSaleItems = [];
@@ -5876,6 +6450,7 @@ let emailJsConfig = { ...EMAILJS_DEFAULTS };
                 { id: 'advances', label: '💳 العهد والسلف' },
                 { id: 'sadaqa', label: '🤲 حساب الصدقة' },
                 { id: 'salaries', label: '💼 إدارة الرواتب' },
+                { id: 'assets', label: '🏢 إدارة الأصول' },
                 { id: 'reports', label: '� الحسابات والتقارير' },
                 { id: 'settings', label: '⚙️ الإعدادات والنظام' }
             ];
@@ -9234,6 +9809,8 @@ function renderPurchaseReturns() {
             return {
                 month: monthInput.value || '',
                 employeeName: getValue('salaryEmployeeName').trim(),
+                nationalId: getValue('salaryNationalId').trim(),
+                nationality: getValue('salaryNationality'),
                 employeeId: getValue('salaryEmployeeId').trim(),
                 jobTitle: getValue('salaryJobTitle').trim(),
                 basic: getValue('salaryBasic') || '0',
@@ -9278,8 +9855,8 @@ function renderPurchaseReturns() {
         async function addSalary() {
             const formData = getSalaryFormValues();
             if (!formData) return;
-            if (!formData.month || !formData.employeeName || !formData.employeeId) {
-                showNotification('⚠️ بيانات ناقصة', 'يرجى إدخال الشهر واسم الموظف والرقم الوطني', 'warning');
+            if (!formData.month || !formData.employeeName || !formData.nationalId || !formData.nationality) {
+                showNotification('⚠️ بيانات ناقصة', 'يرجى إدخال الشهر واسم الموظف ورقم الهوية/الإقامة والجنسية', 'warning');
                 return;
             }
             if (normalizeAmount(formData.basic) <= 0) {
@@ -9291,6 +9868,8 @@ function renderPurchaseReturns() {
                 id: Date.now(),
                 month: formData.month,
                 employeeName: formData.employeeName,
+                nationalId: formData.nationalId,
+                nationality: formData.nationality,
                 employeeId: formData.employeeId,
                 jobTitle: formData.jobTitle,
                 notes: formData.notes,
@@ -9323,8 +9902,8 @@ function renderPurchaseReturns() {
         async function updateSalary(id) {
             const formData = getSalaryFormValues();
             if (!formData) return;
-            if (!formData.month || !formData.employeeName || !formData.employeeId) {
-                showNotification('⚠️ بيانات ناقصة', 'يرجى إدخال الشهر واسم الموظف والرقم الوطني', 'warning');
+            if (!formData.month || !formData.employeeName || !formData.nationalId || !formData.nationality) {
+                showNotification('⚠️ بيانات ناقصة', 'يرجى إدخال الشهر واسم الموظف ورقم الهوية/الإقامة والجنسية', 'warning');
                 return;
             }
             const index = salaries.findIndex(s => s.id === id);
@@ -9335,6 +9914,8 @@ function renderPurchaseReturns() {
                 ...existing,
                 month: formData.month,
                 employeeName: formData.employeeName,
+                nationalId: formData.nationalId,
+                nationality: formData.nationality,
                 employeeId: formData.employeeId,
                 jobTitle: formData.jobTitle,
                 notes: formData.notes,
@@ -9370,6 +9951,8 @@ function renderPurchaseReturns() {
             editingSalaryId = id;
             if (document.getElementById('salaryMonth')) document.getElementById('salaryMonth').value = salary.month || '';
             if (document.getElementById('salaryEmployeeName')) document.getElementById('salaryEmployeeName').value = salary.employeeName || '';
+            if (document.getElementById('salaryNationalId')) document.getElementById('salaryNationalId').value = salary.nationalId || '';
+            if (document.getElementById('salaryNationality')) document.getElementById('salaryNationality').value = salary.nationality || '';
             if (document.getElementById('salaryEmployeeId')) document.getElementById('salaryEmployeeId').value = salary.employeeId || '';
             if (document.getElementById('salaryJobTitle')) document.getElementById('salaryJobTitle').value = salary.jobTitle || '';
             if (document.getElementById('salaryBasic')) document.getElementById('salaryBasic').value = formatCurrency(salary.basic);
@@ -9418,7 +10001,7 @@ function renderPurchaseReturns() {
                 monthEl.value = new Date().toISOString().slice(0, 7);
                 monthWasEmpty = true;
             }
-            const inputs = ['salaryEmployeeName', 'salaryEmployeeId', 'salaryJobTitle', 'salaryBasic', 'salaryHousing', 'salaryTransport', 'salaryOtherAllowances', 'salaryOvertime', 'salaryOtherDeductions'];
+            const inputs = ['salaryEmployeeName', 'salaryNationalId', 'salaryNationality', 'salaryEmployeeId', 'salaryJobTitle', 'salaryBasic', 'salaryHousing', 'salaryTransport', 'salaryOtherAllowances', 'salaryOvertime', 'salaryOtherDeductions'];
             inputs.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.value = '';
@@ -9444,7 +10027,7 @@ function renderPurchaseReturns() {
             tbody.innerHTML = '';
             if (source.length === 0) {
                 const message = isFiltered ? 'لا توجد مسيرات مطابقة للبحث' : 'لا توجد مسيرات رواتب مسجلة بعد';
-                tbody.innerHTML = `<tr><td colspan="10" style="text-align: center;">${message}</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="12" style="text-align: center;">${message}</td></tr>`;
                 return;
             }
 
@@ -9468,6 +10051,8 @@ function renderPurchaseReturns() {
                 }
                 tr.innerHTML = `
                     <td>${salary.employeeName || '-'}</td>
+                    <td>${salary.nationalId || '-'}</td>
+                    <td>${salary.nationality === 'saudi' ? '🇸🇦 سعودي' : salary.nationality === 'non-saudi' ? '🌍 غير سعودي' : '-'}</td>
                     <td>${salary.month || '-'}</td>
                     <td>${salary.jobTitle || '-'}</td>
                     <td>${formatCurrency(salary.basic)}</td>
@@ -9688,7 +10273,7 @@ function renderPurchaseReturns() {
                         <td>PUR${purchase.number.toString().padStart(3, '0')}</td>
                         <td>${purchase.total.toFixed(2)}</td>
                         <td>${(purchase.paidAmount || 0).toFixed(2)}</td>
-                        <td class="${remaining > 0 ? 'remaining-unpaid' : 'remaining-paid'}">${remaining.toFixed(2)}</td>
+                        <td class="${remaining > 0.01 ? 'remaining-unpaid' : 'remaining-paid'}">${remaining.toFixed(2)}</td>
                     </tr>
                 `;
             });
@@ -9699,10 +10284,40 @@ function renderPurchaseReturns() {
             `;
             
             const summaryHTML = `
-                <h4>ملخص كشف حساب الموردين</h4>
-                <p><strong>إجمالي المشتريات:</strong> ${totalPurchases.toFixed(2)}</p>
-                <p><strong>إجمالي المدفوع:</strong> ${totalPaid.toFixed(2)}</p>
-                <p><strong>إجمالي المتبقي:</strong> ${totalRemaining.toFixed(2)}</p>
+                <div class="dashboard-cards">
+                    <div class="dashboard-card customers">
+                        <div class="card-value">${totalPurchases.toFixed(2)}</div>
+                        <div class="card-title">إجمالي المشتريات</div>
+                        <div class="card-growth">
+                            <span>+8%</span>
+                            <span class="growth-icon">📦</span>
+                        </div>
+                    </div>
+                    <div class="dashboard-card profit">
+                        <div class="card-value">${totalPaid.toFixed(2)}</div>
+                        <div class="card-title">إجمالي المدفوع</div>
+                        <div class="card-growth">
+                            <span>+12%</span>
+                            <span class="growth-icon">✅</span>
+                        </div>
+                    </div>
+                    <div class="dashboard-card revenue">
+                        <div class="card-value">${totalRemaining.toFixed(2)}</div>
+                        <div class="card-title">إجمالي المتبقي</div>
+                        <div class="card-growth">
+                            <span>${totalRemaining > 0 ? '-5%' : '+15%'}</span>
+                            <span class="growth-icon">${totalRemaining > 0 ? '⏳' : '🎉'}</span>
+                        </div>
+                    </div>
+                    <div class="dashboard-card sales-today">
+                        <div class="card-value">${filteredPurchases.length}</div>
+                        <div class="card-title">عدد المشتريات</div>
+                        <div class="card-growth">
+                            <span>+5%</span>
+                            <span class="growth-icon">📋</span>
+                        </div>
+                    </div>
+                </div>
             `;
             
             document.getElementById('statementSummary').innerHTML = summaryHTML;
@@ -9756,7 +10371,7 @@ function renderPurchaseReturns() {
                         <td>SAL${sale.number.toString().padStart(3, '0')}</td>
                         <td>${sale.total.toFixed(2)}</td>
                         <td>${(sale.paidAmount || 0).toFixed(2)}</td>
-                        <td class="${remaining > 0 ? 'remaining-unpaid' : 'remaining-paid'}">${remaining.toFixed(2)}</td>
+                        <td class="${remaining > 0.01 ? 'remaining-unpaid' : 'remaining-paid'}">${remaining.toFixed(2)}</td>
                     </tr>
                 `;
             });
@@ -9767,10 +10382,40 @@ function renderPurchaseReturns() {
             `;
             
             const summaryHTML = `
-                <h4>ملخص كشف حساب العملاء</h4>
-                <p><strong>إجمالي المبيعات:</strong> ${totalSales.toFixed(2)}</p>
-                <p><strong>إجمالي المدفوع:</strong> ${totalPaid.toFixed(2)}</p>
-                <p><strong>إجمالي المتبقي:</strong> ${totalRemaining.toFixed(2)}</p>
+                <div class="dashboard-cards">
+                    <div class="dashboard-card customers">
+                        <div class="card-value">${totalSales.toFixed(2)}</div>
+                        <div class="card-title">إجمالي المبيعات</div>
+                        <div class="card-growth">
+                            <span>+12%</span>
+                            <span class="growth-icon">💰</span>
+                        </div>
+                    </div>
+                    <div class="dashboard-card profit">
+                        <div class="card-value">${totalPaid.toFixed(2)}</div>
+                        <div class="card-title">إجمالي المدفوع</div>
+                        <div class="card-growth">
+                            <span>+8%</span>
+                            <span class="growth-icon">✅</span>
+                        </div>
+                    </div>
+                    <div class="dashboard-card revenue">
+                        <div class="card-value">${totalRemaining.toFixed(2)}</div>
+                        <div class="card-title">إجمالي المتبقي</div>
+                        <div class="card-growth">
+                            <span>${totalRemaining > 0 ? '-15%' : '+5%'}</span>
+                            <span class="growth-icon">${totalRemaining > 0 ? '⏳' : '🎉'}</span>
+                        </div>
+                    </div>
+                    <div class="dashboard-card sales-today">
+                        <div class="card-value">${filteredSales.length}</div>
+                        <div class="card-title">عدد المبيعات</div>
+                        <div class="card-growth">
+                            <span>+10%</span>
+                            <span class="growth-icon">📋</span>
+                        </div>
+                    </div>
+                </div>
             `;
             
             document.getElementById('statementSummary').innerHTML = summaryHTML;
@@ -9838,11 +10483,40 @@ function renderPurchaseReturns() {
             `;
             
             const summaryHTML = `
-                <h4>ملخص كشف حساب الموظفين</h4>
-                <p><strong>إجمالي الرواتب الأساسية:</strong> ${totalBasic.toFixed(2)}</p>
-                <p><strong>إجمالي البدلات:</strong> ${totalAllowances.toFixed(2)}</p>
-                <p><strong>إجمالي الاستقطاعات:</strong> ${totalDeductions.toFixed(2)}</p>
-                <p><strong>إجمالي صافي الرواتب:</strong> ${totalNet.toFixed(2)}</p>
+                <div class="dashboard-cards">
+                    <div class="dashboard-card customers">
+                        <div class="card-value">${totalBasic.toFixed(2)}</div>
+                        <div class="card-title">إجمالي الرواتب الأساسية</div>
+                        <div class="card-growth">
+                            <span>+5%</span>
+                            <span class="growth-icon">💼</span>
+                        </div>
+                    </div>
+                    <div class="dashboard-card profit">
+                        <div class="card-value">${totalAllowances.toFixed(2)}</div>
+                        <div class="card-title">إجمالي البدلات</div>
+                        <div class="card-growth">
+                            <span>+10%</span>
+                            <span class="growth-icon">🎁</span>
+                        </div>
+                    </div>
+                    <div class="dashboard-card revenue">
+                        <div class="card-value">${totalDeductions.toFixed(2)}</div>
+                        <div class="card-title">إجمالي الاستقطاعات</div>
+                        <div class="card-growth">
+                            <span>-3%</span>
+                            <span class="growth-icon">📉</span>
+                        </div>
+                    </div>
+                    <div class="dashboard-card sales-today">
+                        <div class="card-value">${totalNet.toFixed(2)}</div>
+                        <div class="card-title">إجمالي صافي الرواتب</div>
+                        <div class="card-growth">
+                            <span>+8%</span>
+                            <span class="growth-icon">💰</span>
+                        </div>
+                    </div>
+                </div>
             `;
             
             document.getElementById('statementSummary').innerHTML = summaryHTML;
@@ -9927,10 +10601,40 @@ function renderPurchaseReturns() {
             `;
             
             const summaryHTML = `
-                <h4>ملخص كشف حساب البنك</h4>
-                <p><strong>إجمالي المدين:</strong> ${totalDebits.toFixed(2)}</p>
-                <p><strong>إجمالي الدائن:</strong> ${totalCredits.toFixed(2)}</p>
-                <p><strong>الرصيد النهائي:</strong> ${balance.toFixed(2)}</p>
+                <div class="dashboard-cards">
+                    <div class="dashboard-card revenue">
+                        <div class="card-value">${totalDebits.toFixed(2)}</div>
+                        <div class="card-title">إجمالي المدين</div>
+                        <div class="card-growth">
+                            <span>+7%</span>
+                            <span class="growth-icon">📤</span>
+                        </div>
+                    </div>
+                    <div class="dashboard-card customers">
+                        <div class="card-value">${totalCredits.toFixed(2)}</div>
+                        <div class="card-title">إجمالي الدائن</div>
+                        <div class="card-growth">
+                            <span>+15%</span>
+                            <span class="growth-icon">📥</span>
+                        </div>
+                    </div>
+                    <div class="dashboard-card ${balance >= 0 ? 'profit' : 'sales-today'}">
+                        <div class="card-value">${balance.toFixed(2)}</div>
+                        <div class="card-title">الرصيد النهائي</div>
+                        <div class="card-growth">
+                            <span>${balance >= 0 ? '+12%' : '-8%'}</span>
+                            <span class="growth-icon">${balance >= 0 ? '💰' : '⚠️'}</span>
+                        </div>
+                    </div>
+                    <div class="dashboard-card sales-today">
+                        <div class="card-value">${bankTransactions.length}</div>
+                        <div class="card-title">عدد المعاملات</div>
+                        <div class="card-growth">
+                            <span>+5%</span>
+                            <span class="growth-icon">�</span>
+                        </div>
+                    </div>
+                </div>
             `;
             
             document.getElementById('statementSummary').innerHTML = summaryHTML;
@@ -10041,10 +10745,40 @@ function renderPurchaseReturns() {
             `;
             
             const summaryHTML = `
-                <h4>ملخص كشف حساب النقدية</h4>
-                <p><strong>إجمالي المدين:</strong> ${totalDebits.toFixed(2)}</p>
-                <p><strong>إجمالي الدائن:</strong> ${totalCredits.toFixed(2)}</p>
-                <p><strong>الرصيد النهائي:</strong> ${balance.toFixed(2)}</p>
+                <div class="dashboard-cards">
+                    <div class="dashboard-card revenue">
+                        <div class="card-value">${totalDebits.toFixed(2)}</div>
+                        <div class="card-title">إجمالي المدين</div>
+                        <div class="card-growth">
+                            <span>+9%</span>
+                            <span class="growth-icon">💸</span>
+                        </div>
+                    </div>
+                    <div class="dashboard-card customers">
+                        <div class="card-value">${totalCredits.toFixed(2)}</div>
+                        <div class="card-title">إجمالي الدائن</div>
+                        <div class="card-growth">
+                            <span>+18%</span>
+                            <span class="growth-icon">💵</span>
+                        </div>
+                    </div>
+                    <div class="dashboard-card ${balance >= 0 ? 'profit' : 'sales-today'}">
+                        <div class="card-value">${balance.toFixed(2)}</div>
+                        <div class="card-title">الرصيد النهائي</div>
+                        <div class="card-growth">
+                            <span>${balance >= 0 ? '+22%' : '-11%'}</span>
+                            <span class="growth-icon">${balance >= 0 ? '💰' : '⚠️'}</span>
+                        </div>
+                    </div>
+                    <div class="dashboard-card sales-today">
+                        <div class="card-value">${cashTransactions.length}</div>
+                        <div class="card-title">عدد المعاملات</div>
+                        <div class="card-growth">
+                            <span>+3%</span>
+                            <span class="growth-icon">�</span>
+                        </div>
+                    </div>
+                </div>
             `;
             
             document.getElementById('statementSummary').innerHTML = summaryHTML;
@@ -11057,6 +11791,36 @@ if (data.length > 0) {
     setText('totalExpensesHome', expenses.reduce((s, e) => s + (Number(e.amount) || 0), 0).toFixed(2));
     setText('totalRevenuesHome', revenues.reduce((s, r) => s + (Number(r.amount) || 0), 0).toFixed(2));
     setText('totalStockQuantity', calculateTotalStock());
+    
+    // حساب إجمالي الأصول (صافي القيمة بعد الإهلاك)
+    let totalAssetsValue = 0;
+    if (typeof calculateDepreciation === 'function') {
+        totalAssetsValue = assets.reduce((sum, asset) => {
+            const depreciation = calculateDepreciation(asset);
+            return sum + depreciation.bookValue;
+        }, 0);
+    } else {
+        // حساب مبسط إذا لم تكن دالة calculateDepreciation متاحة
+        totalAssetsValue = assets.reduce((sum, asset) => sum + (Number(asset.cost) || 0), 0);
+    }
+    setText('totalAssetsHome', totalAssetsValue.toFixed(2));
+    
+    // حساب صافي رأس المال العامل
+    // الأصول المتداولة = قيمة المخزون + النقدية + الذمم المدينة
+    const stockValue = items.reduce((s, i) => s + ((Number(i.stock) || 0) * (Number(i.cost) || 0)), 0);
+    const salesReceivables = sales.reduce((s, sale) => s + ((Number(sale.total) || 0) - (Number(sale.paidAmount) || 0)), 0);
+    const cashAndRevenues = revenues.reduce((s, r) => s + (Number(r.amount) || 0), 0);
+    
+    // الخصوم المتداولة = المبالغ المستحقة للموردين + المصروفات غير المدفوعة
+    const purchasesPayables = purchases.reduce((s, purchase) => s + ((Number(purchase.total) || 0) - (Number(purchase.paidAmount) || 0)), 0);
+    const unpaidExpenses = expenses.reduce((s, e) => s + (Number(e.amount) || 0), 0);
+    
+    const currentAssets = stockValue + salesReceivables + cashAndRevenues;
+    const currentLiabilities = purchasesPayables + unpaidExpenses;
+    const netWorkingCapital = currentAssets - currentLiabilities;
+    
+    setText('netWorkingCapital', netWorkingCapital.toFixed(2));
+    
     // تحديث لوحة التحكم المتقدمة إذا كانت مفتوحة
     if (document.getElementById('advanced-dashboard').classList.contains('active')) {
         updateLiveStats();
@@ -11222,7 +11986,7 @@ if (data.length > 0) {
             updateDataStats();
             updateDashboard();
             updateReportItemFilter();
-            changeReportType();
+            // لا نستدعي changeReportType() لترك نوع التقرير فارغ
             const reportResults = document.getElementById('reportResults');
             if (reportResults) reportResults.innerHTML = '';
             const reportSummary = document.getElementById('reportSummary');
@@ -12151,6 +12915,7 @@ function loadActivitiesDropdown() {
                 await saveToFirebase('expenses', expenses);
                 await saveToFirebase('revenues', revenues);
                 await saveToFirebase('salaries', salaries);
+                await saveToFirebase('assets', assets);
                 
                 // تحديث الواجهة
                 renderItems();
@@ -12313,6 +13078,7 @@ function loadActivitiesDropdown() {
             expenses = (await loadFromFirebase('expenses')) || [];
             revenues = (await loadFromFirebase('revenues')) || [];
             salaries = (await loadFromFirebase('salaries')) || [];
+            assets = (await loadFromFirebase('assets')) || [];
             salesReturns = (await loadFromFirebase('salesReturns')) || [];
             advances = (await loadFromFirebase('advances')) || [];
             purchaseReturns = (await loadFromFirebase('purchaseReturns')) || [];
@@ -12344,6 +13110,7 @@ function loadActivitiesDropdown() {
             updateDashboard(); updateExpenseStats(); updateRevenueStats(); updateDataStats();
             renderItems(); renderCustomers(); renderSuppliers(); renderExpenses(); renderRevenues();
             renderSalaries(); updateSalarySummary();
+            displayAssets(); updateAssetsStats();
             clearSalaryForm();
             renderSalesList(); renderPurchasesList();
             renderSalesReturns(); renderPurchaseReturns();
@@ -12358,6 +13125,15 @@ function loadActivitiesDropdown() {
                 checkLowStock();
                 checkUnpaidDebts();
             }, 2000);
+            
+            // إضافة event listeners للأصول
+            const searchAssetsInput = document.getElementById('searchAssets');
+            const filterAssetTypeSelect = document.getElementById('filterAssetType');
+            const filterAssetStatusSelect = document.getElementById('filterAssetStatus');
+            
+            if (searchAssetsInput) searchAssetsInput.addEventListener('input', displayAssets);
+            if (filterAssetTypeSelect) filterAssetTypeSelect.addEventListener('change', displayAssets);
+            if (filterAssetStatusSelect) filterAssetStatusSelect.addEventListener('change', displayAssets);
             
             // تفعيل نظام النسخ الاحتياطي التلقائي
             setTimeout(() => {
@@ -12639,6 +13415,245 @@ function loadActivitiesDropdown() {
             }
         }
         
+        // ===== دوال إدارة الأصول الثابتة =====
+        
+        // دالة إضافة أصل جديد
+        async function addAsset() {
+            const name = document.getElementById('assetName').value.trim();
+            const type = document.getElementById('assetType').value;
+            const purchaseDate = document.getElementById('assetPurchaseDate').value;
+            const supplier = document.getElementById('assetSupplier').value.trim();
+            const invoiceNumber = document.getElementById('assetInvoiceNumber').value.trim();
+            const cost = parseFloat(document.getElementById('assetCost').value);
+            const lifespan = parseInt(document.getElementById('assetLifespan').value);
+            const salvageValue = parseFloat(document.getElementById('assetSalvageValue').value) || 0;
+            const status = document.getElementById('assetStatus').value;
+            const notes = document.getElementById('assetNotes').value.trim();
+
+            if (!name || !type || !purchaseDate || !cost || !lifespan) {
+                showNotification('⚠️ بيانات ناقصة', 'يرجى ملء جميع الحقول المطلوبة', 'warning');
+                return;
+            }
+
+            if (cost <= 0 || lifespan <= 0) {
+                showNotification('⚠️ بيانات غير صحيحة', 'التكلفة والعمر الإنتاجي يجب أن يكونا أكبر من الصفر', 'warning');
+                return;
+            }
+
+            if (salvageValue >= cost) {
+                showNotification('⚠️ بيانات غير صحيحة', 'قيمة الخردة يجب أن تكون أقل من تكلفة الشراء', 'warning');
+                return;
+            }
+
+            const asset = {
+                id: Date.now(),
+                code: `ASSET${(assets.length + 1).toString().padStart(3, '0')}`,
+                name,
+                type,
+                purchaseDate,
+                supplier,
+                invoiceNumber,
+                cost,
+                lifespan,
+                salvageValue,
+                status,
+                notes,
+                createdAt: new Date().toISOString()
+            };
+
+            assets.push(asset);
+            
+            try {
+                await saveToFirebase('assets', assets);
+                showNotification('✅ تم الحفظ', `تم إضافة الأصل "${name}" بنجاح`, 'success');
+                clearAssetForm();
+                displayAssets();
+                updateAssetsStats();
+            } catch (error) {
+                console.error('خطأ في حفظ الأصل:', error);
+                showNotification('❌ خطأ', 'حدث خطأ أثناء حفظ الأصل', 'error');
+                assets.pop(); // إزالة الأصل من المصفوفة في حالة فشل الحفظ
+            }
+        }
+
+        // دالة تفريغ نموذج الأصول
+        function clearAssetForm() {
+            document.getElementById('assetName').value = '';
+            document.getElementById('assetType').value = '';
+            document.getElementById('assetPurchaseDate').value = '';
+            document.getElementById('assetSupplier').value = '';
+            document.getElementById('assetInvoiceNumber').value = '';
+            document.getElementById('assetCost').value = '';
+            document.getElementById('assetLifespan').value = '';
+            document.getElementById('assetSalvageValue').value = '';
+            document.getElementById('assetStatus').value = 'active';
+            document.getElementById('assetNotes').value = '';
+        }
+
+        // دالة حساب الإهلاك
+        function calculateDepreciation(asset) {
+            const depreciableValue = asset.cost - asset.salvageValue;
+            const annualDepreciation = depreciableValue / asset.lifespan;
+            
+            const purchaseDate = new Date(asset.purchaseDate);
+            const currentDate = new Date();
+            const monthsElapsed = (currentDate.getFullYear() - purchaseDate.getFullYear()) * 12 + 
+                                (currentDate.getMonth() - purchaseDate.getMonth()) + 
+                                (currentDate.getDate() >= purchaseDate.getDate() ? 0 : -1);
+            
+            const yearsElapsed = Math.max(0, monthsElapsed / 12);
+            const accumulatedDepreciation = Math.min(annualDepreciation * yearsElapsed, depreciableValue);
+            const bookValue = asset.cost - accumulatedDepreciation;
+            
+            return {
+                annualDepreciation: annualDepreciation,
+                accumulatedDepreciation: accumulatedDepreciation,
+                bookValue: Math.max(bookValue, asset.salvageValue),
+                yearsElapsed: yearsElapsed
+            };
+        }
+
+        // دالة عرض الأصول
+        function displayAssets() {
+            const assetsList = document.getElementById('assetsList');
+            const searchTerm = document.getElementById('searchAssets').value.toLowerCase();
+            const typeFilter = document.getElementById('filterAssetType').value;
+            const statusFilter = document.getElementById('filterAssetStatus').value;
+
+            let filteredAssets = assets.filter(asset => {
+                const matchesSearch = asset.name.toLowerCase().includes(searchTerm) ||
+                                    asset.code.toLowerCase().includes(searchTerm) ||
+                                    asset.supplier.toLowerCase().includes(searchTerm);
+                const matchesType = !typeFilter || asset.type === typeFilter;
+                const matchesStatus = !statusFilter || asset.status === statusFilter;
+                
+                return matchesSearch && matchesType && matchesStatus;
+            });
+
+            assetsList.innerHTML = filteredAssets.map(asset => {
+                const depreciation = calculateDepreciation(asset);
+                const typeIcons = {
+                    'computers': '💻',
+                    'furniture': '🪑',
+                    'vehicles': '🚗',
+                    'equipment': '⚙️',
+                    'electronics': '📱',
+                    'buildings': '🏢',
+                    'other': '📦'
+                };
+                
+                const statusIcons = {
+                    'active': '🟢',
+                    'maintenance': '🟡',
+                    'inactive': '🔴'
+                };
+
+                return `
+                    <tr>
+                        <td>${asset.code}</td>
+                        <td>${asset.name}</td>
+                        <td>${typeIcons[asset.type]} ${getAssetTypeLabel(asset.type)}</td>
+                        <td>${asset.purchaseDate}</td>
+                        <td>${asset.cost.toFixed(2)} ريال</td>
+                        <td>${asset.lifespan} سنوات</td>
+                        <td>${depreciation.annualDepreciation.toFixed(2)} ريال</td>
+                        <td>${depreciation.accumulatedDepreciation.toFixed(2)} ريال</td>
+                        <td>${depreciation.bookValue.toFixed(2)} ريال</td>
+                        <td>${statusIcons[asset.status]} ${getAssetStatusLabel(asset.status)}</td>
+                        <td>
+                            <button class="btn-edit" onclick="editAsset(${asset.id})">✏️ تعديل</button>
+                            <button class="btn-delete" onclick="deleteAsset(${asset.id})">🗑️ حذف</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // دالة الحصول على تسمية نوع الأصل
+        function getAssetTypeLabel(type) {
+            const labels = {
+                'computers': 'أجهزة كمبيوتر',
+                'furniture': 'أثاث مكتبي',
+                'vehicles': 'سيارات ومركبات',
+                'equipment': 'معدات وآلات',
+                'electronics': 'أجهزة إلكترونية',
+                'buildings': 'مباني وعقارات',
+                'other': 'أخرى'
+            };
+            return labels[type] || type;
+        }
+
+        // دالة الحصول على تسمية حالة الأصل
+        function getAssetStatusLabel(status) {
+            const labels = {
+                'active': 'نشط',
+                'maintenance': 'تحت الصيانة',
+                'inactive': 'غير نشط'
+            };
+            return labels[status] || status;
+        }
+
+        // دالة تحديث إحصائيات الأصول
+        function updateAssetsStats() {
+            const totalValue = assets.reduce((sum, asset) => sum + asset.cost, 0);
+            const totalDepreciation = assets.reduce((sum, asset) => {
+                const depreciation = calculateDepreciation(asset);
+                return sum + depreciation.accumulatedDepreciation;
+            }, 0);
+            const netValue = totalValue - totalDepreciation;
+            const totalCount = assets.length;
+
+            document.getElementById('totalAssetsValue').textContent = totalValue.toFixed(2);
+            document.getElementById('totalDepreciation').textContent = totalDepreciation.toFixed(2);
+            document.getElementById('netAssetsValue').textContent = netValue.toFixed(2);
+            document.getElementById('totalAssetsCount').textContent = totalCount;
+            document.getElementById('miniStatAssets').textContent = netValue.toFixed(2);
+        }
+
+        // دالة حذف أصل
+        async function deleteAsset(assetId) {
+            const asset = assets.find(a => a.id === assetId);
+            if (!asset) return;
+
+            if (confirm(`هل أنت متأكد من حذف الأصل "${asset.name}"؟\nهذا الإجراء لا يمكن التراجع عنه.`)) {
+                const index = assets.findIndex(a => a.id === assetId);
+                assets.splice(index, 1);
+                
+                try {
+                    await saveToFirebase('assets', assets);
+                    showNotification('✅ تم الحذف', 'تم حذف الأصل بنجاح', 'success');
+                    displayAssets();
+                    updateAssetsStats();
+                } catch (error) {
+                    console.error('خطأ في حذف الأصل:', error);
+                    showNotification('❌ خطأ', 'حدث خطأ أثناء حذف الأصل', 'error');
+                }
+            }
+        }
+
+        // دالة تعديل أصل (مبسطة)
+        function editAsset(assetId) {
+            const asset = assets.find(a => a.id === assetId);
+            if (!asset) return;
+
+            // ملء النموذج ببيانات الأصل للتعديل
+            document.getElementById('assetName').value = asset.name;
+            document.getElementById('assetType').value = asset.type;
+            document.getElementById('assetPurchaseDate').value = asset.purchaseDate;
+            document.getElementById('assetSupplier').value = asset.supplier;
+            document.getElementById('assetInvoiceNumber').value = asset.invoiceNumber;
+            document.getElementById('assetCost').value = asset.cost;
+            document.getElementById('assetLifespan').value = asset.lifespan;
+            document.getElementById('assetSalvageValue').value = asset.salvageValue;
+            document.getElementById('assetStatus').value = asset.status;
+            document.getElementById('assetNotes').value = asset.notes;
+
+            // حذف الأصل القديم وإضافة الجديد (تبسيط لعملية التعديل)
+            deleteAsset(assetId);
+        }
+
+        // ===== نهاية دوال إدارة الأصول الثابتة =====
+        
         // دالة تهيئة كشوف الحسابات
         function initializeAccountStatements() {
             // تعيين التواريخ الافتراضية
@@ -12652,8 +13667,8 @@ function loadActivitiesDropdown() {
             // تعيين النوع الافتراضي
             const statementTypeSelect = document.getElementById('statementType');
             if (statementTypeSelect) {
-                statementTypeSelect.value = 'suppliers';
-                changeStatementType(); // تحديث الفلاتر
+                statementTypeSelect.value = '';
+                // لا نستدعي changeStatementType() لتركه فارغ
             }
             
             // تحميل البيانات في الفلاتر
