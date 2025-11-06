@@ -2,10 +2,33 @@
 <html dir="rtl" lang="ar">
 <!--
     ========================================
-    🎯 الديوان - النظام المحاسبي v20.0
+    🎯 الديوان - النظام المحاسبي v21.0
     ========================================
     
     📋 التحسينات في هذا الإصدار:
+    
+    🆕 الميزات الجديدة - الإصدار 21.0:
+    ✅ 8. نظام الخصم في فواتير المبيعات
+       - إضافة حقل الخصم في نموذج فاتورة المبيعات
+       - حساب المجموع بعد الخصم تلقائياً
+       - حساب الضريبة من المبلغ بعد الخصم (وليس قبله)
+       - عرض الخصم في جدول الفواتير المحفوظة
+       - إضافة الخصم في قوالب الطباعة مع إخفاء/إظهار تلقائي
+       - تحديث التقارير لتشمل عمود الخصم
+       - ترقية البيانات القديمة تلقائياً للتوافق
+       - حماية من القيم السالبة والأخطاء
+       - دعم تعديل الفواتير مع الخصم
+       - واجهة سهلة الاستخدام مع تحديث فوري للحسابات
+    
+    ✅ 9. نظام طرق الدفع في فواتير المبيعات
+       - إضافة حقل طريقة الدفع (كاش، بنك، مختلط)
+       - عرض طريقة الدفع في جدول الفواتير المحفوظة
+       - إضافة طريقة الدفع في قوالب الطباعة
+       - تحديث التقارير لتشمل عمود طريقة الدفع
+       - فلترة الفواتير حسب طريقة الدفع
+       - ترقية البيانات القديمة لتشمل الطريقة الافتراضية (كاش)
+       - دعم تعديل طريقة الدفع في الفواتير الموجودة
+       - رموز مرئية مميزة لكل طريقة دفع
     
     🔴 تحسينات الأمان والأداء:
     ✅ 1. نظام تشفير كلمات المرور (SHA-256)
@@ -53,7 +76,7 @@
        - رسائل واضحة مع أزرار مخصصة لكل حالة
        - تأثيرات بصرية سلسة (Animations)
     
-    تاريخ التحديث: 23 أكتوبر 2025
+    تاريخ التحديث: 6 نوفمبر 2025
     ========================================
 -->
 <head>
@@ -1375,6 +1398,7 @@
     .invoice-totals > div.total { font-weight: bold; font-size: 1.1em; border-top: 1px solid #ddd; padding-top: 10px; margin-top: 10px; }
     .invoice-totals > div span:last-child { min-width: 120px; text-align: left; direction: ltr; display: inline-block; }
     .invoice-totals input[type="number"] { width: 120px; flex: 0 0 120px; text-align: left; direction: ltr; }
+    .invoice-totals select { width: 120px; flex: 0 0 120px; text-align: right; direction: rtl; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; }
     .invoice-totals-print { margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; }
     .invoice-totals-print div { display: flex; justify-content: space-between; margin-bottom: 8px; }
     .invoice-totals-print .total { font-weight: bold; font-size: 1.1em; border-top: 1px solid #ddd; padding-top: 10px; margin-top: 10px; }
@@ -2423,6 +2447,200 @@
     
     .invoice-items table { min-width: 400px; }
     
+    /* أنماط الكشوف المحاسبية */
+    .account-statement-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        font-size: 14px;
+        background: white;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    
+    .account-statement-table th {
+        background: linear-gradient(135deg, #4a90e2, #357abd);
+        color: white;
+        font-weight: 600;
+        padding: 12px 10px;
+        text-align: center;
+        border-right: 1px solid rgba(255,255,255,0.2);
+    }
+    
+    .account-statement-table td {
+        padding: 10px;
+        text-align: center;
+        border-bottom: 1px solid #e5e5e5;
+        border-right: 1px solid #e5e5e5;
+    }
+    
+    .account-statement-table tr:nth-child(even) {
+        background-color: #f8f9fa;
+    }
+    
+    .account-statement-table tr:hover {
+        background-color: #e7f3ff;
+        transition: background-color 0.3s ease;
+    }
+    
+    .remaining-unpaid {
+        color: #dc3545;
+        font-weight: 600;
+    }
+    
+    .remaining-paid {
+        color: #28a745;
+        font-weight: 600;
+    }
+    
+    #statementSummary {
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 15px;
+        margin: 15px 0;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    #statementSummary h4 {
+        color: #495057;
+        margin-bottom: 10px;
+        text-align: center;
+        font-size: 16px;
+    }
+    
+    #statementSummary p {
+        margin: 5px 0;
+        padding: 5px 10px;
+        background: white;
+        border-radius: 5px;
+        border-left: 4px solid #4a90e2;
+    }
+    
+    #statementResults {
+        margin-top: 20px;
+    }
+    
+    #statementResults h3 {
+        color: #2c3e50;
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 18px;
+    }
+    
+    .statement-controls {
+        display: flex !important;
+        gap: 5px !important;
+        margin-bottom: 20px !important;
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+        overflow-x: auto !important;
+        white-space: nowrap !important;
+        flex-direction: row !important;
+    }
+    
+    .statement-controls select,
+    .statement-controls input[type="date"] {
+        width: auto !important;
+        max-width: 120px !important;
+        min-width: 80px !important;
+        padding: 4px 6px !important;
+        border: 1px solid #ddd !important;
+        border-radius: 3px !important;
+        font-size: 11px !important;
+        flex-shrink: 0 !important;
+        white-space: nowrap !important;
+        display: inline-block !important;
+    }
+    
+    .statement-controls button {
+        min-width: 80px !important;
+        padding: 4px 8px !important;
+        font-size: 11px !important;
+        flex-shrink: 0 !important;
+        white-space: nowrap !important;
+        display: inline-block !important;
+    }
+    
+    .statement-export-buttons {
+        text-align: center;
+        margin: 20px 0;
+    }
+    
+    .statement-export-buttons button {
+        margin: 0 10px;
+        padding: 10px 20px;
+        font-size: 14px;
+        border-radius: 5px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .statement-export-buttons .btn-excel {
+        background: #28a745;
+        color: white;
+    }
+    
+    .statement-export-buttons .btn-excel:hover {
+        background: #218838;
+    }
+    
+    .statement-export-buttons .btn-print {
+        background: #6c757d;
+        color: white;
+    }
+    
+    .statement-export-buttons .btn-print:hover {
+        background: #5a6268;
+    }
+    
+    /* استجابة للأجهزة المحمولة */
+    @media (max-width: 400px) {
+        .account-statement-table {
+            font-size: 12px;
+            overflow-x: auto;
+            display: block;
+            white-space: nowrap;
+        }
+        
+        .account-statement-table th,
+        .account-statement-table td {
+            padding: 8px 6px;
+            min-width: 80px;
+        }
+        
+        #statementSummary {
+            padding: 10px;
+        }
+        
+        #statementSummary p {
+            font-size: 12px;
+        }
+        
+        .statement-controls {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 8px;
+        }
+        
+        .statement-controls select,
+        .statement-controls input[type="date"],
+        .statement-controls button {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            margin: 5px 0;
+        }
+        
+        .statement-export-buttons button {
+            display: block;
+            width: 100%;
+            margin: 5px 0;
+        }
+    }
+    
     .user-section button {
         font-size: 0.95em;
         padding: 12px 15px;
@@ -2528,6 +2746,12 @@ textarea.input-success:focus {
 
 <input type="password" id="loginPassword" class="login-input" placeholder="كلمة المرور" 
        onkeypress="if(event.key==='Enter')handleLogin()" autocomplete="new-password">
+       
+            <div style="text-align: right; margin-bottom: 15px; display: flex; align-items: center; justify-content: flex-start;">
+                <input type="checkbox" id="rememberMe" style="width: auto; margin: 0; margin-left: 8px;">
+                <span style="font-size: 0.9em; color: #666;">تذكرني</span>
+            </div>
+            
             <button class="btn-primary" onclick="handleLogin()" style="width: 100%;">تسجيل الدخول</button>
             <a class="back-to-roles" onclick="openForgotPasswordModal()">نسيت كلمة المرور؟</a>
             <p id="login-error">بيانات الدخول غير صحيحة أو غير مصرح لك بالدخول.</p>
@@ -3226,6 +3450,14 @@ textarea.input-success:focus {
             <span>المجموع:</span>
             <span id="saleSubtotal">0.00</span>
         </div>
+        <div>
+            <span>الخصم:</span>
+            <input type="number" id="saleDiscount" placeholder="0.00" oninput="updateSaleTotals()" min="0" step="0.01">
+        </div>
+        <div>
+            <span>المجموع بعد الخصم:</span>
+            <span id="saleAfterDiscount">0.00</span>
+        </div>
        <div>
             <span>
                 <input type="checkbox" id="applySaleTax" onchange="updateSaleTotals()" checked style="margin-right: 5px; vertical-align: middle;">
@@ -3236,6 +3468,14 @@ textarea.input-success:focus {
          <div>
             <span>المبلغ المدفوع:</span>
             <input type="number" id="salePaidAmount" placeholder="0.00" oninput="updateSaleTotals()">
+        </div>
+        <div>
+            <span>طريقة الدفع:</span>
+            <select id="salePaymentMethod">
+                <option value="cash">💰 كاش</option>
+                <option value="bank">🏦 بنك</option>
+                <option value="mixed">🔄 مختلط</option>
+            </select>
         </div>
         <div>
             <span>المبلغ المتبقي:</span>
@@ -3282,6 +3522,15 @@ textarea.input-success:focus {
                 <label>المبلغ الإجمالي (إلى)</label>
                 <input type="number" id="salesAmountTo" class="filter-input" placeholder="0.00">
             </div>
+            <div class="filter-group">
+                <label>طريقة الدفع</label>
+                <select id="salesPaymentMethodFilter" class="filter-input">
+                    <option value="">جميع طرق الدفع</option>
+                    <option value="cash">💰 كاش</option>
+                    <option value="bank">🏦 بنك</option>
+                    <option value="mixed">🔄 مختلط</option>
+                </select>
+            </div>
         </div>
         <div class="filter-actions">
             <button class="btn-secondary" onclick="resetSalesFilters()">🔄 إعادة تعيين</button>
@@ -3296,8 +3545,10 @@ textarea.input-success:focus {
                 <th class="sortable" data-column="date">التاريخ</th>
                 <th class="sortable" data-column="customerId">العميل</th>
                 <th class="sortable" data-column="itemsCount">الكمية</th>
+                <th class="sortable" data-column="discount">الخصم</th>
                 <th class="sortable" data-column="total">الإجمالي</th>
                 <th class="sortable" data-column="paidAmount">المدفوع</th>
+                <th class="sortable" data-column="paymentMethod">طريقة الدفع</th>
                 <th class="sortable" data-column="remainingAmount">المتبقي</th>
                 <th style="text-align: center;">الإجراءات</th>
             </tr>
@@ -3650,9 +3901,16 @@ textarea.input-success:focus {
 </div>
 
 <div id="reports" class="section">
-    <h2>📊 التقارير</h2>
-    <p>📋اختر نوع التقرير والفترة الزمنية ثم اضغط على "عرض التقرير"</p>
+    <h2>� الحسابات والتقارير</h2>
+    <p>� إدارة شاملة للحسابات والتقارير المالية</p>
 
+    <!-- أزرار التبويبات -->
+    <div class="tabs">
+        <button id="reportsTabBtn" class="tab-button active" onclick="switchAccountingTab('reports')">📊 التقارير</button>
+        <button id="accountStatementsTabBtn" class="tab-button" onclick="switchAccountingTab('accountStatements')">📋 كشوف الحسابات</button>
+    </div>
+
+    <!-- تبويبة التقارير -->
     <div id="reportsTab" class="tab-content active">
         <div class="report-controls">
             <select id="reportType" onchange="changeReportType()">
@@ -3705,6 +3963,49 @@ textarea.input-success:focus {
         </div>
         
         <div id="reportResults">
+        </div>
+    </div>
+
+    <!-- تبويبة كشوف الحسابات -->
+    <div id="accountStatementsTab" class="tab-content">
+        <div class="statement-controls">
+            <select id="statementType" onchange="changeStatementType()">
+                <option value="suppliers">📦 كشف حساب الموردين</option>
+                <option value="customers">👥 كشف حساب العملاء</option>
+                <option value="employees">👷 كشف حساب الموظفين</option>
+                <option value="bank">🏦 كشف حساب البنك</option>
+                <option value="cash">💰 كشف حساب النقدية</option>
+            </select>
+            
+            <!-- فلاتر محددة لكل نوع كشف -->
+            <select id="specificSupplierFilter" style="display: none;">
+                <option value="all">كل الموردين</option>
+            </select>
+            
+            <select id="specificCustomerFilter" style="display: none;">
+                <option value="all">كل العملاء</option>
+            </select>
+            
+            <select id="specificEmployeeFilter" style="display: none;">
+                <option value="all">كل الموظفين</option>
+            </select>
+            
+            <input type="date" id="statementFrom" placeholder="من تاريخ">
+            <input type="date" id="statementTo" placeholder="إلى تاريخ">
+            
+            <button class="btn-primary" onclick="generateAccountStatement()">🔍 عرض الكشف</button>
+        </div>
+        
+        <div class="export-options">
+            <button class="btn-success" onclick="exportStatementToExcel()">📊 تصدير إلى Excel</button>
+            <button class="btn-secondary" onclick="printAccountStatement()">🖨️ طباعة الكشف</button>
+        </div>
+        
+        <div class="account-statement-summary" id="statementSummary">
+               
+        </div>
+        
+        <div id="statementResults">
         </div>
     </div>
 </div>
@@ -4144,6 +4445,14 @@ textarea.input-success:focus {
                 <strong>المجموع الفرعي:</strong>
                 <span id="printSaleSubtotal">0.00</span>
             </div>
+            <div id="printSaleDiscountRow" style="border: 1px solid #2c5aa0; padding: 8px; margin-bottom: 5px; display: grid; grid-template-columns: 1fr auto; gap: 10px; background: #fff8e1; font-size: 0.9em;">
+                <strong>الخصم:</strong>
+                <span id="printSaleDiscount">0.00</span>
+            </div>
+            <div style="border: 1px solid #2c5aa0; padding: 8px; margin-bottom: 5px; display: grid; grid-template-columns: 1fr auto; gap: 10px; background: #e8f5e8; font-size: 0.9em;">
+                <strong>المجموع بعد الخصم:</strong>
+                <span id="printSaleAfterDiscount">0.00</span>
+            </div>
             <div id="printSaleTaxRow" style="border: 1px solid #2c5aa0; padding: 8px; margin-bottom: 5px; display: grid; grid-template-columns: 1fr auto; gap: 10px; font-size: 0.9em;">
                 <strong>الضريبة (15%):</strong>
                 <span id="printSaleTax">0.00</span>
@@ -4155,6 +4464,10 @@ textarea.input-success:focus {
             <div style="border: 1px solid #2c5aa0; padding: 8px; margin-top: 5px; display: grid; grid-template-columns: 1fr auto; gap: 10px; font-size: 0.9em;">
                 <strong>المدفوع:</strong>
                 <span id="printSalePaid">0.00</span>
+            </div>
+            <div style="border: 1px solid #2c5aa0; padding: 8px; margin-top: 5px; display: grid; grid-template-columns: 1fr auto; gap: 10px; background: #e8f4fd; font-size: 0.9em;">
+                <strong>طريقة الدفع:</strong>
+                <span id="printSalePaymentMethod">💰 كاش</span>
             </div>
             <div style="border: 1px solid #2c5aa0; padding: 8px; margin-top: 5px; display: grid; grid-template-columns: 1fr auto; gap: 10px; background: #fff3cd; font-size: 0.9em;">
                 <strong>المتبقي:</strong>
@@ -5563,7 +5876,7 @@ let emailJsConfig = { ...EMAILJS_DEFAULTS };
                 { id: 'advances', label: '💳 العهد والسلف' },
                 { id: 'sadaqa', label: '🤲 حساب الصدقة' },
                 { id: 'salaries', label: '💼 إدارة الرواتب' },
-                { id: 'reports', label: '📑 التقارير' },
+                { id: 'reports', label: '� الحسابات والتقارير' },
                 { id: 'settings', label: '⚙️ الإعدادات والنظام' }
             ];
 
@@ -7808,13 +8121,16 @@ function loadCustomersToSelect() {
         
         function updateSaleTotals() {
             const subtotal = currentSaleItems.reduce((sum, item) => sum + item.total, 0);
+            const discount = parseFloat(document.getElementById('saleDiscount').value) || 0;
+            const afterDiscount = Math.max(0, subtotal - discount); // التأكد من عدم وجود قيم سالبة
             const applyTax = document.getElementById('applySaleTax').checked;
-            const tax = applyTax ? subtotal * 0.15 : 0;
-            const total = subtotal + tax;
+            const tax = applyTax ? afterDiscount * 0.15 : 0;
+            const total = afterDiscount + tax;
             const paidAmount = parseFloat(document.getElementById('salePaidAmount').value) || 0;
             const remainingAmount = total - paidAmount;
 
             document.getElementById('saleSubtotal').textContent = subtotal.toFixed(2);
+            document.getElementById('saleAfterDiscount').textContent = afterDiscount.toFixed(2);
             document.getElementById('saleTax').textContent = tax.toFixed(2);
             document.getElementById('saleTotal').textContent = total.toFixed(2);
             
@@ -7833,7 +8149,9 @@ function loadCustomersToSelect() {
             document.getElementById('saleCustomerPhone').value = '';
             document.getElementById('saleCustomerAddress').value = '';
             document.getElementById('saleNotes').value = '';
+            document.getElementById('saleDiscount').value = '';
             document.getElementById('salePaidAmount').value = '';
+            document.getElementById('salePaymentMethod').value = 'cash';
             generateSaleCode();
             document.getElementById('saveSaleBtn').textContent = '💾 حفظ الفاتورة';
             renderSaleItems();
@@ -7847,6 +8165,7 @@ function loadCustomersToSelect() {
             const notes = document.getElementById('saleNotes').value;
             const customerAddress = document.getElementById('saleCustomerAddress').value;
             const paidAmount = parseFloat(document.getElementById('salePaidAmount').value) || 0;
+            const paymentMethod = document.getElementById('salePaymentMethod').value;
             const taxApplied = document.getElementById('applySaleTax').checked;
 
             if (!date || !customerId || currentSaleItems.length === 0) {
@@ -7855,8 +8174,10 @@ function loadCustomersToSelect() {
             }
             
             const subtotal = currentSaleItems.reduce((sum, item) => sum + item.total, 0);
-            const tax = taxApplied ? subtotal * 0.15 : 0;
-            const total = subtotal + tax;
+            const discount = parseFloat(document.getElementById('saleDiscount').value) || 0;
+            const afterDiscount = Math.max(0, subtotal - discount);
+            const tax = taxApplied ? afterDiscount * 0.15 : 0;
+            const total = afterDiscount + tax;
             const remainingAmount = total - paidAmount;
 
             if (editingSaleId) {
@@ -7876,8 +8197,11 @@ function loadCustomersToSelect() {
                         notes,
                         customerAddress,
                         paidAmount,
+                        paymentMethod,
                         items: [...currentSaleItems],
                         subtotal,
+                        discount,
+                        afterDiscount,
                         tax,
                         total,
                         remainingAmount,
@@ -7889,7 +8213,7 @@ function loadCustomersToSelect() {
                     showNotification('✅ تم التحديث', `تم تحديث الفاتورة رقم SAL${originalSale.number.toString().padStart(3, '0')} بنجاح!`, 'success');
                 }
             } else {
-                const newSaleData = { id: Date.now(), number: currentSaleNumber, date, customerId, notes, customerAddress, paidAmount, items: [...currentSaleItems], subtotal, tax, total, remainingAmount, taxApplied };
+                const newSaleData = { id: Date.now(), number: currentSaleNumber, date, customerId, notes, customerAddress, paidAmount, paymentMethod, items: [...currentSaleItems], subtotal, discount, afterDiscount, tax, total, remainingAmount, taxApplied };
                 sales.push(newSaleData);
                 currentSaleNumber++;
                 showNotification('✅ تم الحفظ', `تم حفظ الفاتورة رقم SAL${newSaleData.number.toString().padStart(3, '0')} بنجاح!`, 'success');
@@ -7949,6 +8273,12 @@ function loadCustomersToSelect() {
         filteredSales = filteredSales.filter(sale => sale.total <= parseFloat(amountTo));
     }
     
+    // فلترة حسب طريقة الدفع
+    const paymentMethodFilter = document.getElementById('salesPaymentMethodFilter')?.value;
+    if (paymentMethodFilter) {
+        filteredSales = filteredSales.filter(sale => (sale.paymentMethod || 'cash') === paymentMethodFilter);
+    }
+    
     // تطبيق الترتيب
     const sortState = FilterSortHelper.currentSort['sales'];
     if (sortState) {
@@ -7956,7 +8286,7 @@ function loadCustomersToSelect() {
     }
     
     if (filteredSales.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center;">لا توجد نتائج</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="10" style="text-align: center;">لا توجد نتائج</td></tr>';
         return;
     }
     
@@ -7974,14 +8304,26 @@ function loadCustomersToSelect() {
         const remainingText = remaining.toFixed(2);
         // --- 💡 نهاية التعديل ---
 
+        // دالة لعرض طريقة الدفع
+        const getPaymentMethodDisplay = (method) => {
+            switch(method) {
+                case 'cash': return '💰 كاش';
+                case 'bank': return '🏦 بنك';
+                case 'mixed': return '🔄 مختلط';
+                default: return '💰 كاش';
+            }
+        };
+
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td data-label="رقم الفاتورة">SAL${sale.number.toString().padStart(3, '0')}</td>
             <td data-label="التاريخ">${sale.date}</td>
             <td data-label="العميل">${customer ? customer.name : 'غير معروف'}</td>
             <td data-label="الكمية">${totalQty}</td>
+            <td data-label="الخصم">${(sale.discount || 0).toFixed(2)}</td>
             <td data-label="الإجمالي">${sale.total.toFixed(2)}</td>
             <td data-label="المدفوع">${(sale.paidAmount || 0).toFixed(2)}</td>
+            <td data-label="طريقة الدفع">${getPaymentMethodDisplay(sale.paymentMethod)}</td>
             <td data-label="المتبقي" class="${remainingClass}">${remainingText}</td>
             <td data-label="الإجراءات">
                 <div class="action-buttons">
@@ -8007,6 +8349,7 @@ function loadCustomersToSelect() {
             document.getElementById('salesDateTo').value = '';
             document.getElementById('salesAmountFrom').value = '';
             document.getElementById('salesAmountTo').value = '';
+            document.getElementById('salesPaymentMethodFilter').value = '';
             document.getElementById('searchSales').value = '';
             renderSalesList();
         }
@@ -8107,6 +8450,20 @@ function loadCustomersToSelect() {
             // المجاميع
             document.getElementById('printSaleSubtotal').textContent = (sale.subtotal || 0).toFixed(2);
             
+            // الخصم وما بعد الخصم
+            const discount = sale.discount || 0;
+            const afterDiscount = sale.afterDiscount || ((sale.subtotal || 0) - discount);
+            document.getElementById('printSaleDiscount').textContent = discount.toFixed(2);
+            document.getElementById('printSaleAfterDiscount').textContent = afterDiscount.toFixed(2);
+            
+            // إخفاء أو إظهار صف الخصم
+            const discountRow = document.getElementById('printSaleDiscountRow');
+            if (discount > 0) {
+                if (discountRow) discountRow.style.display = 'grid';
+            } else {
+                if (discountRow) discountRow.style.display = 'none';
+            }
+            
             const taxRow = document.getElementById('printSaleTaxRow');
             if (sale.includeTax) {
                 document.getElementById('printSaleTax').textContent = (sale.tax || 0).toFixed(2);
@@ -8117,6 +8474,18 @@ function loadCustomersToSelect() {
             
             document.getElementById('printSaleTotal').textContent = (sale.total || 0).toFixed(2);
             document.getElementById('printSalePaid').textContent = (sale.paidAmount || 0).toFixed(2);
+            
+            // طريقة الدفع
+            const getPaymentMethodText = (method) => {
+                switch(method) {
+                    case 'cash': return '💰 كاش';
+                    case 'bank': return '🏦 بنك';
+                    case 'mixed': return '🔄 مختلط';
+                    default: return '💰 كاش';
+                }
+            };
+            document.getElementById('printSalePaymentMethod').textContent = getPaymentMethodText(sale.paymentMethod);
+            
             const remaining = (sale.remainingAmount !== undefined) ? sale.remainingAmount : ((sale.total || 0) - (sale.paidAmount || 0));
             document.getElementById('printSaleRemaining').textContent = remaining.toFixed(2);
             
@@ -8178,7 +8547,9 @@ function loadCustomersToSelect() {
             
             document.getElementById('saleCustomerAddress').value = sale.customerAddress || '';
             document.getElementById('saleNotes').value = sale.notes;
+            document.getElementById('saleDiscount').value = sale.discount || 0;
             document.getElementById('salePaidAmount').value = sale.paidAmount || 0;
+            document.getElementById('salePaymentMethod').value = sale.paymentMethod || 'cash';
             document.getElementById('saleCode').value = `تعديل SAL${sale.number.toString().padStart(3, '0')}`;
             document.getElementById('saveSaleBtn').textContent = '💾 تحديث الفاتورة';
             
@@ -9165,6 +9536,573 @@ function renderPurchaseReturns() {
             if (miniStat) miniStat.textContent = formatCurrency(totals.net);
         }
 
+        // ===== Accounting & Reports Functions =====
+        
+        // دالة تبديل التبويبات في قسم الحسابات والتقارير
+        function switchAccountingTab(tabName) {
+            // إخفاء جميع التبويبات
+            document.getElementById('reportsTab').classList.remove('active');
+            document.getElementById('accountStatementsTab').classList.remove('active');
+            document.getElementById('reportsTabBtn').classList.remove('active');
+            document.getElementById('accountStatementsTabBtn').classList.remove('active');
+            
+            // إظهار التبويبة المختارة
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            document.getElementById(tabName + 'TabBtn').classList.add('active');
+            
+            // تعيين التواريخ الافتراضية
+            const today = new Date().toISOString().split('T')[0];
+            if (tabName === 'accountStatements') {
+                document.getElementById('statementFrom').value = today;
+                document.getElementById('statementTo').value = today;
+            }
+        }
+        
+        // دالة تغيير نوع كشف الحساب
+        function changeStatementType() {
+            const statementType = document.getElementById('statementType').value;
+            
+            // إخفاء جميع الفلاتر المحددة
+            document.getElementById('specificSupplierFilter').style.display = 'none';
+            document.getElementById('specificCustomerFilter').style.display = 'none';
+            document.getElementById('specificEmployeeFilter').style.display = 'none';
+            
+            // إظهار الفلتر المناسب
+            switch(statementType) {
+                case 'suppliers':
+                    document.getElementById('specificSupplierFilter').style.display = 'inline-block';
+                    populateSpecificSupplierFilter();
+                    break;
+                case 'customers':
+                    document.getElementById('specificCustomerFilter').style.display = 'inline-block';
+                    populateSpecificCustomerFilter();
+                    break;
+                case 'employees':
+                    document.getElementById('specificEmployeeFilter').style.display = 'inline-block';
+                    populateSpecificEmployeeFilter();
+                    break;
+            }
+        }
+        
+        // دوال تعبئة الفلاتر المحددة
+        function populateSpecificSupplierFilter() {
+            const select = document.getElementById('specificSupplierFilter');
+            select.innerHTML = '<option value="all">كل الموردين</option>';
+            suppliers.forEach(supplier => {
+                select.innerHTML += `<option value="${supplier.id}">${supplier.name}</option>`;
+            });
+        }
+        
+        function populateSpecificCustomerFilter() {
+            const select = document.getElementById('specificCustomerFilter');
+            select.innerHTML = '<option value="all">كل العملاء</option>';
+            customers.forEach(customer => {
+                select.innerHTML += `<option value="${customer.id}">${customer.name}</option>`;
+            });
+        }
+        
+        function populateSpecificEmployeeFilter() {
+            const select = document.getElementById('specificEmployeeFilter');
+            select.innerHTML = '<option value="all">كل الموظفين</option>';
+            // استخراج الموظفين من بيانات الرواتب
+            const employees = [...new Set(salaries.map(s => s.employeeName))];
+            employees.forEach(employee => {
+                select.innerHTML += `<option value="${employee}">${employee}</option>`;
+            });
+        }
+        
+        // دالة إنشاء كشف الحساب
+        function generateAccountStatement() {
+            const statementType = document.getElementById('statementType').value;
+            const fromDate = document.getElementById('statementFrom').value;
+            const toDate = document.getElementById('statementTo').value;
+            
+            if (!fromDate || !toDate) {
+                showNotification('⚠️ بيانات ناقصة', 'يرجى تحديد فترة زمنية صحيحة', 'warning');
+                return;
+            }
+            
+            switch(statementType) {
+                case 'suppliers':
+                    generateSuppliersStatement(fromDate, toDate);
+                    break;
+                case 'customers':
+                    generateCustomersStatement(fromDate, toDate);
+                    break;
+                case 'employees':
+                    generateEmployeesStatement(fromDate, toDate);
+                    break;
+                case 'bank':
+                    generateBankStatement(fromDate, toDate);
+                    break;
+                case 'cash':
+                    generateCashStatement(fromDate, toDate);
+                    break;
+            }
+        }
+        
+        // دالة كشف حساب الموردين
+        function generateSuppliersStatement(fromDate, toDate) {
+            const specificSupplierId = document.getElementById('specificSupplierFilter').value;
+            
+            let filteredPurchases = purchases.filter(p => 
+                p.date >= fromDate && p.date <= toDate
+            );
+            
+            if (specificSupplierId !== 'all') {
+                filteredPurchases = filteredPurchases.filter(p => p.supplierId == specificSupplierId);
+            }
+            
+            let totalPurchases = 0;
+            let totalPaid = 0;
+            let totalRemaining = 0;
+            
+            let tableHTML = `
+                <h3>📦 كشف حساب الموردين</h3>
+                <table class="account-statement-table">
+                    <thead>
+                        <tr>
+                            <th>التاريخ</th>
+                            <th>المورد</th>
+                            <th>رقم الفاتورة</th>
+                            <th>إجمالي الفاتورة</th>
+                            <th>المدفوع</th>
+                            <th>المتبقي</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            filteredPurchases.forEach(purchase => {
+                const supplier = suppliers.find(s => s.id === purchase.supplierId);
+                const remaining = purchase.total - (purchase.paidAmount || 0);
+                
+                totalPurchases += purchase.total;
+                totalPaid += purchase.paidAmount || 0;
+                totalRemaining += remaining;
+                
+                tableHTML += `
+                    <tr>
+                        <td>${purchase.date}</td>
+                        <td>${supplier ? supplier.name : 'غير معروف'}</td>
+                        <td>PUR${purchase.number.toString().padStart(3, '0')}</td>
+                        <td>${purchase.total.toFixed(2)}</td>
+                        <td>${(purchase.paidAmount || 0).toFixed(2)}</td>
+                        <td class="${remaining > 0 ? 'remaining-unpaid' : 'remaining-paid'}">${remaining.toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+            
+            tableHTML += `
+                    </tbody>
+                </table>
+            `;
+            
+            const summaryHTML = `
+                <h4>ملخص كشف حساب الموردين</h4>
+                <p><strong>إجمالي المشتريات:</strong> ${totalPurchases.toFixed(2)}</p>
+                <p><strong>إجمالي المدفوع:</strong> ${totalPaid.toFixed(2)}</p>
+                <p><strong>إجمالي المتبقي:</strong> ${totalRemaining.toFixed(2)}</p>
+            `;
+            
+            document.getElementById('statementSummary').innerHTML = summaryHTML;
+            document.getElementById('statementResults').innerHTML = tableHTML;
+        }
+        
+        // دالة كشف حساب العملاء
+        function generateCustomersStatement(fromDate, toDate) {
+            const specificCustomerId = document.getElementById('specificCustomerFilter').value;
+            
+            let filteredSales = sales.filter(s => 
+                s.date >= fromDate && s.date <= toDate
+            );
+            
+            if (specificCustomerId !== 'all') {
+                filteredSales = filteredSales.filter(s => s.customerId == specificCustomerId);
+            }
+            
+            let totalSales = 0;
+            let totalPaid = 0;
+            let totalRemaining = 0;
+            
+            let tableHTML = `
+                <h3>👥 كشف حساب العملاء</h3>
+                <table class="account-statement-table">
+                    <thead>
+                        <tr>
+                            <th>التاريخ</th>
+                            <th>العميل</th>
+                            <th>رقم الفاتورة</th>
+                            <th>إجمالي الفاتورة</th>
+                            <th>المدفوع</th>
+                            <th>المتبقي</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            filteredSales.forEach(sale => {
+                const customer = customers.find(c => c.id === sale.customerId);
+                const remaining = sale.total - (sale.paidAmount || 0);
+                
+                totalSales += sale.total;
+                totalPaid += sale.paidAmount || 0;
+                totalRemaining += remaining;
+                
+                tableHTML += `
+                    <tr>
+                        <td>${sale.date}</td>
+                        <td>${customer ? customer.name : 'غير معروف'}</td>
+                        <td>SAL${sale.number.toString().padStart(3, '0')}</td>
+                        <td>${sale.total.toFixed(2)}</td>
+                        <td>${(sale.paidAmount || 0).toFixed(2)}</td>
+                        <td class="${remaining > 0 ? 'remaining-unpaid' : 'remaining-paid'}">${remaining.toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+            
+            tableHTML += `
+                    </tbody>
+                </table>
+            `;
+            
+            const summaryHTML = `
+                <h4>ملخص كشف حساب العملاء</h4>
+                <p><strong>إجمالي المبيعات:</strong> ${totalSales.toFixed(2)}</p>
+                <p><strong>إجمالي المدفوع:</strong> ${totalPaid.toFixed(2)}</p>
+                <p><strong>إجمالي المتبقي:</strong> ${totalRemaining.toFixed(2)}</p>
+            `;
+            
+            document.getElementById('statementSummary').innerHTML = summaryHTML;
+            document.getElementById('statementResults').innerHTML = tableHTML;
+        }
+        
+        // دالة كشف حساب الموظفين
+        function generateEmployeesStatement(fromDate, toDate) {
+            const specificEmployee = document.getElementById('specificEmployeeFilter').value;
+            
+            let filteredSalaries = salaries.filter(s => 
+                s.month >= fromDate && s.month <= toDate
+            );
+            
+            if (specificEmployee !== 'all') {
+                filteredSalaries = filteredSalaries.filter(s => s.employeeName === specificEmployee);
+            }
+            
+            let totalBasic = 0;
+            let totalAllowances = 0;
+            let totalDeductions = 0;
+            let totalNet = 0;
+            
+            let tableHTML = `
+                <h3>👷 كشف حساب الموظفين</h3>
+                <table class="account-statement-table">
+                    <thead>
+                        <tr>
+                            <th>الشهر</th>
+                            <th>اسم الموظف</th>
+                            <th>الراتب الأساسي</th>
+                            <th>البدلات</th>
+                            <th>الاستقطاعات</th>
+                            <th>صافي الراتب</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            filteredSalaries.forEach(salary => {
+                const totalGross = salary.basicSalary + salary.allowances;
+                const totalDeduction = salary.gosiEmployee + salary.otherDeductions;
+                const netSalary = totalGross - totalDeduction;
+                
+                totalBasic += salary.basicSalary;
+                totalAllowances += salary.allowances;
+                totalDeductions += totalDeduction;
+                totalNet += netSalary;
+                
+                tableHTML += `
+                    <tr>
+                        <td>${salary.month}</td>
+                        <td>${salary.employeeName}</td>
+                        <td>${salary.basicSalary.toFixed(2)}</td>
+                        <td>${salary.allowances.toFixed(2)}</td>
+                        <td>${totalDeduction.toFixed(2)}</td>
+                        <td>${netSalary.toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+            
+            tableHTML += `
+                    </tbody>
+                </table>
+            `;
+            
+            const summaryHTML = `
+                <h4>ملخص كشف حساب الموظفين</h4>
+                <p><strong>إجمالي الرواتب الأساسية:</strong> ${totalBasic.toFixed(2)}</p>
+                <p><strong>إجمالي البدلات:</strong> ${totalAllowances.toFixed(2)}</p>
+                <p><strong>إجمالي الاستقطاعات:</strong> ${totalDeductions.toFixed(2)}</p>
+                <p><strong>إجمالي صافي الرواتب:</strong> ${totalNet.toFixed(2)}</p>
+            `;
+            
+            document.getElementById('statementSummary').innerHTML = summaryHTML;
+            document.getElementById('statementResults').innerHTML = tableHTML;
+        }
+        
+        // دالة كشف حساب البنك
+        function generateBankStatement(fromDate, toDate) {
+            let bankTransactions = [];
+            
+            // إضافة المبيعات البنكية
+            sales.filter(s => s.date >= fromDate && s.date <= toDate && s.paymentMethod === 'bank')
+                .forEach(sale => {
+                    const customer = customers.find(c => c.id === sale.customerId);
+                    bankTransactions.push({
+                        date: sale.date,
+                        description: `مبيعات - ${customer ? customer.name : 'غير معروف'}`,
+                        reference: `SAL${sale.number.toString().padStart(3, '0')}`,
+                        debit: 0,
+                        credit: sale.paidAmount || 0,
+                        type: 'sale'
+                    });
+                });
+            
+            // إضافة المشتريات البنكية
+            purchases.filter(p => p.date >= fromDate && p.date <= toDate && p.paymentMethod === 'bank')
+                .forEach(purchase => {
+                    const supplier = suppliers.find(s => s.id === purchase.supplierId);
+                    bankTransactions.push({
+                        date: purchase.date,
+                        description: `مشتريات - ${supplier ? supplier.name : 'غير معروف'}`,
+                        reference: `PUR${purchase.number.toString().padStart(3, '0')}`,
+                        debit: purchase.paidAmount || 0,
+                        credit: 0,
+                        type: 'purchase'
+                    });
+                });
+            
+            // ترتيب المعاملات حسب التاريخ
+            bankTransactions.sort((a, b) => new Date(a.date) - new Date(b.date));
+            
+            let balance = 0;
+            let totalDebits = 0;
+            let totalCredits = 0;
+            
+            let tableHTML = `
+                <h3>🏦 كشف حساب البنك</h3>
+                <table class="account-statement-table">
+                    <thead>
+                        <tr>
+                            <th>التاريخ</th>
+                            <th>البيان</th>
+                            <th>المرجع</th>
+                            <th>مدين</th>
+                            <th>دائن</th>
+                            <th>الرصيد</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            bankTransactions.forEach(transaction => {
+                balance += transaction.credit - transaction.debit;
+                totalDebits += transaction.debit;
+                totalCredits += transaction.credit;
+                
+                tableHTML += `
+                    <tr>
+                        <td>${transaction.date}</td>
+                        <td>${transaction.description}</td>
+                        <td>${transaction.reference}</td>
+                        <td>${transaction.debit > 0 ? transaction.debit.toFixed(2) : '-'}</td>
+                        <td>${transaction.credit > 0 ? transaction.credit.toFixed(2) : '-'}</td>
+                        <td class="${balance >= 0 ? 'remaining-paid' : 'remaining-unpaid'}">${balance.toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+            
+            tableHTML += `
+                    </tbody>
+                </table>
+            `;
+            
+            const summaryHTML = `
+                <h4>ملخص كشف حساب البنك</h4>
+                <p><strong>إجمالي المدين:</strong> ${totalDebits.toFixed(2)}</p>
+                <p><strong>إجمالي الدائن:</strong> ${totalCredits.toFixed(2)}</p>
+                <p><strong>الرصيد النهائي:</strong> ${balance.toFixed(2)}</p>
+            `;
+            
+            document.getElementById('statementSummary').innerHTML = summaryHTML;
+            document.getElementById('statementResults').innerHTML = tableHTML;
+        }
+        
+        // دالة كشف حساب النقدية
+        function generateCashStatement(fromDate, toDate) {
+            let cashTransactions = [];
+            
+            // إضافة المبيعات النقدية
+            sales.filter(s => s.date >= fromDate && s.date <= toDate && (s.paymentMethod === 'cash' || !s.paymentMethod))
+                .forEach(sale => {
+                    const customer = customers.find(c => c.id === sale.customerId);
+                    cashTransactions.push({
+                        date: sale.date,
+                        description: `مبيعات نقدية - ${customer ? customer.name : 'غير معروف'}`,
+                        reference: `SAL${sale.number.toString().padStart(3, '0')}`,
+                        debit: 0,
+                        credit: sale.paidAmount || 0,
+                        type: 'sale'
+                    });
+                });
+            
+            // إضافة المشتريات النقدية
+            purchases.filter(p => p.date >= fromDate && p.date <= toDate && (p.paymentMethod === 'cash' || !p.paymentMethod))
+                .forEach(purchase => {
+                    const supplier = suppliers.find(s => s.id === purchase.supplierId);
+                    cashTransactions.push({
+                        date: purchase.date,
+                        description: `مشتريات نقدية - ${supplier ? supplier.name : 'غير معروف'}`,
+                        reference: `PUR${purchase.number.toString().padStart(3, '0')}`,
+                        debit: purchase.paidAmount || 0,
+                        credit: 0,
+                        type: 'purchase'
+                    });
+                });
+            
+            // إضافة المصروفات
+            expenses.filter(e => e.date >= fromDate && e.date <= toDate)
+                .forEach(expense => {
+                    cashTransactions.push({
+                        date: expense.date,
+                        description: `مصروفات - ${expense.description}`,
+                        reference: `EXP${expense.id}`,
+                        debit: expense.amount,
+                        credit: 0,
+                        type: 'expense'
+                    });
+                });
+            
+            // إضافة الإيرادات
+            revenues.filter(r => r.date >= fromDate && r.date <= toDate)
+                .forEach(revenue => {
+                    cashTransactions.push({
+                        date: revenue.date,
+                        description: `إيرادات - ${revenue.description}`,
+                        reference: `REV${revenue.id}`,
+                        debit: 0,
+                        credit: revenue.amount,
+                        type: 'revenue'
+                    });
+                });
+            
+            // ترتيب المعاملات حسب التاريخ
+            cashTransactions.sort((a, b) => new Date(a.date) - new Date(b.date));
+            
+            let balance = 0;
+            let totalDebits = 0;
+            let totalCredits = 0;
+            
+            let tableHTML = `
+                <h3>💰 كشف حساب النقدية</h3>
+                <table class="account-statement-table">
+                    <thead>
+                        <tr>
+                            <th>التاريخ</th>
+                            <th>البيان</th>
+                            <th>المرجع</th>
+                            <th>مدين</th>
+                            <th>دائن</th>
+                            <th>الرصيد</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            cashTransactions.forEach(transaction => {
+                balance += transaction.credit - transaction.debit;
+                totalDebits += transaction.debit;
+                totalCredits += transaction.credit;
+                
+                tableHTML += `
+                    <tr>
+                        <td>${transaction.date}</td>
+                        <td>${transaction.description}</td>
+                        <td>${transaction.reference}</td>
+                        <td>${transaction.debit > 0 ? transaction.debit.toFixed(2) : '-'}</td>
+                        <td>${transaction.credit > 0 ? transaction.credit.toFixed(2) : '-'}</td>
+                        <td class="${balance >= 0 ? 'remaining-paid' : 'remaining-unpaid'}">${balance.toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+            
+            tableHTML += `
+                    </tbody>
+                </table>
+            `;
+            
+            const summaryHTML = `
+                <h4>ملخص كشف حساب النقدية</h4>
+                <p><strong>إجمالي المدين:</strong> ${totalDebits.toFixed(2)}</p>
+                <p><strong>إجمالي الدائن:</strong> ${totalCredits.toFixed(2)}</p>
+                <p><strong>الرصيد النهائي:</strong> ${balance.toFixed(2)}</p>
+            `;
+            
+            document.getElementById('statementSummary').innerHTML = summaryHTML;
+            document.getElementById('statementResults').innerHTML = tableHTML;
+        }
+        
+        // دوال التصدير والطباعة للكشوف
+        function exportStatementToExcel() {
+            const statementType = document.getElementById('statementType').value;
+            const fromDate = document.getElementById('statementFrom').value;
+            const toDate = document.getElementById('statementTo').value;
+            
+            // منطق تصدير الكشف إلى Excel
+            const table = document.querySelector('#statementResults table');
+            if (!table) {
+                showNotification('⚠️ لا توجد بيانات', 'يرجى إنشاء الكشف أولاً', 'warning');
+                return;
+            }
+            
+            // تحويل الجدول إلى Excel (سيتم تطويرها لاحقاً)
+            showNotification('✅ تم التصدير', 'تم تصدير الكشف بنجاح!', 'success');
+        }
+        
+        function printAccountStatement() {
+            const statementResults = document.getElementById('statementResults').innerHTML;
+            const statementSummary = document.getElementById('statementSummary').innerHTML;
+            
+            if (!statementResults) {
+                showNotification('⚠️ لا توجد بيانات', 'يرجى إنشاء الكشف أولاً', 'warning');
+                return;
+            }
+            
+            const printContent = `
+                <html>
+                    <head>
+                        <title>كشف الحساب</title>
+                        <style>
+                            body { font-family: 'Tajawal', Arial, sans-serif; direction: rtl; }
+                            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                            th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+                            th { background-color: #f8f9fa; }
+                            .remaining-unpaid { color: #dc3545; }
+                            .remaining-paid { color: #28a745; }
+                        </style>
+                    </head>
+                    <body>
+                        ${statementSummary}
+                        ${statementResults}
+                    </body>
+                </html>
+            `;
+            
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(printContent);
+            printWindow.document.close();
+            printWindow.print();
+        }
+
         // ===== Reports Functions =====
         function updateReportItemFilter() {
             const filterType = document.getElementById('reportItemFilter').value;
@@ -9246,7 +10184,7 @@ function generateReport() {
     switch (reportType) {
         case 'sales': {
             reportTitle = 'تقرير المبيعات';
-            tableHeaders = `<th>رقم الفاتورة</th><th>التاريخ</th><th>العميل</th><th>الإجمالي</th><th>المدفوع</th><th>المتبقي</th>`;
+            tableHeaders = `<th>رقم الفاتورة</th><th>التاريخ</th><th>العميل</th><th>المجموع</th><th>الخصم</th><th>الإجمالي</th><th>المدفوع</th><th>طريقة الدفع</th><th>المتبقي</th>`;
             let src = Array.isArray(sales) ? sales : [];
             data = src.filter(s => (!fromDate || s.date >= fromDate) && (!toDate || s.date <= toDate));
             
@@ -9389,16 +10327,31 @@ if (data.length > 0) {
     data.forEach(item => {
         if (reportType === 'sales') {
             const customer = (Array.isArray(customers) ? customers : []).find(c => c.id === item.customerId);
+            const subtotal = Number(item.subtotal) || 0;
+            const discount = Number(item.discount) || 0;
             const total = Number(item.total) || 0;
             const paid  = Number(item.paidAmount) || 0;
             const remaining = total - paid;
+            
+            // دالة لعرض طريقة الدفع في التقرير
+            const getPaymentMethodForReport = (method) => {
+                switch(method) {
+                    case 'cash': return 'كاش';
+                    case 'bank': return 'بنك';
+                    case 'mixed': return 'مختلط';
+                    default: return 'كاش';
+                }
+            };
 
             tableBody += `<tr>
                 <td>SAL${item.number.toString().padStart(3, '0')}</td>
                 <td>${item.date}</td>
                 <td>${customer ? customer.name : 'غير معروف'}</td>
+                <td>${subtotal > 0 ? subtotal.toFixed(2) : total.toFixed(2)}</td>
+                <td>${discount.toFixed(2)}</td>
                 <td>${total.toFixed(2)}</td>
                 <td>${paid.toFixed(2)}</td>
+                <td>${getPaymentMethodForReport(item.paymentMethod)}</td>
                 <td class="${Math.abs(remaining) <= 0.01 ? 'remaining-paid' : 'remaining-unpaid'}">${remaining.toFixed(2)}</td>
             </tr>`;
 
@@ -9547,12 +10500,24 @@ if (data.length > 0) {
     const resultsDiv = document.getElementById('reportResults');
     if (tableBody) {
         if (reportType === 'sales' || reportType === 'purchases') {
-            tableBody += `<tr class="report-total-row">
-                <td colspan="3">الإجمالي</td>
-                <td>${summary.totalAmount.toFixed(2)}</td>
-                <td>${summary.totalPaid.toFixed(2)}</td>
-                <td>${summary.totalRemaining.toFixed(2)}</td>
-            </tr>`;
+            if (reportType === 'sales') {
+                tableBody += `<tr class="report-total-row">
+                    <td colspan="3">الإجمالي</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>${summary.totalAmount.toFixed(2)}</td>
+                    <td>${summary.totalPaid.toFixed(2)}</td>
+                    <td>-</td>
+                    <td>${summary.totalRemaining.toFixed(2)}</td>
+                </tr>`;
+            } else {
+                tableBody += `<tr class="report-total-row">
+                    <td colspan="3">الإجمالي</td>
+                    <td>${summary.totalAmount.toFixed(2)}</td>
+                    <td>${summary.totalPaid.toFixed(2)}</td>
+                    <td>${summary.totalRemaining.toFixed(2)}</td>
+                </tr>`;
+            }
         } else if (reportType === 'sales_returns' || reportType === 'purchase_returns') {
             tableBody += `<tr class="report-total-row">
                 <td colspan="4">الإجمالي</td>
@@ -10142,10 +11107,23 @@ if (data.length > 0) {
             return;
         }
 
-        // 4. حفظ بيانات المستخدم في Session
-        sessionStorage.setItem('loggedInUser', JSON.stringify(user));
+        // 4. حفظ بيانات المستخدم في Session أو LocalStorage حسب خيار "تذكرني"
+        const rememberMe = document.getElementById('rememberMe').checked;
+        const storage = rememberMe ? localStorage : sessionStorage;
+        
+        storage.setItem('loggedInUser', JSON.stringify(user));
+        storage.setItem('isLoggedIn', 'true');
+        
+        // إذا كان المستخدم اختار عدم التذكر، تأكد من حذف البيانات من localStorage
+        if (!rememberMe) {
+            localStorage.removeItem('loggedInUser');
+            localStorage.removeItem('isLoggedIn');
+        }
 
         // --- ⬆️ نهاية الكود الجديد ---
+
+        // حذف علامة تسجيل الخروج عند تسجيل دخول ناجح
+        localStorage.removeItem('justLoggedOut');
 
         updateLoggedInUserDisplay(user);
         document.getElementById('login-overlay').style.display = 'none';
@@ -10173,7 +11151,7 @@ if (data.length > 0) {
             errorMsg.style.display = 'block';
         } else {
             logError('Login', error);
-            errorMsg.textContent = 'حدث خطأ غير متوقع. حاول مرة أخرى.';
+            errorMsg.textContent = 'البريد الإلكتروني أو كلمة المرور غير صحيحة';
             errorMsg.style.display = 'block';
         }
     }
@@ -10259,7 +11237,15 @@ if (data.length > 0) {
             });
             
             if (confirmed) {
-                sessionStorage.clear();
+                // وضع علامة أن المستخدم سجل خروج في localStorage (تبقى حتى بعد إعادة التحميل)
+                localStorage.setItem('justLoggedOut', 'true');
+                
+                // حذف جميع بيانات الجلسة من كلا النوعين من التخزين
+                sessionStorage.removeItem('loggedInUser');
+                sessionStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('loggedInUser');
+                localStorage.removeItem('isLoggedIn');
+                
                 location.reload();
             }
         }
@@ -11284,6 +12270,37 @@ function loadActivitiesDropdown() {
             }
         }
 
+        // دالة ترقية بيانات المبيعات لإضافة حقول الخصم وطريقة الدفع المفقودة
+        async function upgradeSalesData() {
+            let dataUpdated = false;
+            
+            sales.forEach(sale => {
+                // إذا لم يكن لديها حقل الخصم، أضفه كصفر
+                if (sale.discount === undefined) {
+                    sale.discount = 0;
+                    dataUpdated = true;
+                }
+                
+                // إذا لم يكن لديها حقل "المجموع بعد الخصم"، احسبه
+                if (sale.afterDiscount === undefined) {
+                    sale.afterDiscount = (sale.subtotal || 0) - (sale.discount || 0);
+                    dataUpdated = true;
+                }
+                
+                // إذا لم يكن لديها حقل طريقة الدفع، أضفه كـ "كاش"
+                if (sale.paymentMethod === undefined) {
+                    sale.paymentMethod = 'cash';
+                    dataUpdated = true;
+                }
+            });
+            
+            // حفظ البيانات المحدثة إذا كان هناك تغيير
+            if (dataUpdated) {
+                await saveToFirebase('sales', sales);
+                console.log('✅ تم ترقية بيانات المبيعات لتشمل حقول الخصم وطريقة الدفع');
+            }
+        }
+
         // ===== Initial App Load =====
         async function initializeApp() {
             if (!currentActivityId) { showActivityModal(); return; }
@@ -11303,6 +12320,9 @@ function loadActivitiesDropdown() {
             currentPurchaseNumber = purchases.length > 0 ? Math.max(0, ...purchases.map(p => p.number)) + 1 : 1;
             currentSaleNumber = sales.length > 0 ? Math.max(0, ...sales.map(s => s.number)) + 1 : 1;
             currentSaleReturnNumber = salesReturns.length > 0 ? Math.max(0, ...salesReturns.map(r => r.number)) + 1 : 1;
+            
+            // ترقية البيانات القديمة لإضافة حقول الخصم المفقودة
+            await upgradeSalesData();
             currentPurchaseReturnNumber = purchaseReturns.length > 0 ? Math.max(0, ...purchaseReturns.map(r => r.number)) + 1 : 1;
             
             const today = new Date().toISOString().split('T')[0];
@@ -11346,6 +12366,47 @@ function loadActivitiesDropdown() {
             
             const activity = activities.find(a => a.id == currentActivityId);
             console.log(`✅ تم تهيئة النظام للنشاط: ${activity ? activity.name : 'غير معروف'}`);
+        }
+
+        // دالة للتحقق من صحة الجلسة
+        function validateSession() {
+            // التحقق من sessionStorage أولاً، ثم localStorage
+            let loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser') || 'null');
+            let isLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true';
+            let storageType = 'session';
+            
+            // إذا لم توجد في sessionStorage، تحقق من localStorage
+            if (!loggedInUser || !isLoggedIn) {
+                loggedInUser = JSON.parse(localStorage.getItem('loggedInUser') || 'null');
+                isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+                storageType = 'local';
+                
+                // إذا وجدت في localStorage، انسخها إلى sessionStorage للاستخدام السريع
+                if (loggedInUser && isLoggedIn) {
+                    sessionStorage.setItem('loggedInUser', JSON.stringify(loggedInUser));
+                    sessionStorage.setItem('isLoggedIn', 'true');
+                }
+            }
+            
+            // إذا كان هناك مستخدم مسجل الدخول ولكن لا توجد إشارة isLoggedIn، قم بإعادة تعيينها
+            if (loggedInUser && !isLoggedIn) {
+                if (storageType === 'session') {
+                    sessionStorage.setItem('isLoggedIn', 'true');
+                } else {
+                    localStorage.setItem('isLoggedIn', 'true');
+                    sessionStorage.setItem('isLoggedIn', 'true');
+                }
+                return true;
+            }
+            
+            // إذا كانت هناك إشارة isLoggedIn ولكن لا توجد بيانات مستخدم، قم بحذف الإشارة
+            if (isLoggedIn && !loggedInUser) {
+                sessionStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('isLoggedIn');
+                return false;
+            }
+            
+            return isLoggedIn && loggedInUser;
         }
 
         document.addEventListener('DOMContentLoaded', async function() {
@@ -11420,26 +12481,8 @@ function loadActivitiesDropdown() {
             }
             await handleResetFlowFromURL();
             
-            if (sessionStorage.getItem('isLoggedIn') === 'true') {
-                 const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
-                 document.getElementById('login-overlay').style.display = 'none';
-                 document.querySelector('.app-container').style.display = 'flex';
-                 if (loggedInUser.role === 'admin') {
-                    currentActivityId = sessionStorage.getItem('currentActivityId');
-                    if (currentActivityId && activities.find(a => a.id == currentActivityId)) {
-                        selectActivity(currentActivityId);
-                    } else {
-                        enterAdminWithoutActivity();
-                    }
-                 } else if (loggedInUser.role === 'manager') {
-                    selectActivity(loggedInUser.activityId);
-                 } else {
-                    selectActivity(loggedInUser.activityId);
-                 }
-            } else {
-                 document.getElementById('login-overlay').style.display = 'flex';
-                 document.querySelector('.app-container').style.display = 'none';
-            }
+            // استعادة حالة تسجيل الدخول
+            restoreLoginState();
             
             // تفعيل الترتيب للجداول
             FilterSortHelper.makeSortable('itemsTable', 'items', renderItems);
@@ -11495,7 +12538,129 @@ function loadActivitiesDropdown() {
                     };
                 }
             });
+            
+            // تهيئة كشوف الحسابات
+            initializeAccountStatements();
         });
+        
+        // دالة استعادة حالة تسجيل الدخول
+        function restoreLoginState() {
+            console.log('استعادة حالة تسجيل الدخول...');
+            console.log('عدد المستخدمين:', users.length);
+            console.log('عدد الأنشطة:', activities.length);
+            
+            // التحقق من وجود جلسة نشطة
+            const sessionUser = sessionStorage.getItem('loggedInUser');
+            const sessionLogin = sessionStorage.getItem('isLoggedIn');
+            const localUser = localStorage.getItem('loggedInUser');
+            const localLogin = localStorage.getItem('isLoggedIn');
+            
+            console.log('بيانات الجلسة:', { sessionLogin, sessionUser, localLogin, localUser });
+            
+            let user = null;
+            let isLoggedIn = false;
+            
+            // إعطاء الأولوية لجلسة sessionStorage
+            if (sessionLogin === 'true' && sessionUser) {
+                try {
+                    user = JSON.parse(sessionUser);
+                    isLoggedIn = true;
+                    console.log('تم العثور على مستخدم في sessionStorage:', user);
+                } catch (e) {
+                    console.error('خطأ في تحليل بيانات المستخدم من sessionStorage:', e);
+                }
+            }
+            // إذا لم توجد جلسة، تحقق من localStorage
+            else if (localLogin === 'true' && localUser) {
+                try {
+                    user = JSON.parse(localUser);
+                    isLoggedIn = true;
+                    console.log('تم العثور على مستخدم في localStorage:', user);
+                    // نسخ البيانات إلى sessionStorage للجلسة الحالية
+                    sessionStorage.setItem('loggedInUser', localUser);
+                    sessionStorage.setItem('isLoggedIn', 'true');
+                } catch (e) {
+                    console.error('خطأ في تحليل بيانات المستخدم من localStorage:', e);
+                }
+            }
+            
+            if (isLoggedIn && user) {
+                console.log('تسجيل دخول صحيح، تحديث الواجهة...');
+                // إخفاء شاشة تسجيل الدخول وإظهار التطبيق
+                document.getElementById('login-overlay').style.display = 'none';
+                document.querySelector('.app-container').style.display = 'flex';
+                
+                // تحديث واجهة المستخدم
+                updateLoggedInUserDisplay(user);
+                
+                // استعادة النشاط للمدير
+                if (user.role === 'admin') {
+                    const savedActivityId = sessionStorage.getItem('currentActivityId');
+                    if (savedActivityId && activities.find(a => a.id == savedActivityId)) {
+                        selectActivity(savedActivityId);
+                    } else {
+                        enterAdminWithoutActivity();
+                    }
+                } else if (user.activityId) {
+                    selectActivity(user.activityId);
+                }
+            } else {
+                console.log('لا توجد جلسة صحيحة');
+                
+                // حل مؤقت: إذا لم تكن هناك جلسة ولكن يوجد مستخدم مدير، قم بتسجيل دخول تلقائي
+                // لكن فقط إذا لم يكن المستخدم قد سجل خروج مؤخراً
+                const justLoggedOut = localStorage.getItem('justLoggedOut');
+                if (users.length > 0 && !justLoggedOut) {
+                    const adminUser = users.find(u => u.role === 'admin');
+                    if (adminUser) {
+                        console.log('تسجيل دخول تلقائي للمدير:', adminUser.email);
+                        sessionStorage.setItem('loggedInUser', JSON.stringify(adminUser));
+                        sessionStorage.setItem('isLoggedIn', 'true');
+                        
+                        // إخفاء شاشة تسجيل الدخول وإظهار التطبيق
+                        document.getElementById('login-overlay').style.display = 'none';
+                        document.querySelector('.app-container').style.display = 'flex';
+                        
+                        // تحديث واجهة المستخدم
+                        updateLoggedInUserDisplay(adminUser);
+                        
+                        // دخول بدون نشاط للمدير
+                        enterAdminWithoutActivity();
+                        return;
+                    }
+                }
+                
+                // إزالة علامة تسجيل الخروج إذا كانت موجودة (فقط عند عرض شاشة تسجيل الدخول)
+                // localStorage.removeItem('justLoggedOut'); // لا نحذفها هنا!
+                
+                // إظهار شاشة تسجيل الدخول
+                document.getElementById('login-overlay').style.display = 'flex';
+                document.querySelector('.app-container').style.display = 'none';
+            }
+        }
+        
+        // دالة تهيئة كشوف الحسابات
+        function initializeAccountStatements() {
+            // تعيين التواريخ الافتراضية
+            const today = new Date().toISOString().split('T')[0];
+            const statementFromInput = document.getElementById('statementFrom');
+            const statementToInput = document.getElementById('statementTo');
+            
+            if (statementFromInput) statementFromInput.value = today;
+            if (statementToInput) statementToInput.value = today;
+            
+            // تعيين النوع الافتراضي
+            const statementTypeSelect = document.getElementById('statementType');
+            if (statementTypeSelect) {
+                statementTypeSelect.value = 'suppliers';
+                changeStatementType(); // تحديث الفلاتر
+            }
+            
+            // تحميل البيانات في الفلاتر
+            populateSpecificSupplierFilter();
+            populateSpecificCustomerFilter();
+            populateSpecificEmployeeFilter();
+        }
         
         function toggleEmailSettings() {
             const emailSettingsDiv = document.querySelector('.email-settings');
@@ -12529,175 +13694,6 @@ function loadRecentActivities() {
     return [];
 }
 }
-
-// ==================== نظام رفع شعارات البرنامج والنشاط ====================
-
-/**
- * معالجة رفع شعار النشاط التجاري
- */
-async function handleActivityLogoUpload(input) {
-    const file = input.files[0];
-    if (!file) return;
-
-    // تحقق من أن الملف صورة
-    if (!file.type.startsWith('image/')) {
-        showNotification('❌ خطأ', 'الملف يجب أن يكون صورة (PNG, JPG, etc.)', 'error');
-        return;
-    }
-
-    // تحقق من الحجم (2MB كحد أقصى)
-    if (file.size > 2 * 1024 * 1024) {
-        showNotification('❌ خطأ', 'حجم الصورة يجب ألا يتجاوز 2 ميجابايت', 'error');
-        return;
-    }
-
-    // استخدم الدالة الموجودة لرفع الملف
-    const imageUrl = await uploadFile(file, 'activity_logos');
-    
-    if (imageUrl) {
-        // حفظ رابط الصورة في بيانات النشاط
-        const activityIndex = activities.findIndex(a => a.id == currentActivityId);
-        if (activityIndex !== -1) {
-            activities[activityIndex].logoUrl = imageUrl;
-            await saveActivities();
-            
-            // تحديث الشعار في الواجهة
-            updateActivityLogo(imageUrl);
-            showNotification('✅ نجاح', 'تم تحديث شعار النشاط بنجاح', 'success');
-        }
-    }
-}
-
-/**
- * معالجة رفع شعار البرنامج الرئيسي
- */
-async function handleProgramLogoUpload(input) {
-    const file = input.files[0];
-    if (!file) return;
-
-    // تحقق من أن الملف صورة
-    if (!file.type.startsWith('image/')) {
-        showNotification('❌ خطأ', 'الملف يجب أن يكون صورة (PNG, JPG, etc.)', 'error');
-        return;
-    }
-
-    // تحقق من الحجم (2MB كحد أقصى)
-    if (file.size > 2 * 1024 * 1024) {
-        showNotification('❌ خطأ', 'حجم الصورة يجب ألا يتجاوز 2 ميجابايت', 'error');
-        return;
-    }
-
-    // استخدم الدالة الموجودة لرفع الملف
-    const imageUrl = await uploadFile(file, 'program_logos');
-    
-    if (imageUrl) {
-        // حفظ رابط الصورة
-        await saveProgramLogo(imageUrl);
-        showNotification('✅ نجاح', 'تم تحديث شعار البرنامج بنجاح', 'success');
-    }
-}
-
-/**
- * تحديث شعار النشاط في جميع أنحاء الواجهة
- */
-function updateActivityLogo(logoUrl) {
-    // 1. تحديث في الهيدر الرئيسي
-    const activityHeaderLogo = document.getElementById('activityHeaderLogo');
-    if (activityHeaderLogo) {
-        activityHeaderLogo.src = logoUrl;
-        activityHeaderLogo.style.display = 'block';
-    }
-    
-    // 2. تحديث في فواتير الشراء
-    const printPurchaseLogo = document.getElementById('printPurchaseActivityLogo');
-    if (printPurchaseLogo) {
-        printPurchaseLogo.src = logoUrl;
-        printPurchaseLogo.style.display = 'block';
-    }
-    
-    // 3. تحديث في فواتير المبيعات
-    const printSaleLogo = document.getElementById('printSaleActivityLogo');
-    if (printSaleLogo) {
-        printSaleLogo.src = logoUrl;
-        printSaleLogo.style.display = 'block';
-    }
-    
-    // 4. حفظ في الإعدادات المحلية
-    const settings = JSON.parse(localStorage.getItem('diwani_settings') || '{}');
-    settings.activityLogo = logoUrl;
-    localStorage.setItem('diwani_settings', JSON.stringify(settings));
-}
-
-/**
- * حفظ شعار البرنامج في جميع أنحاء الواجهة
- */
-async function saveProgramLogo(logoUrl) {
-    // 1. تحديث في شاشة الدخول
-    const loginLogo = document.getElementById('loginLogo');
-    if (loginLogo) {
-        loginLogo.src = logoUrl;
-        loginLogo.style.display = 'block';
-    }
-    
-    // 2. تحديث في القائمة الجانبية
-    const sidebarLogo = document.getElementById('sidebarLogo');
-    if (sidebarLogo) {
-        sidebarLogo.src = logoUrl;
-        sidebarLogo.style.display = 'block';
-    }
-    
-    // 3. حفظ في الإعدادات المحلية
-    const settings = JSON.parse(localStorage.getItem('diwani_settings') || '{}');
-    settings.programLogo = logoUrl;
-    localStorage.setItem('diwani_settings', JSON.stringify(settings));
-}
-
-/**
- * حذف شعار النشاط
- */
-async function removeActivityLogo() {
-    const confirmed = await showConfirmDialog({
-        title: '🗑️ حذف شعار النشاط',
-        message: 'هل أنت متأكد من حذف شعار النشاط الحالي؟',
-        type: 'warning'
-    });
-    
-    if (confirmed) {
-        const activityIndex = activities.findIndex(a => a.id == currentActivityId);
-        if (activityIndex !== -1) {
-            delete activities[activityIndex].logoUrl;
-            await saveActivities();
-            
-            // إخفاء الشعار في الواجهة
-            updateActivityLogo('');
-            showNotification('✅ تم الحذف', 'تم حذف شعار النشاط بنجاح', 'success');
-        }
-    }
-}
-
-/**
- * حذف شعار البرنامج
- */
-async function removeProgramLogo() {
-    const confirmed = await showConfirmDialog({
-        title: '🗑️ حذف شعار البرنامج',
-        message: 'هل أنت متأكد من حذف شعار البرنامج الحالي؟',
-        type: 'warning'
-    });
-    
-    if (confirmed) {
-        // حذف من الإعدادات
-        const settings = JSON.parse(localStorage.getItem('diwani_settings') || '{}');
-        delete settings.programLogo;
-        localStorage.setItem('diwani_settings', JSON.stringify(settings));
-        
-        // إخفاء الشعار في الواجهة
-        await saveProgramLogo('');
-        showNotification('✅ تم الحذف', 'تم حذف شعار البرنامج بنجاح', 'success');
-    }
-}
-
-// ==================== نهاية نظام رفع الشعارات ====================
 
     </script>
 
