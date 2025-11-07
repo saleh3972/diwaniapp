@@ -155,7 +155,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <!-- الفافيكون -->
-    <link rel="icon" type="image/x-icon" href="logo/logosmall.png">
+    <link rel="icon" type="image/png" href="https://res.cloudinary.com/dgjcr2bgq/image/upload/v1762349658/logo_vlldbc.png">
+    <link rel="shortcut icon" type="image/png" href="https://res.cloudinary.com/dgjcr2bgq/image/upload/v1762349658/logo_vlldbc.png">
     
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
@@ -3093,6 +3094,7 @@ textarea.input-success:focus {
      alt="شعار نظام ديواني" class="login-logo" id="loginLogo">
             
             <h2>ديواني<br><span style="font-size: 0.8em; font-weight: normal; color: #1e3a5f;">نظام محاسبي متكامل</span></h2>
+            <form id="loginForm" onsubmit="return false;">
            <input type="email" id="loginEmail" class="login-input" placeholder="البريد الإلكتروني" 
        onkeypress="if(event.key==='Enter')handleLogin()" autocomplete="off"> 
 
@@ -3100,6 +3102,7 @@ textarea.input-success:focus {
        onkeypress="if(event.key==='Enter')handleLogin()" autocomplete="new-password">
        
             <button class="btn-primary" onclick="handleLogin()" style="width: 100%; margin-top: 15px;">تسجيل الدخول</button>
+            </form>
             <a class="back-to-roles" onclick="openForgotPasswordModal()">نسيت كلمة المرور؟</a>
             <p id="login-error">بيانات الدخول غير صحيحة أو غير مصرح لك بالدخول.</p>
         </div>
@@ -3120,6 +3123,7 @@ textarea.input-success:focus {
     <div id="user-edit-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); display: none; justify-content: center; align-items: center; z-index: 10001; backdrop-filter: blur(5px);">
         <div id="user-edit-box" style="background: white; padding: 30px; border-radius: var(--border-radius); box-shadow: 0 10px 25px rgba(0,0,0,0.2); width: 100%; max-width: 480px; text-align: center;">
             <h2 style="color: var(--primary-color); margin-bottom: 20px;">✏️ تعديل بيانات المستخدم</h2>
+            <form id="editUserForm" onsubmit="return false;">
             <input type="text" id="editUserName" class="login-input" placeholder="اسم المستخدم">
             <input type="email" id="editUserEmail" class="login-input" placeholder="البريد الإلكتروني">
             <input type="tel" id="editUserPhone" class="login-input" placeholder="رقم الجوال">
@@ -3132,6 +3136,7 @@ textarea.input-success:focus {
             <select id="editUserActivity" class="login-input" style="display: none;">
                 <option value="">-- تعيين لنشاط --</option>
             </select>
+            </form>
             <div style="display: flex; gap: 10px; margin-top: 10px;">
                 <button class="btn-success" onclick="saveEditedUser()" style="flex:1;">حفظ</button>
                 <button class="btn-secondary" onclick="closeEditUserModal()" style="flex:1;">إلغاء</button>
@@ -3143,9 +3148,11 @@ textarea.input-success:focus {
     <div id="change-password-overlay" style="display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); justify-content:center; align-items:center; z-index:10002; backdrop-filter: blur(5px);">
         <div style="background:white; padding: 24px; border-radius: var(--border-radius); width: 100%; max-width: 420px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
             <h2 style="margin-top:0; color: var(--primary-color);">🔒 تغيير كلمة المرور</h2>
+            <form id="changePasswordForm" onsubmit="return false;">
             <input type="password" id="cp-old" class="login-input" placeholder="كلمة المرور الحالية">
             <input type="password" id="cp-new" class="login-input" placeholder="كلمة المرور الجديدة">
             <input type="password" id="cp-confirm" class="login-input" placeholder="تأكيد كلمة المرور الجديدة">
+            </form>
             <div style="display:flex; gap:10px; margin-top:10px;">
                 <button class="btn-success" onclick="submitPasswordChange()" style="flex:1;">حفظ</button>
                 <button class="btn-secondary" onclick="closeChangePasswordModal()" style="flex:1;">إلغاء</button>
@@ -3158,7 +3165,9 @@ textarea.input-success:focus {
         <div style="background:white; padding: 24px; border-radius: var(--border-radius); width: 100%; max-width: 420px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); text-align:center;">
             <h2 style="margin-top:0; color: var(--primary-color);">📧 استعادة كلمة المرور</h2>
             <p style="margin: 0 0 10px;">أدخل بريدك الإلكتروني وسنرسل لك رابطاً لإعادة تعيين كلمة المرور.</p>
+            <form id="forgotPasswordForm" onsubmit="return false;">
             <input type="email" id="fp-email" class="login-input" placeholder="البريد الإلكتروني">
+            </form>
             <div style="display:flex; gap:10px; margin-top:10px;">
                 <button class="btn-success" onclick="requestPasswordReset()" style="flex:1;">إرسال الرابط</button>
                 <button class="btn-secondary" onclick="closeForgotPasswordModal()" style="flex:1;">إلغاء</button>
@@ -3170,8 +3179,10 @@ textarea.input-success:focus {
     <div id="reset-password-overlay" style="display:none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); justify-content:center; align-items:center; z-index:10003; backdrop-filter: blur(5px);">
         <div style="background:white; padding: 24px; border-radius: var(--border-radius); width: 100%; max-width: 420px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); text-align:center;">
             <h2 style="margin-top:0; color: var(--primary-color);">🔁 تعيين كلمة مرور جديدة</h2>
+            <form id="resetPasswordForm" onsubmit="return false;">
             <input type="password" id="rp-new" class="login-input" placeholder="كلمة المرور الجديدة">
             <input type="password" id="rp-confirm" class="login-input" placeholder="تأكيد كلمة المرور الجديدة">
+            </form>
             <div style="display:flex; gap:10px; margin-top:10px;">
                 <button class="btn-success" onclick="submitTokenPasswordReset()" style="flex:1;">حفظ</button>
                 <button class="btn-secondary" onclick="closeResetPasswordModal()" style="flex:1;">إلغاء</button>
@@ -4605,6 +4616,7 @@ textarea.input-success:focus {
             </div>
             
             <h4 style="color: var(--secondary-color); margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #e0e0e0;">➕ إضافة مستخدم جديد</h4>
+            <form id="newUserForm" onsubmit="return false;">
             <div class="form-grid grid-3">
                 <input type="text" id="newUserName" placeholder="اسم المستخدم *">
                 <select id="newUserRole">
@@ -4621,6 +4633,7 @@ textarea.input-success:focus {
                     <option value="">-- تعيين لنشاط --</option>
                 </select>
             </div>
+            </form>
             <div class="form-grid grid-1">
                 <button class="btn-primary btn-add" onclick="addUser()">➕ إضافة مستخدم</button>
             </div>
@@ -6201,8 +6214,13 @@ let emailJsConfig = { ...EMAILJS_DEFAULTS };
                 const snapshot = await database.ref(key).once('value');
                 return snapshot.val();
             } catch (error) {
-                logError('Firebase Get', error, false);
-                console.error('Firebase get error:', error);
+                // إذا كان الخطأ permission_denied، لا نُظهر رسالة خطأ
+                if (error.message && error.message.includes('permission_denied')) {
+                    console.log(`تم منع الوصول إلى ${key} - سيتم المحاولة لاحقاً بعد المصادقة`);
+                } else {
+                    logError('Firebase Get', error, false);
+                    console.error('Firebase get error:', error);
+                }
                 return null;
             }
         }
@@ -6309,15 +6327,22 @@ let emailJsConfig = { ...EMAILJS_DEFAULTS };
         }
 
        async function loadUsers() {
-    users = (await firebaseGet('diwan_users')) || [];
-    
-    // ⬇️ تم تعديل هذا الجزء ⬇️
-    // أصبح هذا الكود للرجوع إليه فقط في حال لم يتم إنشاء حساب مدير
-    // يجب إنشاء حساب المدير يدوياً في المرة الأولى
-    if (users.length === 0) {
-        console.warn("لا يوجد مستخدمون. يرجى إنشاء حساب 'مدير نظام' (admin) جديد.");
-        // يمكنك توجيه المستخدم لإنشاء حساب إداري إذا لم يكن هناك أي مستخدمين
-        // في الوقت الحالي، سنتركها فارغة ليتم إنشاؤها من واجهة المستخدم
+    try {
+        users = (await firebaseGet('diwan_users')) || [];
+        
+        // إذا لم يكن هناك مستخدمون، اعرض رسالة فقط إذا كان لدينا وصول لقاعدة البيانات
+        if (users.length === 0 && auth.currentUser) {
+            console.warn("لا يوجد مستخدمون في قاعدة البيانات. تأكد من إنشاء مدير النظام في Firebase.");
+        }
+    } catch (error) {
+        // إذا فشل تحميل المستخدمين بسبب عدم المصادقة، نتجاهل الخطأ مؤقتاً
+        if (error.message && error.message.includes('permission_denied')) {
+            console.log("تحميل المستخدمين متأخر حتى تسجيل الدخول...");
+            users = [];
+        } else {
+            logError('loadUsers', error);
+            users = [];
+        }
     }
 }
 
@@ -6737,13 +6762,19 @@ let emailJsConfig = { ...EMAILJS_DEFAULTS };
         }
         
         async function loadActivities() {
-            activities = (await firebaseGet('diwan_activities')) || [];
-            const activitySelect = document.getElementById('userActivitySelect');
-            if (activitySelect) {
-                activitySelect.innerHTML = '<option value="">-- اختر النشاط التجاري أولاً --</option>';
-                activities.forEach(act => {
-                    activitySelect.innerHTML += `<option value="${act.id}">${act.name}</option>`;
-                });
+            try {
+                activities = (await firebaseGet('diwan_activities')) || [];
+                const activitySelect = document.getElementById('userActivitySelect');
+                if (activitySelect) {
+                    activitySelect.innerHTML = '<option value="">-- اختر النشاط التجاري أولاً --</option>';
+                    activities.forEach(act => {
+                        activitySelect.innerHTML += `<option value="${act.id}">${act.name}</option>`;
+                    });
+                }
+            } catch (error) {
+                // إذا فشل تحميل الأنشطة بسبب عدم المصادقة، نتجاهل الخطأ مؤقتاً
+                console.log("تحميل الأنشطة متأخر حتى تسجيل الدخول...");
+                activities = [];
             }
         }
 
@@ -11825,7 +11856,15 @@ if (data.length > 0) {
         const userCredential = await auth.signInWithEmailAndPassword(email, pass);
         const firebaseUser = userCredential.user;
 
-        // 2. جلب بيانات المستخدم (الصلاحيات) من قاعدة بياناتنا
+        // 2. تحميل/إعادة تحميل بيانات المستخدمين والأنشطة بعد المصادقة
+        if (users.length === 0) {
+            await loadUsers();
+        }
+        if (activities.length === 0) {
+            await loadActivities();
+        }
+        
+        // 3. جلب بيانات المستخدم (الصلاحيات) من قاعدة بياناتنا
         const user = users.find(u => u.id === firebaseUser.uid || u.email === email);
 
         if (!user) {
@@ -11837,7 +11876,7 @@ if (data.length > 0) {
             return;
         }
 
-        // 3. التحقق من الصلاحيات (كما كان)
+        // 4. التحقق من الصلاحيات (كما كان)
         if ((user.role === 'manager' || user.role === 'user') && (!user.activityId || !activities.find(a => a.id == user.activityId))) {
             hideLoading();
             showNotification('⚠️ نشاط غير صالح', 'النشاط المرتبط بحسابك غير موجود. راجع المدير.', 'warning');
@@ -12301,6 +12340,86 @@ if (data.length > 0) {
                 users = users.filter(u => u.id !== id);
                 await saveUsers();
                 renderUsersInSettings();
+            }
+        }
+
+        // دالة إضافة مستخدم جديد
+        async function addUser() {
+            const name = document.getElementById('newUserName').value.trim();
+            const email = document.getElementById('newUserEmail').value.trim();
+            const phone = document.getElementById('newUserPhone').value.trim();
+            const password = document.getElementById('newUserPassword').value.trim();
+            const role = document.getElementById('newUserRole').value;
+            const activityId = document.getElementById('newUserActivity').value;
+
+            // التحقق من الحقول المطلوبة
+            if (!name || !email || !phone || !password) {
+                showNotification('⚠️ حقول مطلوبة', 'يرجى ملء جميع الحقول المطلوبة', 'warning');
+                return;
+            }
+
+            // التحقق من صحة البريد الإلكتروني
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showNotification('⚠️ بريد إلكتروني غير صحيح', 'يرجى إدخال بريد إلكتروني صحيح', 'warning');
+                return;
+            }
+
+            // التحقق من عدم تكرار البريد الإلكتروني
+            if (users.some(u => u.email === email)) {
+                showNotification('⚠️ البريد موجود مسبقاً', 'هذا البريد الإلكتروني مستخدم بالفعل', 'warning');
+                return;
+            }
+
+            try {
+                showLoading('جاري إضافة المستخدم...');
+
+                // إنشاء حساب Firebase Auth
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                const firebaseUser = userCredential.user;
+
+                // إنشاء كائن المستخدم الجديد
+                const newUser = {
+                    id: firebaseUser.uid,
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    role: role,
+                    activityId: activityId || null,
+                    createdAt: new Date().toISOString()
+                };
+
+                // إضافة المستخدم إلى المصفوفة
+                users.push(newUser);
+
+                // حفظ المستخدمين
+                await saveUsers();
+
+                // تنظيف النموذج
+                document.getElementById('newUserName').value = '';
+                document.getElementById('newUserEmail').value = '';
+                document.getElementById('newUserPhone').value = '';
+                document.getElementById('newUserPassword').value = '';
+                document.getElementById('newUserRole').value = 'user';
+                document.getElementById('newUserActivity').value = '';
+
+                // تحديث القوائم
+                renderUsersInSettings();
+                renderUsersInSettings();
+
+                hideLoading();
+                showNotification('✅ تم الإنشاء', 'تم إنشاء المستخدم بنجاح', 'success');
+
+            } catch (error) {
+                hideLoading();
+                logError('addUser', error);
+                if (error.code === 'auth/email-already-in-use') {
+                    showNotification('⚠️ البريد موجود مسبقاً', 'هذا البريد الإلكتروني مستخدم بالفعل في Firebase', 'warning');
+                } else if (error.code === 'auth/weak-password') {
+                    showNotification('⚠️ كلمة مرور ضعيفة', 'كلمة المرور يجب أن تكون 6 أحرف على الأقل', 'warning');
+                } else {
+                    showNotification('❌ خطأ', 'فشل في إنشاء المستخدم: ' + (error.message || 'خطأ غير معروف'), 'error');
+                }
             }
         }
 
@@ -13192,11 +13311,10 @@ function loadActivitiesDropdown() {
                 responsiveTablesTimer = setTimeout(hydrateResponsiveTables, 100);
             };
 
+            // محاولة تحميل البيانات الأساسية - إذا فشلت بسبب المصادقة سيتم تحميلها لاحقاً
             await loadUsers();
-            if (users.length === 0) {
-                users.push({ id: 1, name: 'مدير النظام', email: 'msafr3972@gmail.com', phone: '', password: 'A711858322', role: 'admin', activityId: null });
-                await saveUsers();
-            }
+            await loadActivities();
+            
             if (EMAILJS_FIXED) {
                 emailJsConfig = { ...EMAILJS_DEFAULTS };
             } else {
