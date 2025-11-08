@@ -1371,7 +1371,18 @@
         #activity-box { background: white; padding: 40px; border-radius: var(--border-radius); box-shadow: 0 10px 30px rgba(0,0,0,0.25); width: 100%; max-width: 500px; text-align: center; animation: fadeIn 0.5s ease; }
         #activity-box h2 { color: var(--primary-color); margin-bottom: 25px; }
         #activity-list { max-height: 200px; overflow-y: auto; margin-bottom: 20px; }
-        .activity-btn { width: 100%; margin-bottom: 10px; padding: 18px; font-size: 1.1em; }
+        .activity-btn { 
+            width: 100%; 
+            margin-bottom: 10px; 
+            padding: 18px; 
+            font-size: 1.1em; 
+            white-space: normal; 
+            word-wrap: break-word; 
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
         .app-container { display: flex; min-height: 100vh; }
         .container { flex: 1; margin-right: var(--sidebar-width); padding: 20px; transition: margin-right 0.3s ease; }
         .sidebar { width: var(--sidebar-width); background: var(--sidebar-bg); height: 100vh; position: fixed; right: 0; top: 0; box-shadow: var(--shadow); padding: 20px; overflow-y: auto; z-index: 100; }
@@ -5362,7 +5373,7 @@ const GOSI_RATE = 0.09;
 const GOSI_SALARY_CAP = 45000;
 
 // ========================================
-// 🔥 إنشاء مستخدم افتراضي (LocalStorage + Firebase)
+// 🔥 إنشاء مستخدم افتراضي (LocalStorage فقط - معطل في Firebase)
 // ========================================
 async function createDefaultUser() {
     const existingUsers = loadFromLocalStorage('diwan_users') || [];
@@ -5384,7 +5395,10 @@ async function createDefaultUser() {
         saveToLocalStorage('diwan_users', existingUsers);
         console.log('✅ تم إنشاء المستخدم الافتراضي في LocalStorage: admin@diwani.com / 123456');
         
-        // ✅ إنشاء المستخدم في Firebase فقط إذا لم يكن موجوداً
+        // ⚠️ إنشاء المستخدم في Firebase معطل - استخدم أداة نقل المستخدمين بدلاً من ذلك
+        console.log('ℹ️ إنشاء المستخدم الافتراضي في Firebase معطل - قم بنقل المستخدمين من الإعدادات');
+        
+        /* // كود إنشاء Firebase معطل
         if (USE_FIREBASE) {
             try {
                 // محاولة تسجيل الدخول أولاً للتحقق من وجود المستخدم
@@ -5419,6 +5433,7 @@ async function createDefaultUser() {
                 console.log('ℹ️ تخطي إنشاء المستخدم في Firebase:', error.message);
             }
         }
+        */ // نهاية كود Firebase المعطل
     }
 }
 
@@ -12794,9 +12809,87 @@ if (data.length > 0) {
             debugLog('✅ تم تسجيل الدخول بنجاح عبر LocalStorage');
         }
 
-        // تحميل الأنشطة
-        const savedActivities = loadFromLocalStorage('diwan_activities') || [];
-        activities = savedActivities;
+        // تحميل الأنشطة من Firebase أو LocalStorage
+        if (USE_FIREBASE) {
+            try {
+                const { ref, get } = window.firebaseModules;
+                const db = window.firebaseDatabase;
+                
+                const activitiesRef = ref(db, 'activities');
+                const activitiesSnapshot = await get(activitiesRef);
+                
+                if (activitiesSnapshot.exists()) {
+                    const activitiesData = activitiesSnapshot.val();
+                    activities = Object.values(activitiesData)
+                        .filter(activity => activity && activity.id && activity.name) // تجاهل البيانات الفارغة
+                        .map(activity => ({
+                            id: activity.id,
+                            name: activity.name,
+                            createdAt: activity.createdAt,
+                            createdBy: activity.createdBy
+                        }));
+                    
+                    // حفظ في LocalStorage
+                    localStorage.setItem('diwan_activities', JSON.stringify(activities));
+                    debugLog(`✅ تم تحميل ${activities.length} نشاط من Firebase`);
+                } else {
+                    activities = loadFromLocalStorage('diwan_activities') || [];
+                }
+            } catch (error) {
+                console.error('❌ خطأ في تحميل الأنشطة:', error);
+                activities = loadFromLocalStorage('diwan_activities') || [];
+            }
+        } else {
+            activities = loadFromLocalStorage('diwan_activities') || [];
+        }
+
+        // تحميل المستخدمين من Firebase أو LocalStorage
+        if (USE_FIREBASE) {
+            try {
+                const { ref, get } = window.firebaseModules;
+                const db = window.firebaseDatabase;
+                
+                const usersRef = ref(db, 'users');
+                const usersSnapshot = await get(usersRef);
+                
+                if (usersSnapshot.exists()) {
+                    const usersData = usersSnapshot.val();
+                    const rawUsers = Object.values(usersData)
+                        .filter(user => user && user.id && user.email); // تجاهل البيانات الفارغة
+                    
+                    // إزالة التكرار بناءً على البريد الإلكتروني (الاحتفاظ بأحدث سجل)
+                    const uniqueUsersMap = new Map();
+                    rawUsers.forEach(user => {
+                        const existing = uniqueUsersMap.get(user.email);
+                        if (!existing || (user.createdAt && user.createdAt > existing.createdAt)) {
+                            uniqueUsersMap.set(user.email, {
+                                id: user.id,
+                                name: user.name,
+                                email: user.email,
+                                password: user.password,
+                                role: user.role,
+                                activityId: user.activityId,
+                                firebaseUid: user.firebaseUid,
+                                createdAt: user.createdAt
+                            });
+                        }
+                    });
+                    
+                    users = Array.from(uniqueUsersMap.values());
+                    
+                    // حفظ في LocalStorage
+                    localStorage.setItem('diwan_users', JSON.stringify(users));
+                    debugLog(`✅ تم تحميل ${users.length} مستخدم من Firebase (بعد إزالة ${rawUsers.length - users.length} مكرر)`);
+                } else {
+                    users = loadFromLocalStorage('diwan_users') || [];
+                }
+            } catch (error) {
+                console.error('❌ خطأ في تحميل المستخدمين:', error);
+                users = loadFromLocalStorage('diwan_users') || [];
+            }
+        } else {
+            users = loadFromLocalStorage('diwan_users') || [];
+        }
 
         // التحقق من الصلاحيات
         if ((user.role === 'manager' || user.role === 'user') && (!user.activityId || !activities.find(a => a.id == user.activityId))) {
@@ -13020,7 +13113,23 @@ if (data.length > 0) {
 
                 console.log('عدد المستخدمين بعد التصفية:', filteredUsers.length);
 
-                filteredUsers.forEach(user => {
+                // ترتيب المستخدمين: مدير النظام أولاً، ثم مدير النشاط، ثم المستخدمين
+                const sortedUsers = filteredUsers.sort((a, b) => {
+                    const roleOrder = { admin: 1, manager: 2, user: 3 };
+                    const orderA = roleOrder[a.role] || 4;
+                    const orderB = roleOrder[b.role] || 4;
+                    
+                    if (orderA !== orderB) {
+                        return orderA - orderB;
+                    }
+                    
+                    // نفس الصلاحية: ترتيب حسب الاسم
+                    const nameA = (a.name && a.name.trim()) ? a.name : a.email;
+                    const nameB = (b.name && b.name.trim()) ? b.name : b.email;
+                    return nameA.localeCompare(nameB, 'ar');
+                });
+
+                sortedUsers.forEach(user => {
                     const option = document.createElement('option');
                     option.value = user.id;
                     const roleLabelMap = { admin: 'مدير النظام', manager: 'مدير نشاط', user: 'مستخدم' };
@@ -14292,13 +14401,6 @@ function emailSaleInvoice(saleId) {
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            // مسح حقول تسجيل الدخول تماماً
-            setTimeout(() => {
-                document.getElementById('loginEmail').value = '';
-                document.getElementById('loginPassword').value = '';
-                document.getElementById('rememberMe').checked = false;
-            }, 100);
-            
             // تنظيف بيانات تسجيل الدخول القديمة من localStorage (إجراء أمني)
             localStorage.removeItem('loggedInUser');
             localStorage.removeItem('isLoggedIn');
