@@ -12781,6 +12781,45 @@ if (data.length > 0) {
                 debugLog('✅ تم تسجيل الدخول بنجاح عبر Firebase');
                 user = firebaseResult.userData;
                 user.firebaseUid = firebaseResult.firebaseUser.uid;
+                
+                // تحميل المستخدمين من Firebase فوراً بعد تسجيل الدخول
+                try {
+                    const { ref, get } = window.firebaseModules;
+                    const db = window.firebaseDatabase;
+                    
+                    const usersRef = ref(db, 'users');
+                    const usersSnapshot = await get(usersRef);
+                    
+                    if (usersSnapshot.exists()) {
+                        const usersData = usersSnapshot.val();
+                        const rawUsers = Object.values(usersData)
+                            .filter(u => u && u.id && u.email);
+                        
+                        // إزالة التكرار بناءً على البريد الإلكتروني
+                        const uniqueUsersMap = new Map();
+                        rawUsers.forEach(u => {
+                            const existing = uniqueUsersMap.get(u.email);
+                            if (!existing || (u.createdAt && u.createdAt > existing.createdAt)) {
+                                uniqueUsersMap.set(u.email, {
+                                    id: u.id,
+                                    name: u.name,
+                                    email: u.email,
+                                    password: u.password,
+                                    role: u.role,
+                                    activityId: u.activityId,
+                                    firebaseUid: u.firebaseUid,
+                                    createdAt: u.createdAt
+                                });
+                            }
+                        });
+                        
+                        users = Array.from(uniqueUsersMap.values());
+                        localStorage.setItem('diwan_users', JSON.stringify(users));
+                        debugLog(`✅ تم تحميل ${users.length} مستخدم من Firebase (بعد إزالة ${rawUsers.length - users.length} مكرر)`);
+                    }
+                } catch (error) {
+                    console.error('❌ خطأ في تحميل المستخدمين:', error);
+                }
             } else if (firebaseResult && firebaseResult.error) {
                 hideLoading();
                 errorMsg.textContent = firebaseResult.error;
@@ -12841,54 +12880,6 @@ if (data.length > 0) {
             }
         } else {
             activities = loadFromLocalStorage('diwan_activities') || [];
-        }
-
-        // تحميل المستخدمين من Firebase أو LocalStorage
-        if (USE_FIREBASE) {
-            try {
-                const { ref, get } = window.firebaseModules;
-                const db = window.firebaseDatabase;
-                
-                const usersRef = ref(db, 'users');
-                const usersSnapshot = await get(usersRef);
-                
-                if (usersSnapshot.exists()) {
-                    const usersData = usersSnapshot.val();
-                    const rawUsers = Object.values(usersData)
-                        .filter(user => user && user.id && user.email); // تجاهل البيانات الفارغة
-                    
-                    // إزالة التكرار بناءً على البريد الإلكتروني (الاحتفاظ بأحدث سجل)
-                    const uniqueUsersMap = new Map();
-                    rawUsers.forEach(user => {
-                        const existing = uniqueUsersMap.get(user.email);
-                        if (!existing || (user.createdAt && user.createdAt > existing.createdAt)) {
-                            uniqueUsersMap.set(user.email, {
-                                id: user.id,
-                                name: user.name,
-                                email: user.email,
-                                password: user.password,
-                                role: user.role,
-                                activityId: user.activityId,
-                                firebaseUid: user.firebaseUid,
-                                createdAt: user.createdAt
-                            });
-                        }
-                    });
-                    
-                    users = Array.from(uniqueUsersMap.values());
-                    
-                    // حفظ في LocalStorage
-                    localStorage.setItem('diwan_users', JSON.stringify(users));
-                    debugLog(`✅ تم تحميل ${users.length} مستخدم من Firebase (بعد إزالة ${rawUsers.length - users.length} مكرر)`);
-                } else {
-                    users = loadFromLocalStorage('diwan_users') || [];
-                }
-            } catch (error) {
-                console.error('❌ خطأ في تحميل المستخدمين:', error);
-                users = loadFromLocalStorage('diwan_users') || [];
-            }
-        } else {
-            users = loadFromLocalStorage('diwan_users') || [];
         }
 
         // التحقق من الصلاحيات
