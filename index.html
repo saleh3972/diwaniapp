@@ -5384,28 +5384,39 @@ async function createDefaultUser() {
         saveToLocalStorage('diwan_users', existingUsers);
         console.log('✅ تم إنشاء المستخدم الافتراضي في LocalStorage: admin@diwani.com / 123456');
         
-        // ✅ إنشاء المستخدم في Firebase أيضاً
+        // ✅ إنشاء المستخدم في Firebase فقط إذا لم يكن موجوداً
         if (USE_FIREBASE) {
             try {
-                const firebaseUser = await firebaseCreateUser(
-                    defaultUser.email,
-                    defaultUser.password,
-                    {
-                        id: defaultUser.id,
-                        name: defaultUser.name,
-                        email: defaultUser.email,
-                        phone: defaultUser.phone,
-                        role: defaultUser.role,
-                        activityId: defaultUser.activityId
-                    }
-                );
+                // محاولة تسجيل الدخول أولاً للتحقق من وجود المستخدم
+                const { signInWithEmailAndPassword } = window.firebaseModules;
+                const auth = window.firebaseAuth;
                 
-                if (firebaseUser) {
-                    console.log('✅ تم إنشاء المستخدم الافتراضي في Firebase أيضاً');
+                try {
+                    await signInWithEmailAndPassword(auth, defaultUser.email, defaultUser.password);
+                    console.log('ℹ️ المستخدم الافتراضي موجود بالفعل في Firebase');
+                } catch (signInError) {
+                    // المستخدم غير موجود، نقوم بإنشائه
+                    if (signInError.code === 'auth/user-not-found' || signInError.code === 'auth/invalid-credential') {
+                        const firebaseUser = await firebaseCreateUser(
+                            defaultUser.email,
+                            defaultUser.password,
+                            {
+                                id: defaultUser.id,
+                                name: defaultUser.name,
+                                email: defaultUser.email,
+                                phone: defaultUser.phone,
+                                role: defaultUser.role,
+                                activityId: defaultUser.activityId
+                            }
+                        );
+                        
+                        if (firebaseUser) {
+                            console.log('✅ تم إنشاء المستخدم الافتراضي في Firebase');
+                        }
+                    }
                 }
             } catch (error) {
-                // إذا كان المستخدم موجود في Firebase، نتجاهل الخطأ
-                console.log('ℹ️ المستخدم موجود في Firebase أو حدث خطأ:', error.message);
+                console.log('ℹ️ تخطي إنشاء المستخدم في Firebase:', error.message);
             }
         }
     }
