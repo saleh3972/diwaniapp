@@ -3276,12 +3276,12 @@ textarea.input-success:focus {
      alt="شعار نظام ديواني" class="login-logo" id="loginLogo">
             
             <h2>ديواني<br><span style="font-size: 0.8em; font-weight: normal; color: #1e3a5f;">نظام محاسبي متكامل</span></h2>
-            <form id="loginForm" onsubmit="return false;">
+            <form id="loginForm" onsubmit="return false;" autocomplete="off">
            <input type="email" id="loginEmail" class="login-input" placeholder="البريد الإلكتروني" 
-       onkeypress="if(event.key==='Enter')handleLogin()" autocomplete="off"> 
+       onkeypress="if(event.key==='Enter')handleLogin()" autocomplete="new-email" name="email-new"> 
 
 <input type="password" id="loginPassword" class="login-input" placeholder="كلمة المرور" 
-       onkeypress="if(event.key==='Enter')handleLogin()" autocomplete="off">
+       onkeypress="if(event.key==='Enter')handleLogin()" autocomplete="new-password" name="password-new">
        
             <div style="display: flex; align-items: center; margin-top: 10px; gap: 8px;">
                 <input type="checkbox" id="rememberMe" style="width: auto; cursor: pointer;">
@@ -14292,6 +14292,13 @@ function emailSaleInvoice(saleId) {
         }
 
         document.addEventListener('DOMContentLoaded', function() {
+            // مسح حقول تسجيل الدخول تماماً
+            setTimeout(() => {
+                document.getElementById('loginEmail').value = '';
+                document.getElementById('loginPassword').value = '';
+                document.getElementById('rememberMe').checked = false;
+            }, 100);
+            
             // تنظيف بيانات تسجيل الدخول القديمة من localStorage (إجراء أمني)
             localStorage.removeItem('loggedInUser');
             localStorage.removeItem('isLoggedIn');
