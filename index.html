@@ -851,7 +851,7 @@
     position: fixed;
     top: 80px;
     left: 20px;
-    z-index: 9999;
+    z-index: 99999;
     max-width: 400px;
     pointer-events: none;
 }
@@ -1608,12 +1608,12 @@
         .btn-info:hover { background: #16a085; transform: translateY(-2px); }
         #settings .data-actions-grid button { background: #005189; color: #ffffff; border: 1px solid #003f68; box-shadow: 0 2px 6px rgba(0, 81, 137, 0.2); }
         #settings .data-actions-grid button:hover { background: #004373; color: #ffffff; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0, 81, 137, 0.3); }
-    /* أزرار التحذير/التنبيه (تعديل/نسخ احتياطي) بلون كهرماني متناسق */
-    .btn-warning { background: #E6B980; color: #2c3e50; border: 1px solid #DDB07A; box-shadow: 0 2px 6px rgba(217, 154, 89, 0.12); }
-    .btn-warning:hover { background: #D99A59; color: #1a1a1a; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(217, 154, 89, 0.22); }
-    /* تخصيص زر التعديل باللون الأخضر والنص الأبيض */
-    .btn-warning.edit-btn { background: #005189; color: #ffffff; border: 1px solid #003f68; box-shadow: 0 2px 6px rgba(0, 81, 137, 0.2); }
-    .btn-warning.edit-btn:hover { background: #004373; color: #ffffff; box-shadow: 0 4px 12px rgba(0, 81, 137, 0.3); }
+    /* أزرار التعديل بلون أزرق داكن موحد */
+    .btn-warning { background: #2c5aa0; color: #ffffff; border: 1px solid #235080; box-shadow: 0 2px 6px rgba(44, 90, 160, 0.2); }
+    .btn-warning:hover { background: #235080; color: #ffffff; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(44, 90, 160, 0.3); }
+    /* تخصيص زر التعديل باللون الأزرق الداكن */
+    .btn-warning.edit-btn { background: #2c5aa0; color: #ffffff; border: 1px solid #235080; box-shadow: 0 2px 6px rgba(44, 90, 160, 0.2); }
+    .btn-warning.edit-btn:hover { background: #235080; color: #ffffff; box-shadow: 0 4px 12px rgba(44, 90, 160, 0.3); }
     /* تخصيص زر النسخ الاحتياطي باللون الأخضر الداكن */
     .btn-warning.backup-btn { background: #1e8449; color: #ffffff; border: 1px solid #16653a; box-shadow: 0 2px 6px rgba(22, 101, 58, 0.18); }
     .btn-warning.backup-btn:hover { background: #16653a; color: #ffffff; box-shadow: 0 4px 12px rgba(22, 101, 58, 0.28); }
@@ -1690,7 +1690,6 @@
         .user-status { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-left: 10px; }
         .status-active { background: #27ae60; }
         .status-inactive { background: #e74c3c; }
-        .email-settings { background: #fff3cd; padding: 20px; border-radius: var(--border-radius); border-right: 4px solid #ffc107; margin-bottom: 20px; display: none; }
         @media (max-width: 1024px) { .sidebar { width: 250px; } .container { margin-right: 250px; } .control-panel { right: calc(250px + 20px); } }
         @media (max-width: 768px) { 
             * { max-width: 100vw; }
@@ -3255,6 +3254,39 @@ textarea.input-success:focus {
     flex: 1;
 }
 
+/* المؤثر البصري الأخضر لوضع التعديل - عام لجميع النماذج */
+input.editing-mode,
+select.editing-mode,
+textarea.editing-mode {
+    border: 2px solid #28a745 !important;
+    box-shadow: 0 0 8px rgba(40, 167, 69, 0.3) !important;
+    animation: editPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes editPulse {
+    0%, 100% {
+        box-shadow: 0 0 8px rgba(40, 167, 69, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 15px rgba(40, 167, 69, 0.5);
+    }
+}
+
+/* تنسيق زر التحديث */
+.btn-primary.update-mode {
+    background: linear-gradient(135deg, #28a745, #20c997) !important;
+    animation: updateButton 2s ease-in-out infinite;
+}
+
+@keyframes updateButton {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.02);
+    }
+}
+
 .assets-filters {
     display: flex;
     gap: 15px;
@@ -3318,7 +3350,7 @@ textarea.input-success:focus {
     </div>
 
     <!-- نافذة تعديل المستخدم -->
-    <div id="user-edit-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); display: none; justify-content: center; align-items: center; z-index: 10001; backdrop-filter: blur(5px);">
+    <div id="user-edit-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); display: none; justify-content: center; align-items: center; z-index: 10000; backdrop-filter: blur(5px);">
         <div id="user-edit-box" style="background: white; padding: 30px; border-radius: var(--border-radius); box-shadow: 0 10px 25px rgba(0,0,0,0.2); width: 100%; max-width: 480px; text-align: center;">
             <h2 style="color: var(--primary-color); margin-bottom: 20px;">✏️ تعديل بيانات المستخدم</h2>
             <form id="editUserForm" onsubmit="return false;">
@@ -3339,6 +3371,61 @@ textarea.input-success:focus {
                 <button class="btn-success" onclick="saveEditedUser()" style="flex:1;">حفظ</button>
                 <button class="btn-secondary" onclick="closeEditUserModal()" style="flex:1;">إلغاء</button>
             </div>
+        </div>
+    </div>
+
+    <!-- نافذة إعدادات البريد الإلكتروني -->
+    <div id="email-settings-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); justify-content: center; align-items: center; z-index: 10002; backdrop-filter: blur(5px);">
+        <div style="background: white; padding: 30px; border-radius: var(--border-radius); box-shadow: 0 10px 25px rgba(0,0,0,0.2); width: 100%; max-width: 700px; max-height: 90vh; overflow-y: auto;">
+            <h2 style="color: var(--primary-color); margin-bottom: 10px; text-align: center;">📧 إعدادات البريد الإلكتروني</h2>
+            <p style="text-align: center; color: #666; margin-bottom: 20px; font-size: 0.95em;">
+                هذه الإعدادات ضرورية لتفعيل إرسال الفواتير عبر البريد. احصل عليها من <a href="https://www.emailjs.com/" target="_blank" style="color: var(--primary-color);">EmailJS</a>
+            </p>
+            
+            <form id="emailSettingsForm" onsubmit="return false;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                    <!-- Service ID -->
+                    <div>
+                        <label for="emailJsServiceId" style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">Service ID</label>
+                        <code style="display: block; background-color: #f0f0f0; padding: 8px; border-radius: 4px; margin-bottom: 8px; cursor: pointer; user-select: all; font-size: 0.85em;" onclick="navigator.clipboard.writeText(this.innerText); showNotification('✅ تم النسخ', 'تم نسخ Service ID', 'success', 2000);">service_hu6ucxi</code>
+                        <input type="text" id="emailJsServiceId" class="login-input" placeholder="أدخل Service ID">
+                    </div>
+                    
+                    <!-- Public Key -->
+                    <div>
+                        <label for="emailJsPublicKey" style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">Public Key</label>
+                        <code style="display: block; background-color: #f0f0f0; padding: 8px; border-radius: 4px; margin-bottom: 8px; cursor: pointer; user-select: all; font-size: 0.85em;" onclick="navigator.clipboard.writeText(this.innerText); showNotification('✅ تم النسخ', 'تم نسخ Public Key', 'success', 2000);">-FKicwCTdzG90IoY6</code>
+                        <input type="text" id="emailJsPublicKey" class="login-input" placeholder="أدخل Public Key">
+                    </div>
+                    
+                    <!-- Template ID -->
+                    <div>
+                        <label for="emailJsTemplateId" style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">Template ID (الفواتير)</label>
+                        <code style="display: block; background-color: #f0f0f0; padding: 8px; border-radius: 4px; margin-bottom: 8px; cursor: pointer; user-select: all; font-size: 0.85em;" onclick="navigator.clipboard.writeText(this.innerText); showNotification('✅ تم النسخ', 'تم نسخ Template ID', 'success', 2000);">template_cwep9ok</code>
+                        <input type="text" id="emailJsTemplateId" class="login-input" placeholder="أدخل Template ID للفواتير">
+                    </div>
+                    
+                    <!-- Reset Template ID -->
+                    <div>
+                        <label for="emailJsResetTemplateId" style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">Reset Template ID</label>
+                        <code style="display: block; background-color: #f0f0f0; padding: 8px; border-radius: 4px; margin-bottom: 8px; cursor: pointer; user-select: all; font-size: 0.85em;" onclick="navigator.clipboard.writeText(this.innerText); showNotification('✅ تم النسخ', 'تم نسخ Reset Template ID', 'success', 2000);">template_password_reset</code>
+                        <input type="text" id="emailJsResetTemplateId" class="login-input" placeholder="أدخل Template ID لإعادة كلمة المرور">
+                    </div>
+                </div>
+                
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9em; color: #555;">
+                    <strong>📝 ملاحظات:</strong>
+                    <ul style="margin: 10px 0 0 20px; padding: 0;">
+                        <li>قالب الفاتورة يجب أن يحتوي على: <code style="background: #e9ecef; padding: 2px 5px; border-radius: 3px;">{{to_name}}, {{to_email}}, {{invoice_number}}, {{invoice_details}}</code></li>
+                        <li>قالب إعادة كلمة المرور يجب أن يحتوي على: <code style="background: #e9ecef; padding: 2px 5px; border-radius: 3px;">{{to_email}}, {{reset_link}}, {{app_name}}</code></li>
+                    </ul>
+                </div>
+                
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn-success" onclick="saveEmailJsSettings()" style="flex: 1;">💾 حفظ إعدادات البريد</button>
+                    <button class="btn-secondary" onclick="closeEmailSettingsModal()" style="flex: 1;">إلغاء</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -4458,19 +4545,89 @@ textarea.input-success:focus {
     </div>
 
     <div class="salary-summary">
-        <h3>ملخص الرواتب للشهر المحدد</h3>
-        <div class="summary-item"><span>عدد الموظفين</span><span id="salarySummaryCount">0</span></div>
-        <div class="summary-item"><span>إجمالي الرواتب الأساسية</span><span id="salarySummaryBasic">0.00</span></div>
-        <div class="summary-item"><span>إجمالي البدلات</span><span id="salarySummaryAllowances">0.00</span></div>
-        <div class="summary-item"><span>إجمالي الرواتب</span><span id="salarySummaryGross">0.00</span></div>
-        <div class="summary-item gosi-deduction"><span>إجمالي استقطاعات GOSI</span><span id="salarySummaryGosi">0.00</span></div>
-        <div class="summary-item"><span>مساهمة جهة العمل (GOSI)</span><span id="salarySummaryGosiEmployer">0.00</span></div>
-        <div class="summary-item"><span>استقطاعات أخرى</span><span id="salarySummaryOtherDeductions">0.00</span></div>
-        <div class="summary-item summary-total"><span>صافي الرواتب</span><span id="salarySummaryNet" class="net-salary">0.00</span></div>
+        <h3>📊 ملخص الرواتب للشهر المحدد</h3>
+        <div class="dashboard-cards">
+            <div class="dashboard-card" style="background: white; border: 2px solid #3498db; color: #3498db;">
+                <div class="card-value" id="salarySummaryCount" style="color: #3498db;">0</div>
+                <div class="card-title" style="color: #3498db;">عدد الموظفين</div>
+                <div class="card-growth">
+                    <span style="color: #3498db;">+0%</span>
+                    <span class="growth-icon">👥</span>
+                </div>
+            </div>
+            <div class="dashboard-card" style="background: white; border: 2px solid #27ae60; color: #27ae60;">
+                <div class="card-value" id="salarySummaryBasic" style="color: #27ae60;">0.00</div>
+                <div class="card-title" style="color: #27ae60;">إجمالي الرواتب الأساسية</div>
+                <div class="card-growth">
+                    <span style="color: #27ae60;">+0%</span>
+                    <span class="growth-icon">💰</span>
+                </div>
+            </div>
+            <div class="dashboard-card" style="background: white; border: 2px solid #f39c12; color: #f39c12;">
+                <div class="card-value" id="salarySummaryAllowances" style="color: #f39c12;">0.00</div>
+                <div class="card-title" style="color: #f39c12;">إجمالي البدلات</div>
+                <div class="card-growth">
+                    <span style="color: #f39c12;">+0%</span>
+                    <span class="growth-icon">🎁</span>
+                </div>
+            </div>
+            <div class="dashboard-card" style="background: white; border: 2px solid #9b59b6; color: #9b59b6;">
+                <div class="card-value" id="salarySummaryGross" style="color: #9b59b6;">0.00</div>
+                <div class="card-title" style="color: #9b59b6;">إجمالي الرواتب</div>
+                <div class="card-growth">
+                    <span style="color: #9b59b6;">+0%</span>
+                    <span class="growth-icon">💵</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- بطاقات الاستقطاعات -->
+        <div class="dashboard-cards" style="margin-top: 15px;">
+            <div class="dashboard-card" style="background: white; border: 2px solid #e74c3c; color: #e74c3c;">
+                <div class="card-value" id="salarySummaryGosi" style="color: #e74c3c;">0.00</div>
+                <div class="card-title" style="color: #e74c3c;">إجمالي استقطاعات GOSI</div>
+                <div class="card-growth">
+                    <span style="color: #e74c3c;">-9%</span>
+                    <span class="growth-icon">🏛️</span>
+                </div>
+            </div>
+            <div class="dashboard-card" style="background: white; border: 2px solid #e67e22; color: #e67e22;">
+                <div class="card-value" id="salarySummaryGosiEmployer" style="color: #e67e22;">0.00</div>
+                <div class="card-title" style="color: #e67e22;">مساهمة جهة العمل (GOSI)</div>
+                <div class="card-growth">
+                    <span style="color: #e67e22;">+9%</span>
+                    <span class="growth-icon">🏢</span>
+                </div>
+            </div>
+            <div class="dashboard-card" style="background: white; border: 2px solid #8e44ad; color: #8e44ad;">
+                <div class="card-value" id="salarySummaryOtherDeductions" style="color: #8e44ad;">0.00</div>
+                <div class="card-title" style="color: #8e44ad;">استقطاعات أخرى</div>
+                <div class="card-growth">
+                    <span style="color: #8e44ad;">+0%</span>
+                    <span class="growth-icon">📋</span>
+                </div>
+            </div>
+            <div class="dashboard-card" style="background: white; border: 3px solid #2ecc71; color: #2ecc71; box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3);">
+                <div class="card-value" id="salarySummaryNet" style="font-size: 1.8em; font-weight: bold; color: #2ecc71;">0.00</div>
+                <div class="card-title" style="font-weight: bold; color: #2ecc71;">صافي الرواتب</div>
+                <div class="card-growth">
+                    <span style="font-weight: bold; color: #2ecc71;">💼</span>
+                    <span class="growth-icon">✅</span>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="search-container">
         <input type="text" id="searchSalaries" class="search-input" placeholder="🔍 بحث في مسيرات الرواتب...">
+    </div>
+
+    <!-- أزرار الطباعة والتصدير -->
+    <div class="export-options" style="margin: 20px 0;">
+        <div class="form-grid grid-2">
+            <button class="btn-success" onclick="exportSalariesToExcel()">📊 تصدير إلى Excel</button>
+            <button class="btn-secondary" onclick="printSalariesReport()">🖨️ طباعة التقرير</button>
+        </div>
     </div>
 
     <table>
@@ -4499,7 +4656,7 @@ textarea.input-success:focus {
     <p>🏭 إدارة وتتبع الأصول الثابتة مع حساب الإهلاك التلقائي</p>
 
     <!-- نموذج إضافة أصل جديد -->
-    <div class="asset-card">
+    <div class="asset-card" id="assetForm">
         <h3>إضافة أصل ثابت جديد</h3>
         <div class="form-grid grid-3">
             <input type="text" id="assetName" placeholder="اسم الأصل *" required>
@@ -4538,7 +4695,6 @@ textarea.input-success:focus {
         
         <div class="asset-actions">
             <button class="btn-primary" onclick="addAsset()">➕ إضافة الأصل</button>
-            <button class="btn-secondary" onclick="clearAssetForm()">↺ تفريغ الحقول</button>
         </div>
     </div>
 
@@ -4599,6 +4755,14 @@ textarea.input-success:focus {
             <option value="inactive">🔴 غير نشط</option>
         </select>
         <input type="text" id="searchAssets" class="search-input" placeholder="🔍 بحث في الأصول...">
+    </div>
+
+    <!-- أزرار الطباعة والتصدير -->
+    <div class="export-options" style="margin: 20px 0;">
+        <div class="form-grid grid-2">
+            <button class="btn-success" onclick="exportAssetsToExcel()">📊 تصدير إلى Excel</button>
+            <button class="btn-secondary" onclick="printAssetsReport()">🖨️ طباعة التقرير</button>
+        </div>
     </div>
 
     <!-- جدول الأصول -->
@@ -4851,6 +5015,9 @@ textarea.input-success:focus {
             </form>
             <div class="form-grid grid-2">
                 <button class="btn-primary btn-add" onclick="addUser()">➕ إضافة مستخدم</button>
+                <button class="btn-secondary" onclick="fixUsersPhoneField()" style="background: linear-gradient(135deg, #3498db 0%, #2ecc71 100%);">
+                    📱 إصلاح حقول الهاتف
+                </button>
                 <button class="btn-secondary" onclick="migrateUsersToFirebase()" style="background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);">
                     🔥 نقل المستخدمين إلى Firebase
                 </button>
@@ -4906,10 +5073,6 @@ textarea.input-success:focus {
                 </button>
                 <button class="btn-secondary" onclick="migrateActivityDataToFirebase()" style="background: linear-gradient(135deg, #9C27B0 0%, #E91E63 100%);">
                     📦 نقل بيانات النشاط الحالي
-                </button>
-                <button class="btn-danger" onclick="showTrashModal()">
-                    🗑️ سلة المحذوفات
-                    <span id="trash-count-badge" style="background: #fff; color: #d32f2f; padding: 2px 8px; border-radius: 10px; font-size: 0.8em; margin-right: 5px; font-weight: bold;"></span>
                 </button>
             </div>
             <div class="activity-selector" style="margin-top: 20px;">
@@ -5015,6 +5178,10 @@ textarea.input-success:focus {
                 <button class="btn-secondary" onclick="importSampleData()" style="background: #64748b;">
                     🧪 بيانات تجريبية للنشاط
                 </button>
+                <button class="btn-danger" onclick="showTrashModal()">
+                    🗑️ سلة المحذوفات
+                    <span id="trash-count-badge" style="background: #fff; color: #d32f2f; padding: 2px 8px; border-radius: 10px; font-size: 0.8em; margin-right: 5px; font-weight: bold;"></span>
+                </button>
                 <button class="btn-danger" onclick="clearActivityData()" style="background: #dc2626;">
                     🗑️ مسح بيانات النشاط
                 </button>
@@ -5034,45 +5201,6 @@ textarea.input-success:focus {
             </div>
             
             <input type="file" id="importFile" accept=".json" style="display: none;" onchange="handleFileImport(this.files)">
-        </div>
-
-      
-            </div>
-            <input type="file" id="importFile" accept=".json" style="display: none;" onchange="handleFileImport(this.files)">
-        </div>
-        
-        <div class="email-settings">
-        <h3>📧 إعدادات البريد الإلكتروني (EmailJS)</h3>
-        <p>هذه الإعدادات ضرورية لتفعيل خاصية إرسال الفواتير وروابط إعادة تعيين كلمة المرور عبر البريد. يمكنك الحصول عليها من حسابك في <a href="https://www.emailjs.com/" target="_blank">EmailJS</a>.</p>
-        <div class="form-grid grid-3" style="margin-top: 15px;">
-            <div style="display: flex; flex-direction: column;">
-                <label for="emailJsServiceId" style="margin-bottom: 5px; font-weight: bold;">Service ID</label>
-                <code style="background-color: #eee; padding: 5px; border-radius: 4px; margin-bottom: 5px; cursor: pointer; user-select: all;" onclick="navigator.clipboard.writeText(this.innerText); alert('تم نسخ Service ID');">service_hu6ucxi</code>
-                <input type="text" id="emailJsServiceId" placeholder="أدخل Service ID هنا">
-            </div>
-            <div style="display: flex; flex-direction: column;">
-                <label for="emailJsTemplateId" style="margin-bottom: 5px; font-weight: bold;">Template ID</label>
-                <code style="background-color: #eee; padding: 5px; border-radius: 4px; margin-bottom: 5px; cursor: pointer; user-select: all;" onclick="navigator.clipboard.writeText(this.innerText); alert('تم نسخ Template ID');">template_cwep9ok</code>
-                <input type="text" id="emailJsTemplateId" placeholder="أدخل Template ID هنا">
-            </div>
-            <div style="display: flex; flex-direction: column;">
-                <label for="emailJsResetTemplateId" style="margin-bottom: 5px; font-weight: bold;">Reset Template ID</label>
-                <code style="background-color: #eee; padding: 5px; border-radius: 4px; margin-bottom: 5px; cursor: pointer; user-select: all;" onclick="navigator.clipboard.writeText(this.innerText); alert('تم نسخ Reset Template ID');">template_password_reset</code>
-                <input type="text" id="emailJsResetTemplateId" placeholder="أدخل Template ID لرسالة إعادة كلمة المرور">
-            </div>
-            <div style="display: flex; flex-direction: column;">
-                <label for="emailJsPublicKey" style="margin-bottom: 5px; font-weight: bold;">Public Key</label>
-                <code style="background-color: #eee; padding: 5px; border-radius: 4px; margin-bottom: 5px; cursor: pointer; user-select: all;" onclick="navigator.clipboard.writeText(this.innerText); alert('تم نسخ Public Key');">-FKicwCTdzG90IoY6</code>
-                <input type="text" id="emailJsPublicKey" placeholder="أدخل Public Key هنا">
-            </div>
-        </div>
-        <button class="btn-success" onclick="saveEmailJsSettings()">💾 حفظ إعدادات البريد</button>
-        <div style="margin-top: 10px; font-size: 0.9em;">
-            <p><strong>ملاحظة:</strong>
-                - قالب الفاتورة يجب أن يحتوي على: <code>{{to_name}}</code>, <code>{{to_email}}</code>, <code>{{from_name}}</code>, <code>{{invoice_number}}</code>, <code>{{invoice_details}}</code>.
-                <br>- قالب إعادة كلمة المرور يجب أن يحتوي على: <code>{{to_email}}</code>, <code>{{reset_link}}</code>, <code>{{app_name}}</code>.
-            </p>
-        </div>
         </div>
     </div>
 </div>
@@ -5562,6 +5690,19 @@ let emailJsConfig = { ...EMAILJS_DEFAULTS };
     function showNotification(title, message, type = 'info', duration = 5000) {
         const container = document.getElementById('notifications-container') || createNotificationContainer();
         
+        // التحقق من عدم وجود إشعار مطابق معروض حالياً
+        const existingNotifications = container.querySelectorAll('.notification');
+        for (let existingNotif of existingNotifications) {
+            const existingTitle = existingNotif.querySelector('.notification-title')?.textContent;
+            const existingMessage = existingNotif.querySelector('.notification-message')?.textContent;
+            
+            // إذا كان هناك إشعار مطابق تماماً، لا نضيف إشعار جديد
+            if (existingTitle === title && existingMessage === message && existingNotif.classList.contains(type)) {
+                // نعيد تفعيل المؤقت للإشعار الموجود
+                return existingNotif;
+            }
+        }
+        
         const notification = document.createElement('div');
         notification.className = `notification ${type}`;
         
@@ -5615,6 +5756,259 @@ let emailJsConfig = { ...EMAILJS_DEFAULTS };
         setTimeout(() => {
             notification.remove();
         }, 300);
+    }
+
+    // ===== دوال المؤثرات البصرية للتعديل =====
+    
+    /**
+     * تطبيق المؤثر البصري الأخضر على نموذج التعديل
+     * @param {string} formSelector - محدد النموذج (مثل: '#itemForm')
+     * @param {string} firstFieldId - معرف أول حقل للتركيز عليه
+     * @param {string} titleSelector - محدد العنوان (اختياري)
+     * @param {string} titleText - نص العنوان الجديد (اختياري)
+     */
+    function applyEditMode(formSelector, firstFieldId, titleSelector = null, titleText = null) {
+        const form = document.querySelector(formSelector);
+        if (!form) return;
+        
+        // إضافة كلاس للمؤثر البصري الأخضر على جميع الحقول
+        const formInputs = form.querySelectorAll('input, select, textarea');
+        formInputs.forEach(input => {
+            input.classList.add('editing-mode');
+            // إزالة readonly و disabled لجعل الحقول قابلة للتعديل
+            input.removeAttribute('readonly');
+            input.removeAttribute('disabled');
+            input.disabled = false;
+            input.readOnly = false;
+        });
+        
+        // تغيير العنوان إن وجد
+        if (titleSelector && titleText) {
+            const titleElement = document.querySelector(titleSelector);
+            if (titleElement) {
+                titleElement.innerHTML = titleText;
+                titleElement.style.color = '#28a745';
+            }
+        }
+        
+        // تغيير زر الحفظ إلى زر التحديث
+        const submitBtn = form.querySelector('.btn-primary');
+        if (submitBtn && !submitBtn.innerHTML.includes('تحديث')) {
+            submitBtn.setAttribute('data-original-text', submitBtn.innerHTML);
+            submitBtn.innerHTML = '🔄 تحديث';
+            submitBtn.classList.add('update-mode');
+        }
+        
+        // التمرير للنموذج
+        form.scrollIntoView({ behavior: 'smooth' });
+        
+        // نقل المؤشر للحقل الأول بعد التمرير
+        setTimeout(() => {
+            const firstField = document.getElementById(firstFieldId);
+            if (firstField) {
+                firstField.focus();
+                if (firstField.type === 'text' || firstField.tagName === 'TEXTAREA') {
+                    firstField.select();
+                }
+            }
+        }, 500);
+    }
+    
+    /**
+     * إزالة المؤثر البصري للتعديل وإعادة النموذج للوضع الطبيعي
+     * @param {string} formSelector - محدد النموذج
+     * @param {string} titleSelector - محدد العنوان (اختياري)
+     * @param {string} originalTitleText - النص الأصلي للعنوان (اختياري)
+     */
+    function removeEditMode(formSelector, titleSelector = null, originalTitleText = null) {
+        const form = document.querySelector(formSelector);
+        if (!form) return;
+        
+        // إزالة المؤثر البصري الأخضر
+        const formInputs = form.querySelectorAll('input, select, textarea');
+        formInputs.forEach(input => {
+            input.classList.remove('editing-mode');
+        });
+        
+        // إعادة العنوان الأصلي
+        if (titleSelector && originalTitleText) {
+            const titleElement = document.querySelector(titleSelector);
+            if (titleElement) {
+                titleElement.innerHTML = originalTitleText;
+                titleElement.style.color = '';
+            }
+        }
+        
+        // إعادة زر الحفظ الأصلي
+        const submitBtn = form.querySelector('.btn-primary');
+        if (submitBtn) {
+            const originalText = submitBtn.getAttribute('data-original-text');
+            if (originalText) {
+                submitBtn.innerHTML = originalText;
+                submitBtn.removeAttribute('data-original-text');
+            }
+            submitBtn.classList.remove('update-mode');
+        }
+    }
+    
+    /**
+     * التحقق من وجود تعديل قيد التنفيذ في صفحة الأصناف فقط
+     * @returns {Promise<boolean>} - true إذا تم التأكيد أو لا يوجد تعديل، false إذا تم الإلغاء
+     */
+    async function confirmCancelItemEdit() {
+        const form = document.querySelector('#items');
+        if (!form) return true;
+        
+        // التحقق من وجود حقول في وضع التعديل في نموذج الأصناف فقط
+        const editingFields = form.querySelectorAll('.editing-mode');
+        if (editingFields.length > 0) {
+            const confirmed = await showConfirmDialog({
+                title: 'لديك تعديل قيد التنفيذ ⚠️',
+                message: 'هل أنت متأكد من رغبتك في الانتقال من صفحة الأصناف؟\nسيتم إلغاء التعديلات الحالية.',
+                type: 'warning',
+                confirmText: 'نعم، انتقل',
+                cancelText: 'إلغاء'
+            });
+            return confirmed;
+        }
+        return true;
+    }
+
+    /**
+     * التحقق من وجود تعديل قيد التنفيذ في صفحة العملاء فقط
+     * @returns {Promise<boolean>} - true إذا تم التأكيد أو لا يوجد تعديل، false إذا تم الإلغاء
+     */
+    async function confirmCancelCustomerEdit() {
+        const form = document.querySelector('#customers');
+        if (!form) return true;
+        
+        // التحقق من وجود حقول في وضع التعديل في نموذج العملاء فقط
+        const editingFields = form.querySelectorAll('.editing-mode');
+        if (editingFields.length > 0) {
+            const confirmed = await showConfirmDialog({
+                title: 'لديك تعديل قيد التنفيذ ⚠️',
+                message: 'هل أنت متأكد من رغبتك في الانتقال من صفحة العملاء؟\nسيتم إلغاء التعديلات الحالية.',
+                type: 'warning',
+                confirmText: 'نعم، انتقل',
+                cancelText: 'إلغاء'
+            });
+            return confirmed;
+        }
+        return true;
+    }
+
+    /**
+     * التحقق من وجود تعديل قيد التنفيذ في صفحة الموردين فقط
+     */
+    async function confirmCancelSupplierEdit() {
+        const form = document.querySelector('#suppliers');
+        if (!form) return true;
+        const editingFields = form.querySelectorAll('.editing-mode');
+        if (editingFields.length > 0) {
+            return await showConfirmDialog({
+                title: 'لديك تعديل قيد التنفيذ ⚠️',
+                message: 'هل أنت متأكد من رغبتك في الانتقال من صفحة الموردين؟\nسيتم إلغاء التعديلات الحالية.',
+                type: 'warning',
+                confirmText: 'نعم، انتقل',
+                cancelText: 'إلغاء'
+            });
+        }
+        return true;
+    }
+
+    /**
+     * التحقق من وجود تعديل قيد التنفيذ في صفحة المصروفات فقط
+     */
+    async function confirmCancelExpenseEdit() {
+        const form = document.querySelector('#expenses');
+        if (!form) return true;
+        const editingFields = form.querySelectorAll('.editing-mode');
+        if (editingFields.length > 0) {
+            return await showConfirmDialog({
+                title: 'لديك تعديل قيد التنفيذ ⚠️',
+                message: 'هل أنت متأكد من رغبتك في الانتقال من صفحة المصروفات؟\nسيتم إلغاء التعديلات الحالية.',
+                type: 'warning',
+                confirmText: 'نعم، انتقل',
+                cancelText: 'إلغاء'
+            });
+        }
+        return true;
+    }
+
+    /**
+     * التحقق من وجود تعديل قيد التنفيذ في صفحة الإيرادات فقط
+     */
+    async function confirmCancelRevenueEdit() {
+        const form = document.querySelector('#revenues');
+        if (!form) return true;
+        const editingFields = form.querySelectorAll('.editing-mode');
+        if (editingFields.length > 0) {
+            return await showConfirmDialog({
+                title: 'لديك تعديل قيد التنفيذ ⚠️',
+                message: 'هل أنت متأكد من رغبتك في الانتقال من صفحة الإيرادات؟\nسيتم إلغاء التعديلات الحالية.',
+                type: 'warning',
+                confirmText: 'نعم، انتقل',
+                cancelText: 'إلغاء'
+            });
+        }
+        return true;
+    }
+
+    /**
+     * التحقق من وجود تعديل قيد التنفيذ في صفحة الرواتب فقط
+     */
+    async function confirmCancelSalaryEdit() {
+        const form = document.querySelector('#salaries');
+        if (!form) return true;
+        const editingFields = form.querySelectorAll('.editing-mode');
+        if (editingFields.length > 0) {
+            return await showConfirmDialog({
+                title: 'لديك تعديل قيد التنفيذ ⚠️',
+                message: 'هل أنت متأكد من رغبتك في الانتقال من صفحة الرواتب؟\nسيتم إلغاء التعديلات الحالية.',
+                type: 'warning',
+                confirmText: 'نعم، انتقل',
+                cancelText: 'إلغاء'
+            });
+        }
+        return true;
+    }
+
+    /**
+     * التحقق من وجود تعديل قيد التنفيذ في صفحة الأصول فقط
+     */
+    async function confirmCancelAssetEdit() {
+        const form = document.querySelector('#assets');
+        if (!form) return true;
+        const editingFields = form.querySelectorAll('.editing-mode');
+        if (editingFields.length > 0) {
+            return await showConfirmDialog({
+                title: 'لديك تعديل قيد التنفيذ ⚠️',
+                message: 'هل أنت متأكد من رغبتك في الانتقال من صفحة الأصول؟\nسيتم إلغاء التعديلات الحالية.',
+                type: 'warning',
+                confirmText: 'نعم، انتقل',
+                cancelText: 'إلغاء'
+            });
+        }
+        return true;
+    }
+
+    /**
+     * التحقق من وجود تعديل قيد التنفيذ في صفحة العهد والسلف فقط
+     */
+    async function confirmCancelAdvanceEdit() {
+        const form = document.querySelector('#advances');
+        if (!form) return true;
+        const editingFields = form.querySelectorAll('.editing-mode');
+        if (editingFields.length > 0) {
+            return await showConfirmDialog({
+                title: 'لديك تعديل قيد التنفيذ ⚠️',
+                message: 'هل أنت متأكد من رغبتك في الانتقال من صفحة العهد والسلف؟\nسيتم إلغاء التعديلات الحالية.',
+                type: 'warning',
+                confirmText: 'نعم، انتقل',
+                cancelText: 'إلغاء'
+            });
+        }
+        return true;
     }
 
     function checkLowStock() {
@@ -6400,7 +6794,8 @@ let emailJsConfig = { ...EMAILJS_DEFAULTS };
                 type = 'warning', // warning, danger, info, success
                 confirmText = 'تأكيد',
                 cancelText = 'إلغاء',
-                icon = null
+                icon = null,
+                confirmButtonClass = '' // إضافة خاصية جديدة
             } = options;
             
             // الحصول على عناصر الحوار
@@ -6427,9 +6822,10 @@ let emailJsConfig = { ...EMAILJS_DEFAULTS };
             confirmBtn.textContent = confirmText;
             cancelBtn.textContent = cancelText;
             
-            // تعيين الفئات
+            // تعيين الفئات - استخدام confirmButtonClass إذا كان موجوداً
             header.className = `confirm-header ${type}`;
-            confirmBtn.className = `confirm-btn-confirm ${type === 'danger' ? 'danger' : type === 'success' ? 'success' : ''}`;
+            const buttonClass = confirmButtonClass || (type === 'danger' ? 'danger' : type === 'success' ? 'success' : '');
+            confirmBtn.className = `confirm-btn-confirm ${buttonClass}`;
             
             // عرض الحوار
             overlay.classList.add('active');
@@ -6475,6 +6871,28 @@ let emailJsConfig = { ...EMAILJS_DEFAULTS };
     }
     
     // ===== نهاية نظام الحوار الاحترافي =====
+
+    // دالة التحقق من إلغاء التعديل
+    async function confirmCancelEdit(formSelector) {
+        // التحقق من وجود النموذج
+        const form = document.querySelector(formSelector);
+        if (!form) return true;
+        
+        // التحقق من وجود معرف التعديل
+        const editingId = form.getAttribute('data-editing-id');
+        if (!editingId) return true; // لا يوجد تعديل قيد التنفيذ
+        
+        // عرض تأكيد الإلغاء
+        return await showConfirmDialog({
+            title: '⚠️ إلغاء التعديل',
+            message: 'هل أنت متأكد من رغبتك في إلغاء التعديل الحالي؟\n\nسيتم فقدان جميع التغييرات غير المحفوظة.',
+            type: 'warning',
+            icon: '⚠️',
+            confirmText: 'نعم، إلغاء التعديل',
+            cancelText: 'الاستمرار في التعديل',
+            confirmButtonClass: 'warning'
+        });
+    }
 
         // === دوال التخزين المحلي ===
         const GLOBAL_STORAGE_KEYS = new Set(['diwan_users', 'diwan_activities']);
@@ -6682,6 +7100,65 @@ let emailJsConfig = { ...EMAILJS_DEFAULTS };
                     'فشل نقل جميع المستخدمين. تحقق من Console.',
                     'error',
                     8000
+                );
+            }
+        }
+
+        /**
+         * إصلاح حقول الهاتف للمستخدمين القدامى
+         */
+        async function fixUsersPhoneField() {
+            const confirmed = await showConfirmDialog({
+                title: '📱 إصلاح حقول الهاتف',
+                message: 'هل تريد إصلاح حقول الهاتف للمستخدمين الذين ليس لديهم رقم هاتف؟\n\nسيتم إضافة حقل phone فارغ يمكن تعبئته لاحقاً.',
+                type: 'info',
+                confirmText: 'نعم، إصلح الآن',
+                cancelText: 'إلغاء'
+            });
+
+            if (!confirmed) return;
+
+            showLoading('📱 جاري إصلاح حقول الهاتف...');
+
+            try {
+                let fixedCount = 0;
+                
+                users.forEach(user => {
+                    if (!user.hasOwnProperty('phone') || user.phone === undefined) {
+                        user.phone = '';
+                        fixedCount++;
+                        console.log(`✅ تم إصلاح حقل phone للمستخدم: ${user.email}`);
+                    }
+                });
+
+                if (fixedCount > 0) {
+                    // حفظ التغييرات
+                    saveUsers();
+                    
+                    hideLoading();
+                    showNotification(
+                        '✅ تم الإصلاح',
+                        `تم إصلاح حقل الهاتف لـ ${fixedCount} مستخدم`,
+                        'success'
+                    );
+                    
+                    // تحديث قائمة المستخدمين
+                    renderUsersInSettings();
+                } else {
+                    hideLoading();
+                    showNotification(
+                        'ℹ️ لا حاجة للإصلاح',
+                        'جميع المستخدمين لديهم حقل الهاتف',
+                        'info'
+                    );
+                }
+            } catch (error) {
+                console.error('❌ خطأ في إصلاح حقول الهاتف:', error);
+                hideLoading();
+                showNotification(
+                    '❌ فشل الإصلاح',
+                    'حدث خطأ أثناء إصلاح حقول الهاتف: ' + error.message,
+                    'error'
                 );
             }
         }
@@ -6979,11 +7456,20 @@ let emailJsConfig = { ...EMAILJS_DEFAULTS };
         }
 
         users = storedUsers;
+        
+        // إصلاح: التأكد من وجود حقل phone في جميع المستخدمين
+        users.forEach(user => {
+            if (!user.hasOwnProperty('phone')) {
+                user.phone = '';
+                console.log(`⚠️ تم إضافة حقل phone فارغ للمستخدم: ${user.email}`);
+            }
+        });
+        
         console.log(`تم تحميل ${users.length} مستخدم من التخزين المحلي`);
         if (users.length > 0) {
             console.log('📋 قائمة المستخدمين المحملة:');
             users.forEach(u => {
-                console.log(`  - ${u.email}: role=${u.role}, activityId=${u.activityId} (${typeof u.activityId})`);
+                console.log(`  - ${u.email}: role=${u.role}, phone=${u.phone || 'غير موجود'}, activityId=${u.activityId} (${typeof u.activityId})`);
             });
         }
         
@@ -7267,13 +7753,103 @@ let emailJsConfig = { ...EMAILJS_DEFAULTS };
         }
 
         // === دوال التطبيق الأساسية ===
-       function showSection(sectionId) {
+       async function showSection(sectionId) {
     if (editingSaleId || editingPurchaseId) {
-        if (!confirm('لديك فاتورة قيد التعديل، هل تريد إلغاء التعديلات والانتقال؟')) {
+        const confirmed = await showConfirmDialog(
+            'تعديل قيد التنفيذ ⚠️',
+            'لديك فاتورة قيد التعديل، هل تريد إلغاء التعديلات والانتقال؟',
+            'warning',
+            'حسناً، إلغاء',
+            'إلغاء'
+        );
+        if (!confirmed) {
             return;
         }
         resetInvoiceForms();
     }
+
+    // التحقق من وجود تعديل في صفحة الأصناف فقط عند محاولة الانتقال منها
+    const currentSection = document.querySelector('.section.active');
+    if (currentSection && currentSection.id === 'items' && sectionId !== 'items') {
+        const confirmed = await confirmCancelItemEdit();
+        if (!confirmed) {
+            return; // إلغاء الانتقال والبقاء في صفحة الأصناف
+        }
+    }
+    
+    // التحقق من وجود تعديل في صفحة العملاء فقط عند محاولة الانتقال منها
+    if (currentSection && currentSection.id === 'customers' && sectionId !== 'customers') {
+        const confirmed = await confirmCancelCustomerEdit();
+        if (!confirmed) {
+            return; // إلغاء الانتقال والبقاء في صفحة العملاء
+        }
+    }
+    
+    // التحقق من وجود تعديل في صفحة الموردين
+    if (currentSection && currentSection.id === 'suppliers' && sectionId !== 'suppliers') {
+        const confirmed = await confirmCancelSupplierEdit();
+        if (!confirmed) return;
+    }
+    
+    // التحقق من وجود تعديل في صفحة المصروفات
+    if (currentSection && currentSection.id === 'expenses' && sectionId !== 'expenses') {
+        const confirmed = await confirmCancelExpenseEdit();
+        if (!confirmed) return;
+    }
+    
+    // التحقق من وجود تعديل في صفحة الإيرادات
+    if (currentSection && currentSection.id === 'revenues' && sectionId !== 'revenues') {
+        const confirmed = await confirmCancelRevenueEdit();
+        if (!confirmed) return;
+    }
+    
+    // التحقق من وجود تعديل في صفحة الرواتب
+    if (currentSection && currentSection.id === 'salaries' && sectionId !== 'salaries') {
+        const confirmed = await confirmCancelSalaryEdit();
+        if (!confirmed) return;
+    }
+    
+    // التحقق من وجود تعديل في صفحة الأصول
+    if (currentSection && currentSection.id === 'assets' && sectionId !== 'assets') {
+        const confirmed = await confirmCancelAssetEdit();
+        if (!confirmed) return;
+    }
+    
+    // التحقق من وجود تعديل في صفحة العهد والسلف
+    if (currentSection && currentSection.id === 'advances' && sectionId !== 'advances') {
+        const confirmed = await confirmCancelAdvanceEdit();
+        if (!confirmed) return;
+    }
+
+    // إزالة المؤثرات البصرية من جميع الأقسام وإعادة تعيين النماذج
+    document.querySelectorAll('input.editing-mode, select.editing-mode, textarea.editing-mode').forEach(input => {
+        input.classList.remove('editing-mode');
+    });
+    
+    // إعادة تعيين جميع أزرار التحديث إلى الحالة الأصلية
+    document.querySelectorAll('.btn-primary.update-mode').forEach(btn => {
+        const originalText = btn.getAttribute('data-original-text');
+        if (originalText) {
+            btn.innerHTML = originalText;
+            btn.removeAttribute('data-original-text');
+        }
+        btn.classList.remove('update-mode');
+    });
+    
+    // إعادة تعيين عناوين الأقسام إلى اللون الافتراضي
+    document.querySelectorAll('.section h2').forEach(h2 => {
+        h2.style.color = '';
+    });
+    
+    // استدعاء دوال التفريغ للأقسام الرئيسية لإعادة تعيينها
+    if (typeof clearItemForm === 'function') clearItemForm();
+    if (typeof clearCustomerForm === 'function') clearCustomerForm();
+    if (typeof clearSupplierForm === 'function') clearSupplierForm();
+    if (typeof clearExpenseForm === 'function') clearExpenseForm();
+    if (typeof clearRevenueForm === 'function') clearRevenueForm();
+    if (typeof clearSalaryForm === 'function') clearSalaryForm();
+    if (typeof clearAssetForm === 'function') clearAssetForm();
+    if (typeof clearAdvanceForm === 'function') clearAdvanceForm();
 
     // إخفاء جميع الأقسام
     document.querySelectorAll('.section').forEach(section => {
@@ -8205,6 +8781,9 @@ function loadCustomersToSelect() {
             const addButton = document.querySelector('#items .btn-primary');
             addButton.textContent = '💾 تحديث الصنف';
             addButton.onclick = function() { updateItem(id); };
+            
+            // تطبيق المؤثر البصري الأخضر
+            applyEditMode('#items', 'itemName', '#items h2', `✏️ تعديل الصنف: ${item.name}`);
         }
 
         async function updateItem(id) {
@@ -8376,6 +8955,9 @@ function loadCustomersToSelect() {
             addButton.textContent = '➕ إضافة صنف';
             addButton.onclick = addItem;
             generateItemCode(); // توليد كود جديد تلقائياً بعد التفريغ
+            
+            // إزالة المؤثر البصري
+            removeEditMode('#items', '#items h2', '📦 إدارة الأصناف <span class="title-stat-card"><span class="stat-mini-label">الإجمالي:</span><span id="miniStatItems" class="stat-mini-number">0</span></span>');
         }
         
         // ===== Customers Functions =====
@@ -8510,6 +9092,9 @@ function loadCustomersToSelect() {
             const addButton = document.querySelector('#customers .btn-primary');
             addButton.textContent = '💾 تحديث العميل';
             addButton.onclick = () => updateCustomer(id);
+            
+            // تطبيق المؤثر البصري الأخضر
+            applyEditMode('#customers', 'customerName', '#customers h2', `✏️ تعديل العميل: ${customer.name}`);
         }
 
         async function updateCustomer(id) {
@@ -8602,7 +9187,11 @@ function loadCustomersToSelect() {
             }
         }
 
-        function clearCustomerForm() {
+        async function clearCustomerForm() {
+            // التحقق من وجود تعديل قيد التنفيذ
+            const confirmed = await confirmCancelEdit('#customers');
+            if (!confirmed) return;
+            
             document.getElementById('customerName').value = '';
             document.getElementById('customerPhone').value = '';
             document.getElementById('customerEmail').value = '';
@@ -8611,6 +9200,9 @@ function loadCustomersToSelect() {
             addButton.textContent = '➕ إضافة عميل';
             addButton.onclick = addCustomer;
             generateCustomerCode(); // توليد كود جديد تلقائياً بعد التفريغ
+            
+            // إزالة المؤثر البصري
+            removeEditMode('#customers', '#customers h2', '👥 إدارة العملاء <span class="title-stat-card"><span class="stat-mini-label">الإجمالي:</span><span id="miniStatCustomers" class="stat-mini-number">0</span></span>');
         }
 
         // ===== Suppliers Functions =====
@@ -8741,6 +9333,9 @@ function loadCustomersToSelect() {
             const addButton = document.querySelector('#suppliers .btn-primary');
             addButton.textContent = '💾 تحديث المورد';
             addButton.onclick = () => updateSupplier(id);
+            
+            // تطبيق المؤثر البصري الأخضر
+            applyEditMode('#suppliers', 'supplierName', '#suppliers h2', `✏️ تعديل المورد: ${supplier.name}`);
         }
 
         async function updateSupplier(id) {
@@ -8833,7 +9428,11 @@ function loadCustomersToSelect() {
             }
         }
 
-        function clearSupplierForm() {
+        async function clearSupplierForm() {
+            // التحقق من وجود تعديل قيد التنفيذ
+            const confirmed = await confirmCancelEdit('#suppliers');
+            if (!confirmed) return;
+            
             document.getElementById('supplierName').value = '';
             document.getElementById('supplierPhone').value = '';
             document.getElementById('supplierEmail').value = '';
@@ -8842,6 +9441,9 @@ function loadCustomersToSelect() {
             addButton.textContent = '➕ إضافة مورد';
             addButton.onclick = addSupplier;
             generateSupplierCode(); // توليد كود جديد تلقائياً بعد التفريغ
+            
+            // إزالة المؤثر البصري
+            removeEditMode('#suppliers', '#suppliers h2', '🏪 إدارة الموردين <span class="title-stat-card"><span class="stat-mini-label">الإجمالي:</span><span id="miniStatSuppliers" class="stat-mini-number">0</span></span>');
         }
         
         // ===== General Invoice Functions =====
@@ -9059,7 +9661,11 @@ function loadCustomersToSelect() {
         showNotification('❌ خطأ', 'حدث خطأ في حفظ البيانات', 'error');
     }
 }        
-        function newPurchase() {
+        async function newPurchase() {
+            // التحقق من وجود تعديل قيد التنفيذ
+            const confirmed = await confirmCancelEdit('#purchases');
+            if (!confirmed) return;
+            
             currentPurchaseItems = [];
             editingPurchaseId = null;
             document.getElementById('purchaseDate').value = new Date().toISOString().split('T')[0];
@@ -9071,6 +9677,9 @@ function loadCustomersToSelect() {
             renderPurchaseItems();
             updatePurchaseTotals();
             renderPurchasesList();
+            
+            // إزالة المؤثر البصري
+            removeEditMode('#purchases', '#purchases h2', '🛒 فواتير المشتريات <span class="title-stat-card"><span class="stat-mini-label">الإجمالي:</span><span id="miniStatPurchases" class="stat-mini-number">0</span></span>');
       
   }
   function renderPurchasesList() {
@@ -9310,6 +9919,10 @@ function loadCustomersToSelect() {
             
             renderPurchaseItems();
             updatePurchaseTotals();
+            
+            // تطبيق المؤثر البصري الأخضر
+            const supplierName = suppliers.find(s => s.id === purchase.supplierId)?.name || 'المورد';
+            applyEditMode('#purchases', 'purchaseSupplier', '#purchases h2', `✏️ تعديل فاتورة المشتريات: ${supplierName}`);
         }
 
         // ===== Sales Functions =====
@@ -9445,7 +10058,11 @@ function loadCustomersToSelect() {
             remainingEl.className = remainingAmount <= 0 ? 'remaining-paid' : 'remaining-unpaid';
         }
         
-        function newSale() {
+        async function newSale() {
+            // التحقق من وجود تعديل قيد التنفيذ
+            const confirmed = await confirmCancelEdit('#sales');
+            if (!confirmed) return;
+            
             currentSaleItems = [];
             editingSaleId = null;
             document.getElementById('saleDate').value = new Date().toISOString().split('T')[0];
@@ -9463,6 +10080,9 @@ function loadCustomersToSelect() {
             renderSaleItems();
             updateSaleTotals();
             renderSalesList();
+            
+            // إزالة المؤثر البصري
+            removeEditMode('#sales', '#sales h2', '🧾 فواتير المبيعات <span class="title-stat-card"><span class="stat-mini-label">الإجمالي:</span><span id="miniStatSales" class="stat-mini-number">0</span></span>');
         }
 
         async function saveSale() {
@@ -9864,6 +10484,10 @@ function loadCustomersToSelect() {
             
             renderSaleItems();
             updateSaleTotals();
+            
+            // تطبيق المؤثر البصري الأخضر
+            const customerName = customers.find(c => c.id === sale.customerId)?.name || 'العميل';
+            applyEditMode('#sales', 'saleCustomer', '#sales h2', `✏️ تعديل فاتورة المبيعات: ${customerName}`);
         }
 
         // ===== Returns Functions =====
@@ -10328,7 +10952,7 @@ function renderPurchaseReturns() {
             <td>${attachmentLink}</td>
             <td>
                 <button class="btn-warning edit-btn" onclick="editExpense(${exp.id})">✏️ تعديل</button>
-                <button class="btn-danger" onclick="deleteExpense(${exp.id})">حذف</button>
+                <button class="btn-danger edit-btn" onclick="deleteExpense(${exp.id})">🗑️ حذف</button>
             </td>
         `;
         tbody.appendChild(tr);
@@ -10348,6 +10972,9 @@ function renderPurchaseReturns() {
             const btn = document.querySelector('#expenses .btn-primary');
             btn.textContent = '💾 تحديث المصروف';
             btn.onclick = () => updateExpense(id);
+            
+            // تطبيق المؤثر البصري الأخضر
+            applyEditMode('#expenses', 'expenseDate', '#expenses h2', `✏️ تعديل المصروف`);
         }
 
         async function updateExpense(id) {
@@ -10394,7 +11021,11 @@ function renderPurchaseReturns() {
             }
         }
         
-      function clearExpenseForm() {
+      async function clearExpenseForm() {
+    // التحقق من وجود تعديل قيد التنفيذ
+    const confirmed = await confirmCancelEdit('#expenses');
+    if (!confirmed) return;
+    
     document.getElementById('expenseDate').value = new Date().toISOString().split('T')[0];
     ['expenseCategory', 'expenseAmount', 'expenseDescription', 'expenseReference'].forEach(id => document.getElementById(id).value = '');
     document.getElementById('expensePaymentMethod').value = 'cash';
@@ -10404,6 +11035,9 @@ function renderPurchaseReturns() {
     const btn = document.querySelector('#expenses .btn-primary');
     btn.textContent = '➕ إضافة مصروف';
     btn.onclick = addExpense;
+    
+    // إزالة المؤثر البصري
+    removeEditMode('#expenses', '#expenses h2', '💸 إدارة المصروفات <span class="title-stat-card"><span class="stat-mini-label">الإجمالي:</span><span id="miniStatExpenses" class="stat-mini-number">0</span></span>');
 }
         function updateExpenseStats() {
             const today = new Date().toISOString().split('T')[0];
@@ -10437,7 +11071,7 @@ function renderPurchaseReturns() {
             if (revenues.length === 0) { tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">لا توجد إيرادات</td></tr>'; return; }
              [...revenues].sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(rev => {
                 const tr = document.createElement('tr');
-                tr.innerHTML = `<td>${rev.date}</td><td>${rev.category}</td><td>${getRevenueSourceName(rev.source)}</td><td>${rev.amount.toFixed(2)}</td><td>${rev.description || '-'}</td><td>${rev.reference || '-'}</td><td><button class="btn-warning edit-btn" onclick="editRevenue(${rev.id})">✏️ تعديل</button><button class="btn-danger" onclick="deleteRevenue(${rev.id})">حذف</button></td>`;
+                tr.innerHTML = `<td>${rev.date}</td><td>${rev.category}</td><td>${getRevenueSourceName(rev.source)}</td><td>${rev.amount.toFixed(2)}</td><td>${rev.description || '-'}</td><td>${rev.reference || '-'}</td><td><button class="btn-warning edit-btn" onclick="editRevenue(${rev.id})">✏️ تعديل</button> <button class="btn-danger edit-btn" onclick="deleteRevenue(${rev.id})">🗑️ حذف</button></td>`;
                 tbody.appendChild(tr);
             });
         }
@@ -10454,6 +11088,9 @@ function renderPurchaseReturns() {
             const btn = document.querySelector('#revenues .btn-primary');
             btn.textContent = '💾 تحديث الإيراد';
             btn.onclick = () => updateRevenue(id);
+            
+            // تطبيق المؤثر البصري الأخضر
+            applyEditMode('#revenues', 'revenueDate', '#revenues h2', `✏️ تعديل الإيراد`);
         }
         async function updateRevenue(id) {
             const date = document.getElementById('revenueDate').value, category = document.getElementById('revenueCategory').value, amount = parseFloat(document.getElementById('revenueAmount').value);
@@ -10497,13 +11134,20 @@ function renderPurchaseReturns() {
                 }
             }
         }
-        function clearRevenueForm() {
+        async function clearRevenueForm() {
+            // التحقق من وجود تعديل قيد التنفيذ
+            const confirmed = await confirmCancelEdit('#revenues');
+            if (!confirmed) return;
+            
             document.getElementById('revenueDate').value = new Date().toISOString().split('T')[0];
             ['revenueCategory', 'revenueAmount', 'revenueDescription', 'revenueReference'].forEach(id => document.getElementById(id).value = '');
             document.getElementById('revenueSource').value = 'sales';
             const btn = document.querySelector('#revenues .btn-primary');
             btn.textContent = '➕ إضافة إيراد';
             btn.onclick = addRevenue;
+            
+            // إزالة المؤثر البصري
+            removeEditMode('#revenues', '#revenues h2', '💰 إدارة الإيرادات <span class="title-stat-card"><span class="stat-mini-label">الإجمالي:</span><span id="miniStatRevenues" class="stat-mini-number">0</span></span>');
         }
         function updateRevenueStats() {
             const today = new Date().toISOString().split('T')[0];
@@ -10622,7 +11266,7 @@ function renderPurchaseReturns() {
             salaries.push(salaryRecord);
             const success = saveToLocalStorage('salaries', salaries);
             if (success) {
-                clearSalaryForm();
+                clearSalaryForm(true, true); // تفريغ الحقول تلقائياً بعد الحفظ
                 renderSalaries();
                 updateSalarySummary();
                 updateDataStats();
@@ -10668,7 +11312,7 @@ function renderPurchaseReturns() {
             const success = saveToLocalStorage('salaries', salaries);
             if (success) {
                 showNotification('✅ تم التحديث', 'تم تحديث مسير الرواتب بنجاح', 'success');
-                clearSalaryForm();
+                clearSalaryForm(true, true); // تفريغ الحقول تلقائياً بعد التحديث
                 renderSalaries();
                 updateSalarySummary();
                 updateDataStats();
@@ -10700,6 +11344,9 @@ function renderPurchaseReturns() {
                 addBtn.textContent = '💾 تحديث المسير';
                 addBtn.onclick = () => updateSalary(id);
             }
+            
+            // تطبيق المؤثر البصري الأخضر
+            applyEditMode('#salaries', 'salaryEmployeeName', '#salaries h2', `✏️ تعديل مسير: ${salary.employeeName}`);
         }
 
         async function deleteSalary(id) {
@@ -10725,7 +11372,13 @@ function renderPurchaseReturns() {
             }
         }
 
-        function clearSalaryForm(skipSummaryUpdate = true) {
+        async function clearSalaryForm(skipSummaryUpdate = true, skipConfirmation = false) {
+            // التحقق من وجود تعديل قيد التنفيذ (إلا إذا كان skipConfirmation = true)
+            if (!skipConfirmation) {
+                const confirmed = await confirmCancelSalaryEdit();
+                if (!confirmed) return;
+            }
+            
             editingSalaryId = null;
             const monthEl = document.getElementById('salaryMonth');
             let monthWasEmpty = false;
@@ -10746,6 +11399,9 @@ function renderPurchaseReturns() {
                 addBtn.textContent = '➕ حفظ المسير';
                 addBtn.onclick = addSalary;
             }
+            
+            // إزالة المؤثر البصري
+            removeEditMode('#salaries', '#salaries h2', '👨‍💼 مسير الرواتب <span class="title-stat-card"><span class="stat-mini-label">الإجمالي:</span><span id="miniStatSalaries" class="stat-mini-number">0</span></span>');
 
             if (monthWasEmpty || !skipSummaryUpdate) {
                 updateSalarySummary();
@@ -10795,8 +11451,8 @@ function renderPurchaseReturns() {
                     <td>${formatCurrency(net)}</td>
                     <td>
                         <div class="action-buttons">
-                            <button class="btn-warning edit-btn" onclick="editSalary(${salary.id})">✏️ تعديل</button>
-                            <button class="btn-danger" onclick="deleteSalary(${salary.id})">حذف</button>
+                            <button class="btn-warning edit-btn" onclick="editSalary(${salary.id})">تعديل</button>
+                            <button class="btn-danger edit-btn" onclick="deleteSalary(${salary.id})">حذف</button>
                         </div>
                     </td>
                 `;
@@ -13019,8 +13675,16 @@ if (data.length > 0) {
             renderUsersInSettings();
         }
         
-       function logout() {
-            const confirmed = confirm('هل تريد تسجيل الخروج؟');
+       async function logout() {
+            const confirmed = await showConfirmDialog({
+                title: 'تسجيل الخروج',
+                message: 'هل أنت متأكد من رغبتك في تسجيل الخروج؟',
+                icon: '🚪',
+                type: 'warning',
+                confirmText: 'نعم، تسجيل الخروج',
+                cancelText: 'إلغاء',
+                confirmButtonClass: 'danger'
+            });
             
             if (confirmed) {
                 // حذف جميع بيانات الجلسة من التخزين
@@ -13218,6 +13882,10 @@ if (data.length > 0) {
 
             editingUserId = user.id;
 
+            // تشخيص: طباعة بيانات المستخدم للتأكد من وجود رقم الجوال
+            console.log('🔍 بيانات المستخدم للتعديل:', user);
+            console.log('📱 رقم الجوال:', user.phone);
+
             const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
             const isManager = loggedInUser && loggedInUser.role === 'manager';
             const isSelf = loggedInUser && String(user.id) === String(loggedInUser.id);
@@ -13239,8 +13907,23 @@ if (data.length > 0) {
 
             // تعبئة الحقول الأساسية
             nameInput.value = user.name || '';
-            emailInput.value = user.email;
+            emailInput.value = user.email || '';
+            
+            // تشخيص خاص لحقل الجوال
+            console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+            console.log('📋 جميع خصائص المستخدم:', Object.keys(user));
+            console.log('📱 قيمة user.phone:', user.phone);
+            console.log('📱 نوع user.phone:', typeof user.phone);
+            console.log('📱 هل user.phone فارغ؟', user.phone === '' || user.phone === null || user.phone === undefined);
+            console.log('📱 طول user.phone:', user.phone ? user.phone.length : 0);
+            
+            // تعبئة حقل الجوال
             phoneInput.value = user.phone || '';
+            
+            console.log('✅ قيمة حقل الجوال بعد التعبئة:', phoneInput.value);
+            console.log('✅ طول القيمة:', phoneInput.value.length);
+            console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+            
             passwordInput.value = user.password || '';
             roleSelect.value = user.role;
 
@@ -13291,13 +13974,33 @@ if (data.length > 0) {
                 return;
             }
 
-            const exists = users.some(u => String(u.id) === String(loggedInUser.id));
-            if (!exists) {
+            console.log('🔍 بيانات المستخدم من sessionStorage:', loggedInUser);
+            console.log('📱 رقم الجوال من sessionStorage:', loggedInUser.phone);
+
+            // إعادة تحميل المستخدمين للتأكد من الحصول على أحدث البيانات
+            loadUsers();
+            
+            // البحث عن المستخدم الحالي في مصفوفة users
+            const currentUser = users.find(u => String(u.id) === String(loggedInUser.id));
+            
+            if (!currentUser) {
                 showNotification('❌ خطأ', 'تعذر العثور على بيانات المستخدم للتعديل', 'error');
                 return;
             }
 
-            openEditUserModal(loggedInUser.id, { selfEdit: true });
+            console.log('👤 المستخدم من مصفوفة users:', currentUser);
+            console.log('📱 رقم الجوال من users:', currentUser.phone);
+            
+            // إذا كان رقم الجوال موجود في sessionStorage وليس في users، نقوم بتحديث users
+            if (loggedInUser.phone && !currentUser.phone) {
+                console.log('⚠️ رقم الجوال موجود في sessionStorage لكن مفقود في users!');
+                console.log('🔧 جاري تحديث users من sessionStorage...');
+                currentUser.phone = loggedInUser.phone;
+                saveUsers();
+                console.log('✅ تم تحديث users بنجاح');
+            }
+
+            openEditUserModal(currentUser.id, { selfEdit: true });
         }
 
         async function saveEditedUser() {
@@ -13340,6 +14043,10 @@ if (data.length > 0) {
                 return;
             }
 
+            console.log('💾 حفظ التعديلات:');
+            console.log('  📱 رقم الجوال الجديد:', phone);
+            console.log('  📱 طول رقم الجوال:', phone.length);
+
             targetUser.name = name;
             targetUser.email = email;
             targetUser.phone = phone;
@@ -13347,10 +14054,18 @@ if (data.length > 0) {
             targetUser.role = role;
             targetUser.activityId = (role === 'user' || role === 'manager') ? activityId : null;
 
+            console.log('✅ تم تحديث targetUser.phone إلى:', targetUser.phone);
+
             const updatedUser = targetUser;
             await saveUsers();
+            
+            console.log('💾 بعد saveUsers() - التحقق من البيانات المحفوظة:');
+            const savedUser = users.find(u => String(u.id) === String(editingUserId));
+            console.log('📱 رقم الجوال المحفوظ:', savedUser ? savedUser.phone : 'لم يتم العثور على المستخدم');
+            
             if (loggedInUser && String(loggedInUser.id) === String(updatedUser.id)) {
                 sessionStorage.setItem('loggedInUser', JSON.stringify(updatedUser));
+                console.log('✅ تم تحديث sessionStorage أيضاً');
                 updateLoggedInUserDisplay(updatedUser);
             }
             renderUsersInSettings();
@@ -13859,7 +14574,11 @@ if (data.length > 0) {
             emailJsConfig.resetTemplateID = document.getElementById('emailJsResetTemplateId').value.trim();
             emailJsConfig.publicKey = document.getElementById('emailJsPublicKey').value.trim();
             localStorage.setItem('diwan_email_config', JSON.stringify(emailJsConfig));
-            showNotification('✅ تم حفظ إعدادات البريد بنجاح.', 'success');
+            
+            // إغلاق النافذة
+            closeEmailSettingsModal();
+            
+            showNotification('✅ تم الحفظ', 'تم حفظ إعدادات البريد بنجاح', 'success');
         }
 
         function loadEmailJsSettings() {
@@ -14498,12 +15217,10 @@ function emailSaleInvoice(saleId) {
             }
 
             loadActivities();
-            // إخفاء واجهة إعدادات البريد إذا كانت الإعدادات ثابتة
+            // إخفاء زر إعدادات البريد إذا كانت الإعدادات ثابتة
             if (EMAILJS_FIXED) {
                 const toggleBtn = document.getElementById('toggleEmailSettingsBtn');
-                const emailSettingsDiv = document.querySelector('.email-settings');
                 if (toggleBtn) toggleBtn.style.display = 'none';
-                if (emailSettingsDiv) emailSettingsDiv.style.display = 'none';
             }
             handleResetFlowFromURL();
             
@@ -14677,39 +15394,84 @@ function emailSaleInvoice(saleId) {
                 return;
             }
 
-            const asset = {
-                id: Date.now(),
-                code: `ASSET${(assets.length + 1).toString().padStart(3, '0')}`,
-                name,
-                type,
-                purchaseDate,
-                supplier,
-                invoiceNumber,
-                cost,
-                lifespan,
-                salvageValue,
-                status,
-                notes,
-                createdAt: new Date().toISOString()
-            };
-
-            assets.push(asset);
+            // فحص إذا كان في وضع التعديل
+            const editingId = document.getElementById('assetForm').getAttribute('data-editing-id');
             
-            try {
-                saveToLocalStorage('assets', assets);
-                showNotification('✅ تم الحفظ', `تم إضافة الأصل "${name}" بنجاح`, 'success');
-                clearAssetForm();
-                displayAssets();
-                updateAssetsStats();
-            } catch (error) {
-                console.error('خطأ في حفظ الأصل:', error);
-                showNotification('❌ خطأ', 'حدث خطأ أثناء حفظ الأصل', 'error');
-                assets.pop(); // إزالة الأصل من المصفوفة في حالة فشل الحفظ
+            if (editingId) {
+                // وضع التعديل
+                const assetIndex = assets.findIndex(a => a.id == editingId);
+                if (assetIndex !== -1) {
+                    const oldCode = assets[assetIndex].code;
+                    assets[assetIndex] = {
+                        ...assets[assetIndex],
+                        name,
+                        type,
+                        purchaseDate,
+                        supplier,
+                        invoiceNumber,
+                        cost,
+                        lifespan,
+                        salvageValue,
+                        status,
+                        notes
+                    };
+                    
+                    try {
+                        saveToLocalStorage('assets', assets);
+                        showNotification('✅ تم التحديث', `تم تحديث الأصل "${name}" بنجاح`, 'success');
+                        resetAssetForm();
+                        displayAssets();
+                        updateAssetsStats();
+                    } catch (error) {
+                        console.error('خطأ في تحديث الأصل:', error);
+                        showNotification('❌ خطأ', 'حدث خطأ أثناء تحديث الأصل', 'error');
+                    }
+                }
+            } else {
+                // وضع الإضافة
+                const asset = {
+                    id: Date.now(),
+                    code: `ASSET${(assets.length + 1).toString().padStart(3, '0')}`,
+                    name,
+                    type,
+                    purchaseDate,
+                    supplier,
+                    invoiceNumber,
+                    cost,
+                    lifespan,
+                    salvageValue,
+                    status,
+                    notes,
+                    createdAt: new Date().toISOString()
+                };
+
+                assets.push(asset);
+                
+                try {
+                    saveToLocalStorage('assets', assets);
+                    showNotification('✅ تم الحفظ', `تم إضافة الأصل "${name}" بنجاح`, 'success');
+                    resetAssetForm();
+                    displayAssets();
+                    updateAssetsStats();
+                } catch (error) {
+                    console.error('خطأ في حفظ الأصل:', error);
+                    showNotification('❌ خطأ', 'حدث خطأ أثناء حفظ الأصل', 'error');
+                    assets.pop(); // إزالة الأصل من المصفوفة في حالة فشل الحفظ
+                }
             }
         }
 
         // دالة تفريغ نموذج الأصول
-        function clearAssetForm() {
+        async function clearAssetForm() {
+            // التحقق من وجود تعديل قيد التنفيذ
+            const confirmed = await confirmCancelEdit('#assetForm');
+            if (!confirmed) return;
+            
+            resetAssetForm();
+        }
+
+        // دالة إعادة تعيين نموذج الأصول (بدون تأكيد)
+        function resetAssetForm() {
             document.getElementById('assetName').value = '';
             document.getElementById('assetType').value = '';
             document.getElementById('assetPurchaseDate').value = '';
@@ -14720,6 +15482,29 @@ function emailSaleInvoice(saleId) {
             document.getElementById('assetSalvageValue').value = '';
             document.getElementById('assetStatus').value = 'active';
             document.getElementById('assetNotes').value = '';
+            
+            // حذف معرف التعديل إن وجد
+            document.getElementById('assetForm').removeAttribute('data-editing-id');
+            
+            // إعادة عنوان النموذج
+            const formTitle = document.querySelector('#assetForm h3');
+            if (formTitle) {
+                formTitle.innerHTML = 'إضافة أصل ثابت جديد';
+                formTitle.style.color = '';
+            }
+            
+            // إزالة المؤثر البصري الأخضر
+            const formInputs = document.querySelectorAll('#assetForm input, #assetForm select, #assetForm textarea');
+            formInputs.forEach(input => {
+                input.classList.remove('editing-mode');
+            });
+            
+            // إعادة زر الإضافة
+            const submitBtn = document.querySelector('#assetForm .btn-primary');
+            if (submitBtn) {
+                submitBtn.innerHTML = '➕ إضافة الأصل';
+                submitBtn.classList.remove('update-mode');
+            }
         }
 
         // دالة حساب الإهلاك
@@ -14792,9 +15577,9 @@ function emailSaleInvoice(saleId) {
                         <td>${depreciation.accumulatedDepreciation.toFixed(2)} ريال</td>
                         <td>${depreciation.bookValue.toFixed(2)} ريال</td>
                         <td>${statusIcons[asset.status]} ${getAssetStatusLabel(asset.status)}</td>
-                        <td>
-                            <button class="btn-edit" onclick="editAsset(${asset.id})">✏️ تعديل</button>
-                            <button class="btn-delete" onclick="deleteAsset(${asset.id})">🗑️ حذف</button>
+                        <td style="white-space: nowrap;">
+                            <button class="btn-warning" onclick="editAsset(${asset.id})" title="تعديل" style="background: #2c5aa0; border-color: #2c5aa0;">✏️ تعديل</button>
+                            <button class="btn-danger" onclick="deleteAsset(${asset.id})" title="حذف">🗑️ حذف</button>
                         </td>
                     </tr>
                 `;
@@ -14847,7 +15632,17 @@ function emailSaleInvoice(saleId) {
             const asset = assets.find(a => a.id === assetId);
             if (!asset) return;
 
-            if (confirm(`هل أنت متأكد من حذف الأصل "${asset.name}"؟\nهذا الإجراء لا يمكن التراجع عنه.`)) {
+            const confirmed = await showConfirmDialog({
+                title: '🗑️ حذف الأصل',
+                message: `هل أنت متأكد من حذف الأصل "${asset.name}"؟\n\nهذا الإجراء نهائي ولا يمكن التراجع عنه.`,
+                type: 'danger',
+                icon: '⚠️',
+                confirmText: 'نعم، احذف',
+                cancelText: 'إلغاء',
+                confirmButtonClass: 'danger'
+            });
+
+            if (confirmed) {
                 const index = assets.findIndex(a => a.id === assetId);
                 assets.splice(index, 1);
                 
@@ -14880,11 +15675,628 @@ function emailSaleInvoice(saleId) {
             document.getElementById('assetStatus').value = asset.status;
             document.getElementById('assetNotes').value = asset.notes;
 
-            // حذف الأصل القديم وإضافة الجديد (تبسيط لعملية التعديل)
-            deleteAsset(assetId);
+            // حفظ معرف الأصل المراد تعديله
+            document.getElementById('assetForm').setAttribute('data-editing-id', assetId);
+            
+            // تغيير عنوان النموذج
+            const formTitle = document.querySelector('#assetForm h3');
+            if (formTitle) {
+                formTitle.innerHTML = '✏️ تعديل الأصل: ' + asset.name;
+                formTitle.style.color = '#28a745';
+            }
+            
+            // إضافة كلاس للمؤثر البصري الأخضر
+            const formInputs = document.querySelectorAll('#assetForm input, #assetForm select, #assetForm textarea');
+            formInputs.forEach(input => {
+                input.classList.add('editing-mode');
+            });
+            
+            // تغيير زر الإضافة إلى زر التحديث
+            const submitBtn = document.querySelector('#assetForm .btn-primary');
+            if (submitBtn) {
+                submitBtn.innerHTML = '🔄 تحديث الأصل';
+                submitBtn.classList.add('update-mode');
+            }
+            
+            // التمرير للنموذج
+            document.getElementById('assetForm').scrollIntoView({ behavior: 'smooth' });
+            
+            // نقل المؤشر للحقل الأول بعد التمرير
+            setTimeout(() => {
+                document.getElementById('assetName').focus();
+                document.getElementById('assetName').select();
+            }, 500);
         }
 
         // ===== نهاية دوال إدارة الأصول الثابتة =====
+        
+        // ===== دوال طباعة وتصدير الأصول =====
+        
+        // دالة تصدير الأصول إلى Excel
+        function exportAssetsToExcel() {
+            try {
+                // الحصول على البيانات المفلترة
+                const filteredAssets = getFilteredAssets();
+                
+                if (filteredAssets.length === 0) {
+                    showNotification('⚠️ لا توجد بيانات', 'لا توجد أصول لتصديرها', 'warning');
+                    return;
+                }
+
+                // إنشاء بيانات Excel
+                const worksheetData = [];
+                
+                // إضافة العنوان
+                worksheetData.push(['تقرير الأصول الثابتة']);
+                worksheetData.push(['تاريخ التقرير: ' + new Date().toLocaleDateString('ar-SA')]);
+                worksheetData.push(['']); // سطر فارغ
+                
+                // إضافة رؤوس الأعمدة
+                worksheetData.push([
+                    'كود الأصل',
+                    'اسم الأصل', 
+                    'النوع',
+                    'تاريخ الشراء',
+                    'التكلفة الأصلية (ريال)',
+                    'العمر الإنتاجي (سنوات)',
+                    'الإهلاك السنوي (ريال)',
+                    'مجمع الإهلاك (ريال)',
+                    'القيمة الدفترية (ريال)',
+                    'الحالة',
+                    'المورد',
+                    'رقم الفاتورة',
+                    'ملاحظات'
+                ]);
+                
+                // إضافة بيانات الأصول
+                filteredAssets.forEach(asset => {
+                    const depreciation = calculateDepreciation(asset);
+                    worksheetData.push([
+                        asset.code,
+                        asset.name,
+                        getAssetTypeLabel(asset.type),
+                        asset.purchaseDate,
+                        asset.cost.toFixed(2),
+                        asset.lifespan,
+                        depreciation.annualDepreciation.toFixed(2),
+                        depreciation.accumulatedDepreciation.toFixed(2),
+                        depreciation.bookValue.toFixed(2),
+                        getAssetStatusLabel(asset.status),
+                        asset.supplier || '',
+                        asset.invoiceNumber || '',
+                        asset.notes || ''
+                    ]);
+                });
+                
+                // إضافة سطر فارغ
+                worksheetData.push(['']);
+                
+                // إضافة الإحصائيات
+                const totalValue = filteredAssets.reduce((sum, asset) => sum + asset.cost, 0);
+                const totalDepreciation = filteredAssets.reduce((sum, asset) => {
+                    const depreciation = calculateDepreciation(asset);
+                    return sum + depreciation.accumulatedDepreciation;
+                }, 0);
+                const netValue = totalValue - totalDepreciation;
+                
+                worksheetData.push(['الإحصائيات:']);
+                worksheetData.push(['عدد الأصول:', filteredAssets.length]);
+                worksheetData.push(['إجمالي قيمة الأصول:', totalValue.toFixed(2) + ' ريال']);
+                worksheetData.push(['إجمالي مجمع الإهلاك:', totalDepreciation.toFixed(2) + ' ريال']);
+                worksheetData.push(['صافي قيمة الأصول:', netValue.toFixed(2) + ' ريال']);
+
+                // إنشاء workbook
+                const wb = XLSX.utils.book_new();
+                const ws = XLSX.utils.aoa_to_sheet(worksheetData);
+                
+                // تنسيق العرض
+                ws['!cols'] = [
+                    { width: 12 }, // كود الأصل
+                    { width: 25 }, // اسم الأصل
+                    { width: 18 }, // النوع
+                    { width: 15 }, // تاريخ الشراء
+                    { width: 18 }, // التكلفة
+                    { width: 18 }, // العمر الإنتاجي
+                    { width: 18 }, // الإهلاك السنوي
+                    { width: 18 }, // مجمع الإهلاك
+                    { width: 18 }, // القيمة الدفترية
+                    { width: 15 }, // الحالة
+                    { width: 20 }, // المورد
+                    { width: 15 }, // رقم الفاتورة
+                    { width: 30 }  // الملاحظات
+                ];
+
+                XLSX.utils.book_append_sheet(wb, ws, "الأصول الثابتة");
+                
+                // تصدير الملف
+                const fileName = `تقرير_الأصول_الثابتة_${new Date().toISOString().split('T')[0]}.xlsx`;
+                XLSX.writeFile(wb, fileName);
+                
+                showNotification('✅ تم التصدير', `تم تصدير ${filteredAssets.length} أصل إلى Excel بنجاح`, 'success');
+                
+            } catch (error) {
+                console.error('خطأ في تصدير Excel:', error);
+                showNotification('❌ خطأ', 'حدث خطأ أثناء تصدير البيانات إلى Excel', 'error');
+            }
+        }
+
+        // دالة طباعة تقرير الأصول
+        function printAssetsReport() {
+            try {
+                // الحصول على البيانات المفلترة
+                const filteredAssets = getFilteredAssets();
+                
+                if (filteredAssets.length === 0) {
+                    showNotification('⚠️ لا توجد بيانات', 'لا توجد أصول للطباعة', 'warning');
+                    return;
+                }
+
+                // إنشاء HTML للطباعة
+                let printHTML = `
+                    <html dir="rtl">
+                    <head>
+                        <title>تقرير الأصول الثابتة</title>
+                        <style>
+                            body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; }
+                            .header { text-align: center; margin-bottom: 30px; }
+                            .header h1 { color: #2c5aa0; margin-bottom: 10px; }
+                            .header p { color: #666; margin: 5px 0; }
+                            table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 12px; }
+                            th, td { border: 1px solid #ddd; padding: 8px; text-align: right; }
+                            th { background-color: #2c5aa0; color: white; font-weight: bold; }
+                            tr:nth-child(even) { background-color: #f9f9f9; }
+                            .summary { background-color: #f0f7ff; padding: 15px; border-radius: 5px; margin-top: 20px; }
+                            .summary h3 { color: #2c5aa0; margin-bottom: 10px; }
+                            .summary-item { margin: 5px 0; }
+                            @media print {
+                                body { margin: 0; }
+                                .no-print { display: none; }
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="header">
+                            <h1>🏢 تقرير الأصول الثابتة</h1>
+                            <p>تاريخ التقرير: ${new Date().toLocaleDateString('ar-SA')}</p>
+                            <p>عدد الأصول: ${filteredAssets.length}</p>
+                        </div>
+                        
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>كود الأصل</th>
+                                    <th>اسم الأصل</th>
+                                    <th>النوع</th>
+                                    <th>تاريخ الشراء</th>
+                                    <th>التكلفة الأصلية</th>
+                                    <th>العمر الإنتاجي</th>
+                                    <th>الإهلاك السنوي</th>
+                                    <th>مجمع الإهلاك</th>
+                                    <th>القيمة الدفترية</th>
+                                    <th>الحالة</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+
+                // إضافة بيانات الأصول
+                filteredAssets.forEach(asset => {
+                    const depreciation = calculateDepreciation(asset);
+                    const statusIcons = {
+                        'active': '🟢',
+                        'maintenance': '🟡',
+                        'inactive': '🔴'
+                    };
+                    
+                    printHTML += `
+                        <tr>
+                            <td>${asset.code}</td>
+                            <td>${asset.name}</td>
+                            <td>${getAssetTypeLabel(asset.type)}</td>
+                            <td>${asset.purchaseDate}</td>
+                            <td>${asset.cost.toFixed(2)} ريال</td>
+                            <td>${asset.lifespan} سنوات</td>
+                            <td>${depreciation.annualDepreciation.toFixed(2)} ريال</td>
+                            <td>${depreciation.accumulatedDepreciation.toFixed(2)} ريال</td>
+                            <td>${depreciation.bookValue.toFixed(2)} ريال</td>
+                            <td>${statusIcons[asset.status]} ${getAssetStatusLabel(asset.status)}</td>
+                        </tr>
+                    `;
+                });
+
+                // حساب الإحصائيات
+                const totalValue = filteredAssets.reduce((sum, asset) => sum + asset.cost, 0);
+                const totalDepreciation = filteredAssets.reduce((sum, asset) => {
+                    const depreciation = calculateDepreciation(asset);
+                    return sum + depreciation.accumulatedDepreciation;
+                }, 0);
+                const netValue = totalValue - totalDepreciation;
+
+                printHTML += `
+                            </tbody>
+                        </table>
+                        
+                        <div class="summary">
+                            <h3>📊 ملخص الإحصائيات</h3>
+                            <div class="summary-item"><strong>عدد الأصول:</strong> ${filteredAssets.length} أصل</div>
+                            <div class="summary-item"><strong>إجمالي قيمة الأصول:</strong> ${totalValue.toFixed(2)} ريال</div>
+                            <div class="summary-item"><strong>إجمالي مجمع الإهلاك:</strong> ${totalDepreciation.toFixed(2)} ريال</div>
+                            <div class="summary-item"><strong>صافي قيمة الأصول:</strong> ${netValue.toFixed(2)} ريال</div>
+                        </div>
+                    </body>
+                    </html>
+                `;
+
+                // فتح نافذة جديدة للطباعة
+                const printWindow = window.open('', '_blank');
+                printWindow.document.write(printHTML);
+                printWindow.document.close();
+                
+                // انتظار تحميل المحتوى ثم طباعة
+                printWindow.onload = function() {
+                    printWindow.print();
+                };
+                
+                showNotification('✅ تم التجهيز', 'تم تجهيز التقرير للطباعة', 'success');
+                
+            } catch (error) {
+                console.error('خطأ في الطباعة:', error);
+                showNotification('❌ خطأ', 'حدث خطأ أثناء تجهيز التقرير للطباعة', 'error');
+            }
+        }
+
+        // دالة للحصول على الأصول المفلترة
+        function getFilteredAssets() {
+            const searchTerm = document.getElementById('searchAssets').value.toLowerCase();
+            const typeFilter = document.getElementById('filterAssetType').value;
+            const statusFilter = document.getElementById('filterAssetStatus').value;
+
+            return assets.filter(asset => {
+                const matchesSearch = asset.name.toLowerCase().includes(searchTerm) ||
+                                    asset.code.toLowerCase().includes(searchTerm) ||
+                                    asset.supplier.toLowerCase().includes(searchTerm);
+                const matchesType = !typeFilter || asset.type === typeFilter;
+                const matchesStatus = !statusFilter || asset.status === statusFilter;
+                
+                return matchesSearch && matchesType && matchesStatus;
+            });
+        }
+        
+        // ===== نهاية دوال طباعة وتصدير الأصول =====
+        
+        // ===== دوال طباعة وتصدير الرواتب =====
+        
+        // دالة تصدير الرواتب إلى Excel
+        function exportSalariesToExcel() {
+            try {
+                // إضافة تشخيص للبيانات
+                console.log('🔍 تشخيص البيانات:');
+                console.log('متغير salaries:', salaries);
+                console.log('طول مصفوفة salaries:', salaries ? salaries.length : 'غير معرف');
+                
+                // الحصول على البيانات المفلترة (استخدام الدالة الجديدة)
+                const filteredSalaries = getSalariesForExport();
+                console.log('البيانات المفلترة:', filteredSalaries);
+                console.log('عدد البيانات المفلترة:', filteredSalaries.length);
+                
+                if (filteredSalaries.length === 0) {
+                    showNotification('⚠️ لا توجد بيانات', `لا توجد مسيرات رواتب لتصديرها. إجمالي البيانات: ${salaries ? salaries.length : 0}`, 'warning');
+                    return;
+                }
+
+                // إنشاء بيانات Excel
+                const worksheetData = [];
+                
+                // إضافة العنوان
+                worksheetData.push(['تقرير مسيرات الرواتب']);
+                worksheetData.push(['تاريخ التقرير: ' + new Date().toLocaleDateString('ar-SA')]);
+                worksheetData.push(['']); // سطر فارغ
+                
+                // إضافة رؤوس الأعمدة
+                worksheetData.push([
+                    'الموظف',
+                    'رقم الهوية/الإقامة',
+                    'الجنسية',
+                    'الشهر',
+                    'المسمى الوظيفي',
+                    'الراتب الأساسي (ريال)',
+                    'إجمالي البدلات (ريال)',
+                    'الإجمالي (ريال)',
+                    'استقطاع GOSI (ريال)',
+                    'استقطاعات أخرى (ريال)',
+                    'صافي الراتب (ريال)',
+                    'تاريخ الإضافة'
+                ]);
+                
+                // إضافة بيانات الرواتب
+                filteredSalaries.forEach(salary => {
+                    worksheetData.push([
+                        salary.employeeName || '',
+                        salary.nationalId || '',
+                        salary.nationality || '',
+                        salary.month || '',
+                        salary.jobTitle || '',
+                        (salary.basicSalary || 0).toFixed(2),
+                        (salary.totalAllowances || 0).toFixed(2),
+                        (salary.grossSalary || 0).toFixed(2),
+                        (salary.gosiDeduction || 0).toFixed(2),
+                        (salary.otherDeductions || 0).toFixed(2),
+                        (salary.netSalary || 0).toFixed(2),
+                        new Date(salary.createdAt || Date.now()).toLocaleDateString('ar-SA')
+                    ]);
+                });
+                
+                // إضافة سطر فارغ
+                worksheetData.push(['']);
+                
+                // إضافة الإحصائيات
+                const totalBasicSalary = filteredSalaries.reduce((sum, salary) => sum + (salary.basicSalary || 0), 0);
+                const totalAllowances = filteredSalaries.reduce((sum, salary) => sum + (salary.totalAllowances || 0), 0);
+                const totalGrossSalary = filteredSalaries.reduce((sum, salary) => sum + (salary.grossSalary || 0), 0);
+                const totalGosiDeduction = filteredSalaries.reduce((sum, salary) => sum + (salary.gosiDeduction || 0), 0);
+                const totalOtherDeductions = filteredSalaries.reduce((sum, salary) => sum + (salary.otherDeductions || 0), 0);
+                const totalNetSalary = filteredSalaries.reduce((sum, salary) => sum + (salary.netSalary || 0), 0);
+                
+                worksheetData.push(['الإحصائيات:']);
+                worksheetData.push(['عدد الموظفين:', filteredSalaries.length]);
+                worksheetData.push(['إجمالي الرواتب الأساسية:', totalBasicSalary.toFixed(2) + ' ريال']);
+                worksheetData.push(['إجمالي البدلات:', totalAllowances.toFixed(2) + ' ريال']);
+                worksheetData.push(['إجمالي الرواتب:', totalGrossSalary.toFixed(2) + ' ريال']);
+                worksheetData.push(['إجمالي استقطاعات GOSI:', totalGosiDeduction.toFixed(2) + ' ريال']);
+                worksheetData.push(['إجمالي الاستقطاعات الأخرى:', totalOtherDeductions.toFixed(2) + ' ريال']);
+                worksheetData.push(['صافي الرواتب:', totalNetSalary.toFixed(2) + ' ريال']);
+
+                // إنشاء workbook
+                const wb = XLSX.utils.book_new();
+                const ws = XLSX.utils.aoa_to_sheet(worksheetData);
+                
+                // تنسيق العرض
+                ws['!cols'] = [
+                    { width: 20 }, // الموظف
+                    { width: 18 }, // رقم الهوية
+                    { width: 15 }, // الجنسية
+                    { width: 12 }, // الشهر
+                    { width: 20 }, // المسمى الوظيفي
+                    { width: 18 }, // الراتب الأساسي
+                    { width: 18 }, // إجمالي البدلات
+                    { width: 15 }, // الإجمالي
+                    { width: 18 }, // استقطاع GOSI
+                    { width: 18 }, // استقطاعات أخرى
+                    { width: 18 }, // صافي الراتب
+                    { width: 15 }  // تاريخ الإضافة
+                ];
+
+                XLSX.utils.book_append_sheet(wb, ws, "مسيرات الرواتب");
+                
+                // تصدير الملف
+                const fileName = `تقرير_مسيرات_الرواتب_${new Date().toISOString().split('T')[0]}.xlsx`;
+                XLSX.writeFile(wb, fileName);
+                
+                showNotification('✅ تم التصدير', `تم تصدير ${filteredSalaries.length} مسيرة راتب إلى Excel بنجاح`, 'success');
+                
+            } catch (error) {
+                console.error('خطأ في تصدير Excel:', error);
+                showNotification('❌ خطأ', 'حدث خطأ أثناء تصدير البيانات إلى Excel', 'error');
+            }
+        }
+
+        // دالة طباعة تقرير الرواتب
+        function printSalariesReport() {
+            try {
+                // إضافة تشخيص للبيانات
+                console.log('🖨️ تشخيص بيانات الطباعة:');
+                console.log('متغير salaries:', salaries);
+                console.log('طول مصفوفة salaries:', salaries ? salaries.length : 'غير معرف');
+                
+                // الحصول على البيانات المفلترة (استخدام الدالة الجديدة)
+                const filteredSalaries = getSalariesForExport();
+                console.log('البيانات المفلترة للطباعة:', filteredSalaries);
+                console.log('عدد البيانات المفلترة للطباعة:', filteredSalaries.length);
+                
+                if (filteredSalaries.length === 0) {
+                    showNotification('⚠️ لا توجد بيانات', `لا توجد مسيرات رواتب للطباعة. إجمالي البيانات: ${salaries ? salaries.length : 0}`, 'warning');
+                    return;
+                }
+
+                // إنشاء HTML للطباعة
+                let printHTML = `
+                    <html dir="rtl">
+                    <head>
+                        <title>تقرير مسيرات الرواتب</title>
+                        <style>
+                            body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; }
+                            .header { text-align: center; margin-bottom: 30px; }
+                            .header h1 { color: #2c5aa0; margin-bottom: 10px; }
+                            .header p { color: #666; margin: 5px 0; }
+                            table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 11px; }
+                            th, td { border: 1px solid #ddd; padding: 6px; text-align: right; }
+                            th { background-color: #2c5aa0; color: white; font-weight: bold; }
+                            tr:nth-child(even) { background-color: #f9f9f9; }
+                            .summary { background-color: #f0f7ff; padding: 15px; border-radius: 5px; margin-top: 20px; }
+                            .summary h3 { color: #2c5aa0; margin-bottom: 10px; }
+                            .summary-item { margin: 5px 0; }
+                            .net-salary { font-weight: bold; color: #28a745; }
+                            @media print {
+                                body { margin: 0; }
+                                .no-print { display: none; }
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="header">
+                            <h1>💼 تقرير مسيرات الرواتب</h1>
+                            <p>تاريخ التقرير: ${new Date().toLocaleDateString('ar-SA')}</p>
+                            <p>عدد الموظفين: ${filteredSalaries.length}</p>
+                        </div>
+                        
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>الموظف</th>
+                                    <th>رقم الهوية</th>
+                                    <th>الجنسية</th>
+                                    <th>الشهر</th>
+                                    <th>المسمى الوظيفي</th>
+                                    <th>الراتب الأساسي</th>
+                                    <th>البدلات</th>
+                                    <th>الإجمالي</th>
+                                    <th>GOSI</th>
+                                    <th>استقطاعات أخرى</th>
+                                    <th>صافي الراتب</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+
+                // إضافة بيانات الرواتب
+                filteredSalaries.forEach(salary => {
+                    printHTML += `
+                        <tr>
+                            <td>${salary.employeeName || ''}</td>
+                            <td>${salary.nationalId || ''}</td>
+                            <td>${salary.nationality || ''}</td>
+                            <td>${salary.month || ''}</td>
+                            <td>${salary.jobTitle || ''}</td>
+                            <td>${(salary.basicSalary || 0).toFixed(2)} ريال</td>
+                            <td>${(salary.totalAllowances || 0).toFixed(2)} ريال</td>
+                            <td>${(salary.grossSalary || 0).toFixed(2)} ريال</td>
+                            <td>${(salary.gosiDeduction || 0).toFixed(2)} ريال</td>
+                            <td>${(salary.otherDeductions || 0).toFixed(2)} ريال</td>
+                            <td class="net-salary">${(salary.netSalary || 0).toFixed(2)} ريال</td>
+                        </tr>
+                    `;
+                });
+
+                // حساب الإحصائيات
+                const totalBasicSalary = filteredSalaries.reduce((sum, salary) => sum + (salary.basicSalary || 0), 0);
+                const totalAllowances = filteredSalaries.reduce((sum, salary) => sum + (salary.totalAllowances || 0), 0);
+                const totalGrossSalary = filteredSalaries.reduce((sum, salary) => sum + (salary.grossSalary || 0), 0);
+                const totalGosiDeduction = filteredSalaries.reduce((sum, salary) => sum + (salary.gosiDeduction || 0), 0);
+                const totalOtherDeductions = filteredSalaries.reduce((sum, salary) => sum + (salary.otherDeductions || 0), 0);
+                const totalNetSalary = filteredSalaries.reduce((sum, salary) => sum + (salary.netSalary || 0), 0);
+
+                printHTML += `
+                            </tbody>
+                        </table>
+                        
+                        <div class="summary">
+                            <h3 style="text-align: center; color: #2c5aa0; margin-bottom: 20px; border-bottom: 2px solid #2c5aa0; padding-bottom: 10px;">📊 ملخص الإحصائيات</h3>
+                            
+                            <!-- جدول الملخص المنظم -->
+                            <table style="width: 100%; border-collapse: collapse; margin-top: 15px; background: #f8f9fa;">
+                                <tbody>
+                                    <tr style="background: #e3f2fd;">
+                                        <td style="border: 1px solid #2c5aa0; padding: 12px; font-weight: bold; background: #2c5aa0; color: white; width: 30%;">عدد الموظفين</td>
+                                        <td style="border: 1px solid #2c5aa0; padding: 12px; text-align: center; font-weight: bold; color: #2c5aa0;">${filteredSalaries.length} موظف</td>
+                                        <td style="border: 1px solid #2c5aa0; padding: 12px; font-weight: bold; background: #2c5aa0; color: white; width: 30%;">إجمالي الرواتب الأساسية</td>
+                                        <td style="border: 1px solid #2c5aa0; padding: 12px; text-align: center; font-weight: bold; color: #27ae60;">${totalBasicSalary.toFixed(2)} ريال</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid #2c5aa0; padding: 12px; font-weight: bold; background: #2c5aa0; color: white;">إجمالي البدلات</td>
+                                        <td style="border: 1px solid #2c5aa0; padding: 12px; text-align: center; font-weight: bold; color: #f39c12;">${totalAllowances.toFixed(2)} ريال</td>
+                                        <td style="border: 1px solid #2c5aa0; padding: 12px; font-weight: bold; background: #2c5aa0; color: white;">إجمالي الرواتب</td>
+                                        <td style="border: 1px solid #2c5aa0; padding: 12px; text-align: center; font-weight: bold; color: #9b59b6;">${totalGrossSalary.toFixed(2)} ريال</td>
+                                    </tr>
+                                    <tr style="background: #ffebee;">
+                                        <td style="border: 1px solid #2c5aa0; padding: 12px; font-weight: bold; background: #2c5aa0; color: white;">إجمالي استقطاعات GOSI</td>
+                                        <td style="border: 1px solid #2c5aa0; padding: 12px; text-align: center; font-weight: bold; color: #e74c3c;">${totalGosiDeduction.toFixed(2)} ريال</td>
+                                        <td style="border: 1px solid #2c5aa0; padding: 12px; font-weight: bold; background: #2c5aa0; color: white;">الاستقطاعات الأخرى</td>
+                                        <td style="border: 1px solid #2c5aa0; padding: 12px; text-align: center; font-weight: bold; color: #8e44ad;">${totalOtherDeductions.toFixed(2)} ريال</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                            <!-- صافي الرواتب في مربع مميز -->
+                            <div style="margin-top: 20px; padding: 15px; background: linear-gradient(135deg, #e8f5e8, #f0fff0); border: 3px solid #2ecc71; border-radius: 10px; text-align: center; box-shadow: 0 4px 8px rgba(46, 204, 113, 0.2);">
+                                <h2 style="margin: 0; color: #2ecc71; font-size: 1.8em;">💼 صافي الرواتب النهائي</h2>
+                                <div style="font-size: 2.2em; font-weight: bold; color: #27ae60; margin-top: 10px;">${totalNetSalary.toFixed(2)} ريال</div>
+                                <div style="font-size: 0.9em; color: #666; margin-top: 5px;">إجمالي المبلغ المستحق للموظفين</div>
+                            </div>
+                        </div>
+                    </body>
+                    </html>
+                `;
+
+                // فتح نافذة جديدة للطباعة
+                const printWindow = window.open('', '_blank');
+                printWindow.document.write(printHTML);
+                printWindow.document.close();
+                
+                // انتظار تحميل المحتوى ثم طباعة
+                printWindow.onload = function() {
+                    printWindow.print();
+                };
+                
+                showNotification('✅ تم التجهيز', 'تم تجهيز التقرير للطباعة', 'success');
+                
+            } catch (error) {
+                console.error('خطأ في الطباعة:', error);
+                showNotification('❌ خطأ', 'حدث خطأ أثناء تجهيز التقرير للطباعة', 'error');
+            }
+        }
+
+        // دالة للحصول على الرواتب المفلترة
+        function getFilteredSalaries() {
+            // التأكد من وجود المتغير وأنه مصفوفة
+            if (!salaries || !Array.isArray(salaries)) {
+                console.warn('مصفوفة الرواتب غير موجودة أو فارغة:', salaries);
+                return [];
+            }
+            
+            const searchElement = document.getElementById('searchSalaries');
+            const searchTerm = searchElement ? searchElement.value.toLowerCase() : '';
+
+            return salaries.filter(salary => {
+                // إذا لم يكن هناك بحث، أرجع جميع البيانات
+                if (!searchTerm) return true;
+                
+                // التأكد من وجود الخصائص قبل الوصول إليها
+                const matchesSearch = (salary.employeeName || '').toLowerCase().includes(searchTerm) ||
+                                    (salary.nationalId || '').toLowerCase().includes(searchTerm) ||
+                                    (salary.nationality || '').toLowerCase().includes(searchTerm) ||
+                                    (salary.month || '').toLowerCase().includes(searchTerm) ||
+                                    (salary.jobTitle || '').toLowerCase().includes(searchTerm);
+                
+                return matchesSearch;
+            });
+        }
+
+        // دالة احتياطية للحصول على الرواتب (تستخدم نفس منطق renderSalaries)
+        function getSalariesForExport() {
+            if (!salaries || !Array.isArray(salaries)) {
+                console.warn('مصفوفة الرواتب غير موجودة');
+                return [];
+            }
+
+            // تحويل البيانات لنفس تنسيق العرض
+            return salaries.map(salary => {
+                const allowances = typeof salary.allowancesTotal === 'number'
+                    ? salary.allowancesTotal
+                    : (salary.housing || 0) + (salary.transport || 0) + (salary.otherAllowances || 0) + (salary.overtime || 0);
+                
+                const gross = typeof salary.gross === 'number' ? salary.gross : (salary.basic || 0) + allowances;
+                const gosiEmployee = salary.gosiEmployee || 0;
+                const otherDeductions = salary.otherDeductions || 0;
+                const net = typeof salary.net === 'number' ? salary.net : gross - gosiEmployee - otherDeductions;
+
+                return {
+                    employeeName: salary.employeeName || '',
+                    nationalId: salary.nationalId || '',
+                    nationality: salary.nationality || '',
+                    month: salary.month || '',
+                    jobTitle: salary.jobTitle || '',
+                    basicSalary: salary.basic || 0,
+                    totalAllowances: allowances,
+                    grossSalary: gross,
+                    gosiDeduction: gosiEmployee,
+                    otherDeductions: otherDeductions,
+                    netSalary: net,
+                    createdAt: salary.createdAt || Date.now()
+                };
+            });
+        }
+        
+        // ===== نهاية دوال طباعة وتصدير الرواتب =====
         
         // دالة تهيئة كشوف الحسابات
         function initializeAccountStatements() {
@@ -14910,8 +16322,23 @@ function emailSaleInvoice(saleId) {
         }
         
         function toggleEmailSettings() {
-            const emailSettingsDiv = document.querySelector('.email-settings');
-            emailSettingsDiv.style.display = emailSettingsDiv.style.display === 'none' ? 'block' : 'none';
+            // تحميل القيم الحالية إذا كانت موجودة
+            const savedServiceId = localStorage.getItem('emailjs_service_id') || '';
+            const savedTemplateId = localStorage.getItem('emailjs_template_id') || '';
+            const savedResetTemplateId = localStorage.getItem('emailjs_reset_template_id') || '';
+            const savedPublicKey = localStorage.getItem('emailjs_public_key') || '';
+            
+            document.getElementById('emailJsServiceId').value = savedServiceId;
+            document.getElementById('emailJsTemplateId').value = savedTemplateId;
+            document.getElementById('emailJsResetTemplateId').value = savedResetTemplateId;
+            document.getElementById('emailJsPublicKey').value = savedPublicKey;
+            
+            // فتح النافذة
+            document.getElementById('email-settings-overlay').style.display = 'flex';
+        }
+        
+        function closeEmailSettingsModal() {
+            document.getElementById('email-settings-overlay').style.display = 'none';
         }
 
         // ===== Password Management =====
@@ -15595,8 +17022,8 @@ function renderAdvances() {
             <td>${getStatusBadge(advance.status)}</td>
             <td>${advance.description || '-'}</td>
             <td class="action-buttons">
-                <button class="btn-warning edit-btn" onclick="editAdvance(${advance.id})">✏️</button>
-                <button class="btn-danger" onclick="deleteAdvance(${advance.id})">🗑️</button>
+                <button class="btn-warning edit-btn" onclick="editAdvance(${advance.id})">✏️ تعديل</button>
+                <button class="btn-danger edit-btn" onclick="deleteAdvance(${advance.id})">🗑️ حذف</button>
             </td>
         </tr>
     `).join('');
@@ -15609,12 +17036,25 @@ function renderAdvances() {
 }
 
 // دالة مسح النموذج
-function clearAdvanceForm() {
+async function clearAdvanceForm() {
+    // التحقق من وجود تعديل قيد التنفيذ
+    const confirmed = await confirmCancelEdit('#advances');
+    if (!confirmed) return;
+    
     document.getElementById('advanceDate').value = '';
     document.getElementById('advanceEmployee').value = '';
     document.getElementById('advanceAmount').value = '';
     document.getElementById('advanceDescription').value = '';
-    // الاحتفاظ بالقيم الافتراضية للنوع والحالة
+    
+    // إعادة زر الإضافة
+    const addButton = document.querySelector('#advances .btn-add');
+    if (addButton) {
+        addButton.textContent = '➕ إضافة سلفة';
+        addButton.onclick = addAdvance;
+    }
+    
+    // إزالة المؤثر البصري
+    removeEditMode('#advances', '#advances h2', '💵 العهد والسلف <span class="title-stat-card"><span class="stat-mini-label">الإجمالي:</span><span id="miniStatAdvances" class="stat-mini-number">0</span></span>');
 }
 
 // دالة تحديث إحصائيات العهد والسلف
@@ -15670,8 +17110,8 @@ function editAdvance(id) {
     addButton.textContent = '💾 حفظ التعديل';
     addButton.onclick = function() { updateAdvance(id); };
 
-    // تمرير للأعلى
-    document.getElementById('advances').scrollIntoView({ behavior: 'smooth' });
+    // تطبيق المؤثر البصري الأخضر
+    applyEditMode('#advances', 'advanceEmployee', '#advances h2', `✏️ تعديل السلفة: ${advance.employee}`);
 }
 
 // دالة التحديث
