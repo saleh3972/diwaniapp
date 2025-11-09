@@ -1135,6 +1135,104 @@
 
 /* ===== نهاية أنماط نظام الحوار الاحترافي ===== */
 
+/* ===== أنماط نافذة تعديل النشاط الاحترافية ===== */
+.edit-activity-modal input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    background: white;
+    transform: translateY(-1px);
+}
+
+.edit-activity-modal button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.2) !important;
+}
+
+.edit-activity-modal button:active {
+    transform: translateY(0);
+}
+
+@media (max-width: 600px) {
+    .edit-activity-modal {
+        margin: 10px;
+        max-width: calc(100% - 20px) !important;
+    }
+    
+    .edit-activity-header {
+        padding: 20px !important;
+    }
+    
+    .edit-activity-body {
+        padding: 20px !important;
+    }
+    
+    .edit-activity-footer {
+        padding: 15px 20px !important;
+        flex-direction: column;
+    }
+    
+    .edit-activity-footer button {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    
+    .edit-activity-footer button:last-child {
+        margin-bottom: 0;
+    }
+}
+
+/* تأثيرات انتقالية متقدمة */
+.edit-activity-modal {
+    transform-origin: center;
+}
+
+#edit-activity-overlay.show {
+    display: flex !important;
+    animation: fadeIn 0.3s ease;
+}
+
+#edit-activity-overlay.show .edit-activity-modal {
+    animation: bounceIn 0.4s ease;
+}
+
+@keyframes bounceIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.3) translateY(-50px);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.05) translateY(0);
+    }
+    70% {
+        transform: scale(0.95);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+#edit-activity-overlay.hide {
+    animation: fadeOut 0.3s ease;
+}
+
+#edit-activity-overlay.hide .edit-activity-modal {
+    animation: zoomOut 0.3s ease;
+}
+
+@keyframes zoomOut {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+}
+/* ===== نهاية أنماط نافذة تعديل النشاط ===== */
+
 /* ===== أنماط سلة المحذوفات ===== */
 #trash-modal {
     display: none;
@@ -3475,6 +3573,62 @@ textarea.editing-mode {
         </div>
     </div>
 
+    <!-- نافذة تعديل النشاط الاحترافية -->
+    <div id="edit-activity-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); justify-content: center; align-items: center; z-index: 10005; backdrop-filter: blur(5px);">
+        <div class="edit-activity-modal" style="background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%); border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); width: 100%; max-width: 520px; overflow: hidden; animation: scaleIn 0.3s ease;">
+            <!-- رأس النافذة -->
+            <div class="edit-activity-header" style="background: linear-gradient(135deg, var(--primary-color) 0%, #2980b9 100%); padding: 25px 30px; text-align: center; color: white; position: relative;">
+                <div style="font-size: 48px; margin-bottom: 10px;">✏️</div>
+                <h2 style="margin: 0; font-size: 1.6em; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">تعديل النشاط</h2>
+                <p style="margin: 8px 0 0 0; opacity: 0.9; font-size: 0.95em;">تحديث اسم النشاط والمعلومات الأساسية</p>
+            </div>
+            
+            <!-- محتوى النافذة -->
+            <div class="edit-activity-body" style="padding: 30px;">
+                <form id="editActivityForm" onsubmit="return false;">
+                    <!-- حقل اسم النشاط -->
+                    <div style="margin-bottom: 25px;">
+                        <label for="editActivityName" style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-color); font-size: 1.1em;">
+                            📝 اسم النشاط
+                        </label>
+                        <input type="text" id="editActivityName" class="login-input" placeholder="أدخل اسم النشاط الجديد" 
+                               style="width: 100%; padding: 15px; border: 2px solid #e1e5e9; border-radius: 12px; font-size: 1.1em; transition: all 0.3s ease; background: #f8f9fa;"
+                               autocomplete="off" required>
+                    </div>
+                    
+                    <!-- معلومات إضافية -->
+                    <div style="background: #e8f4fd; border: 1px solid #b3d9ff; border-radius: 12px; padding: 20px; margin-bottom: 25px;">
+                        <h3 style="margin: 0 0 15px 0; color: var(--primary-color); font-size: 1.1em; display: flex; align-items: center; gap: 8px;">
+                            📊 معلومات النشاط
+                        </h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 0.95em;">
+                            <div>
+                                <span style="color: #666; font-weight: 600;">تاريخ الإنشاء:</span>
+                                <div id="activityCreatedAt" style="color: var(--text-color); margin-top: 4px;"></div>
+                            </div>
+                            <div>
+                                <span style="color: #666; font-weight: 600;">المنشئ:</span>
+                                <div id="activityCreatedBy" style="color: var(--text-color); margin-top: 4px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- أزرار النافذة -->
+            <div class="edit-activity-footer" style="padding: 20px 30px; background: #f8f9fa; border-top: 1px solid #e1e5e9; display: flex; gap: 15px;">
+                <button class="btn-success" onclick="saveEditedActivity()" 
+                        style="flex: 1; padding: 15px; font-size: 1.1em; font-weight: 600; border-radius: 12px; transition: all 0.3s ease; background: linear-gradient(135deg, var(--success-color) 0%, #229954 100%); box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);">
+                    💾 حفظ التعديلات
+                </button>
+                <button class="btn-secondary" onclick="closeEditActivityModal()" 
+                        style="flex: 1; padding: 15px; font-size: 1.1em; font-weight: 600; border-radius: 12px; transition: all 0.3s ease; background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%); color: white; box-shadow: 0 4px 15px rgba(149, 165, 166, 0.3);">
+                    ❌ إلغاء
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- نظام الحوار الاحترافي -->
     <div id="confirm-overlay" class="confirm-overlay" role="dialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby="confirm-body">
         <div class="confirm-dialog">
@@ -5501,6 +5655,135 @@ const GOSI_RATE = 0.09;
 const GOSI_SALARY_CAP = 45000;
 
 // ========================================
+// 🔥 تعريف دالة initializeApp مبكراً
+// ========================================
+async function initializeApp() {
+    console.log('🎯 بدء تهيئة التطبيق...');
+    if (!currentActivityId) { 
+        console.log('⚠️ لا يوجد نشاط محدد - عرض نافذة الأنشطة');
+        showActivityModal(); 
+        return; 
+    }
+    
+    // تحميل البيانات من Firebase أو LocalStorage
+    if (USE_FIREBASE) {
+        debugLog('🔥 تحميل البيانات من Firebase...');
+        
+        items = await firebaseGetActivityData(currentActivityId, 'items') || [];
+        customers = await firebaseGetActivityData(currentActivityId, 'customers') || [];
+        suppliers = await firebaseGetActivityData(currentActivityId, 'suppliers') || [];
+        purchases = await firebaseGetActivityData(currentActivityId, 'purchases') || [];
+        sales = await firebaseGetActivityData(currentActivityId, 'sales') || [];
+        expenses = await firebaseGetActivityData(currentActivityId, 'expenses') || [];
+        revenues = await firebaseGetActivityData(currentActivityId, 'revenues') || [];
+        salaries = await firebaseGetActivityData(currentActivityId, 'salaries') || [];
+        assets = await firebaseGetActivityData(currentActivityId, 'assets') || [];
+        salesReturns = await firebaseGetActivityData(currentActivityId, 'salesReturns') || [];
+        advances = await firebaseGetActivityData(currentActivityId, 'advances') || [];
+        purchaseReturns = await firebaseGetActivityData(currentActivityId, 'purchaseReturns') || [];
+        
+        debugLog('✅ تم تحميل البيانات من Firebase');
+    } else {
+        debugLog('📦 تحميل البيانات من LocalStorage...');
+        
+        items = (loadFromLocalStorage('items')) || [];
+        customers = (loadFromLocalStorage('customers')) || [];
+        suppliers = (loadFromLocalStorage('suppliers')) || [];
+        purchases = (loadFromLocalStorage('purchases')) || [];
+        sales = (loadFromLocalStorage('sales')) || [];
+        expenses = (loadFromLocalStorage('expenses')) || [];
+        revenues = (loadFromLocalStorage('revenues')) || [];
+        salaries = (loadFromLocalStorage('salaries')) || [];
+        assets = (loadFromLocalStorage('assets')) || [];
+        salesReturns = (loadFromLocalStorage('salesReturns')) || [];
+        advances = (loadFromLocalStorage('advances')) || [];
+        purchaseReturns = (loadFromLocalStorage('purchaseReturns')) || [];
+    }
+
+    currentPurchaseNumber = purchases.length > 0 ? Math.max(0, ...purchases.map(p => p.number)) + 1 : 1;
+    currentSaleNumber = sales.length > 0 ? Math.max(0, ...sales.map(s => s.number)) + 1 : 1;
+    currentSaleReturnNumber = salesReturns.length > 0 ? Math.max(0, ...salesReturns.map(r => r.number)) + 1 : 1;
+    
+    // ترقية البيانات القديمة لإضافة حقول الخصم المفقودة
+    if (typeof upgradeSalesData === 'function') {
+        await upgradeSalesData();
+    }
+    currentPurchaseReturnNumber = purchaseReturns.length > 0 ? Math.max(0, ...purchaseReturns.map(r => r.number)) + 1 : 1;
+    
+    const today = new Date().toISOString().split('T')[0];
+    ['purchaseDate', 'saleDate', 'expenseDate', 'revenueDate', 'reportFrom', 'reportTo'].forEach(id => {
+        const element = document.getElementById(id);
+        if (element) element.value = today;
+    });
+    
+    const monthInput = document.getElementById('salaryMonth');
+    if (monthInput) {
+        if (!monthInput.value) {
+            monthInput.value = new Date().toISOString().slice(0, 7);
+        }
+        monthInput.onchange = () => { if (typeof updateSalarySummary === 'function') updateSalarySummary(); };
+    }
+    
+    // استدعاء الدوال بأمان
+    const safeFunctions = [
+        'generatePurchaseCode', 'generateSaleCode', 'updateDashboard', 'updateExpenseStats', 
+        'updateRevenueStats', 'updateDataStats', 'renderItems', 'renderCustomers', 'renderSuppliers', 
+        'renderExpenses', 'renderRevenues', 'renderSalaries', 'updateSalarySummary', 'displayAssets', 
+        'updateAssetsStats', 'clearSalaryForm', 'renderSalesList', 'renderPurchasesList', 
+        'renderSalesReturns', 'renderPurchaseReturns', 'updatePurchaseDropdowns', 'updateSaleDropdowns', 
+        'updateReportItemFilter', 'loadTrashFromLocalStorage', 'updateTrashBadge'
+    ];
+    
+    safeFunctions.forEach(funcName => {
+        if (typeof window[funcName] === 'function') {
+            try { window[funcName](); } catch (e) { console.warn(`تحذير في ${funcName}:`, e.message); }
+        }
+    });
+
+    const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser') || 'null');
+    if (typeof updateLoggedInUserDisplay === 'function' && loggedInUser) {
+        updateLoggedInUserDisplay(loggedInUser);
+    }
+    
+    // عرض إشعارات المخزون والديون فقط بعد 10 ثواني
+    setTimeout(() => {
+        if (typeof checkLowStock === 'function') checkLowStock();
+        if (typeof checkUnpaidDebts === 'function') checkUnpaidDebts();
+    }, 10000);
+    
+    // إضافة event listeners للأصول
+    const searchAssetsInput = document.getElementById('searchAssets');
+    const filterAssetTypeSelect = document.getElementById('filterAssetType');
+    const filterAssetStatusSelect = document.getElementById('filterAssetStatus');
+    
+    if (searchAssetsInput && typeof displayAssets === 'function') {
+        searchAssetsInput.addEventListener('input', displayAssets);
+    }
+    if (filterAssetTypeSelect && typeof displayAssets === 'function') {
+        filterAssetTypeSelect.addEventListener('change', displayAssets);
+    }
+    if (filterAssetStatusSelect && typeof displayAssets === 'function') {
+        filterAssetStatusSelect.addEventListener('change', displayAssets);
+    }
+    
+    // تفعيل نظام تنبيهات النسخ الاحتياطي
+    setTimeout(() => {
+        if (typeof initBackupReminderSystem === 'function') {
+            initBackupReminderSystem();
+        }
+    }, 3000);
+    
+    const activity = activities.find(a => a.id == currentActivityId);
+    console.log(`✅ تم تهيئة النظام للنشاط: ${activity ? activity.name : 'غير معروف'}`);
+}
+
+// كشف الدالة للعالمية فوراً
+if (typeof window !== 'undefined') {
+    window.initializeApp = initializeApp;
+    console.log('🎯 تم تعريف window.initializeApp بنجاح في مكان مبكر!');
+}
+
+// ========================================
 // 🔥 إنشاء مستخدم افتراضي (LocalStorage فقط - معطل في Firebase)
 // ========================================
 async function createDefaultUser() {
@@ -6909,9 +7192,34 @@ let emailJsConfig = { ...EMAILJS_DEFAULTS };
                 const fullKey = resolveStorageKey(key);
                 console.log(`💾 saveToLocalStorage: key="${key}" -> fullKey="${fullKey}", items=${Array.isArray(data) ? data.length : 'N/A'}`);
                 
+                // تشخيص خاص لحفظ المستخدمين
+                if (key === 'diwan_users' && Array.isArray(data)) {
+                    console.log('📱 تشخيص حفظ المستخدمين:');
+                    data.forEach(user => {
+                        if (user.phone) {
+                            console.log(`  📱 ${user.email}: phone="${user.phone}" (${typeof user.phone}) - طول: ${user.phone.length}`);
+                        } else {
+                            console.log(`  📱 ${user.email}: phone فارغ أو غير موجود (${typeof user.phone})`);
+                        }
+                    });
+                }
+                
                 // حفظ في LocalStorage
                 localStorage.setItem(fullKey, JSON.stringify(data));
                 console.log(`✅ تم الحفظ بنجاح في LocalStorage: ${fullKey}`);
+                
+                // تحقق فوري من الحفظ (خاص بالمستخدمين)
+                if (key === 'diwan_users') {
+                    const immediateCheck = JSON.parse(localStorage.getItem(fullKey) || '[]');
+                    console.log('🔍 تحقق فوري من الحفظ في localStorage:');
+                    immediateCheck.forEach(user => {
+                        if (user.phone) {
+                            console.log(`  ✅ ${user.email}: phone="${user.phone}" محفوظ بنجاح`);
+                        } else {
+                            console.log(`  ⚠️ ${user.email}: phone فارغ في البيانات المحفوظة`);
+                        }
+                    });
+                }
                 
                 // حفظ في Firebase إذا كان مفعّلاً
                 if (USE_FIREBASE && currentActivityId && !GLOBAL_STORAGE_KEYS.has(key)) {
@@ -6965,12 +7273,39 @@ let emailJsConfig = { ...EMAILJS_DEFAULTS };
 
         function saveUsers() {
             console.log('💾 محاولة حفظ المستخدمين...', users.length, 'مستخدم');
+            
+            // تشخيص تفصيلي قبل الحفظ
+            const userWithPhone = users.find(u => u.phone);
+            if (userWithPhone) {
+                console.log('📱 مثال على مستخدم له رقم جوال قبل الحفظ:', {
+                    id: userWithPhone.id,
+                    name: userWithPhone.name,
+                    phone: userWithPhone.phone,
+                    phoneType: typeof userWithPhone.phone
+                });
+            }
+            
             const success = saveToLocalStorage('diwan_users', users);
             if (success) {
                 console.log('✅ تم حفظ المستخدمين بنجاح في localStorage');
                 // تحقق مباشر
                 const verification = loadFromLocalStorage('diwan_users');
                 console.log('🔍 التحقق من الحفظ:', verification ? verification.length : 0, 'مستخدم محفوظ');
+                
+                // تشخيص إضافي للبيانات المحفوظة
+                if (verification && verification.length > 0) {
+                    const savedUserWithPhone = verification.find(u => u.phone);
+                    if (savedUserWithPhone) {
+                        console.log('📱 مثال على مستخدم له رقم جوال بعد الحفظ:', {
+                            id: savedUserWithPhone.id,
+                            name: savedUserWithPhone.name,
+                            phone: savedUserWithPhone.phone,
+                            phoneType: typeof savedUserWithPhone.phone
+                        });
+                    } else {
+                        console.warn('⚠️ لم يتم العثور على أي مستخدم له رقم جوال بعد الحفظ!');
+                    }
+                }
             } else {
                 console.error('❌ فشل حفظ المستخدمين!');
             }
@@ -7470,6 +7805,16 @@ let emailJsConfig = { ...EMAILJS_DEFAULTS };
             console.log('📋 قائمة المستخدمين المحملة:');
             users.forEach(u => {
                 console.log(`  - ${u.email}: role=${u.role}, phone=${u.phone || 'غير موجود'}, activityId=${u.activityId} (${typeof u.activityId})`);
+            });
+            
+            // تشخيص خاص لأرقام الجوالات
+            console.log('📱 تشخيص أرقام الجوالات:');
+            users.forEach(u => {
+                if (u.phone) {
+                    console.log(`  📱 ${u.email}: phone="${u.phone}" (${typeof u.phone}) - طول: ${u.phone.length}`);
+                } else {
+                    console.log(`  📱 ${u.email}: phone فارغ أو غير موجود (${typeof u.phone})`);
+                }
             });
         }
         
@@ -8103,7 +8448,7 @@ let emailJsConfig = { ...EMAILJS_DEFAULTS };
             }
         }
         
-        async function addNewActivity(fromSettings = false) {
+    async function addNewActivity(fromSettings = false) {
             const inputId = fromSettings ? 'settingNewActivityName' : 'newActivityName';
             const activityName = document.getElementById(inputId).value.trim();
             if (!activityName) {
@@ -8125,7 +8470,7 @@ let emailJsConfig = { ...EMAILJS_DEFAULTS };
                 selectActivity(newActivity.id);
             }
         }
-        
+
         async function selectActivity(id) {
             console.log(`محاولة اختيار النشاط: ${id}`);
             showLoading('جاري تحميل بيانات النشاط...');
@@ -8153,7 +8498,55 @@ let emailJsConfig = { ...EMAILJS_DEFAULTS };
                     updateSidebar(user.role);
                 }
 
-                initializeApp();
+                // التأكد من توفر دالة التهيئة قبل الاستدعاء
+                console.log('🔍 فحص حالة initializeApp:', {
+                    'window.initializeApp type': typeof window.initializeApp,
+                    'window.initializeApp value': window.initializeApp,
+                    'initializeApp type': typeof initializeApp,
+                    'initializeApp value': initializeApp
+                });
+                
+                if (typeof window.initializeApp === 'function') {
+                    console.log('✅ استدعاء initializeApp من window');
+                    await window.initializeApp();
+                } else if (typeof initializeApp === 'function') {
+                    console.log('✅ استدعاء initializeApp مباشرة');
+                    await initializeApp();
+                } else {
+                    console.warn('⚠️ initializeApp غير متاحة - البحث عن تعريف مؤجل...');
+                    // محاولة العثور على الدالة في النطاق العالمي
+                    let attempts = 0;
+                    const maxAttempts = 10;
+                    const checkInterval = 100;
+                    
+                    const tryInitialize = async () => {
+                        console.log(`🔄 محاولة ${attempts + 1}/${maxAttempts} - نوع window.initializeApp:`, typeof window.initializeApp);
+                        
+                        if (typeof window.initializeApp === 'function') {
+                            console.log('✅ تم العثور على initializeApp - التهيئة الآن...');
+                            try { 
+                                await window.initializeApp(); 
+                                console.log('✅ تمت التهيئة بنجاح');
+                            } catch (e) { 
+                                console.error('❌ إخفاق في التهيئة المؤجلة:', e); 
+                            }
+                            return;
+                        }
+                        
+                        attempts++;
+                        if (attempts < maxAttempts) {
+                            setTimeout(tryInitialize, checkInterval);
+                        } else {
+                            console.error('❌ فشل في العثور على initializeApp بعد', maxAttempts, 'محاولات');
+                            console.log('🚨 حالة نهائية:', {
+                                'window.initializeApp': window.initializeApp,
+                                'typeof window.initializeApp': typeof window.initializeApp
+                            });
+                        }
+                    };
+                    
+                    tryInitialize();
+                }
                 hideLoading();
             } catch (error) {
                 hideLoading();
@@ -8236,21 +8629,13 @@ let emailJsConfig = { ...EMAILJS_DEFAULTS };
 
         async function editActivity(id) {
             const activityIndex = activities.findIndex(a => a.id === id);
-            if (activityIndex === -1) return;
-
-            const currentName = activities[activityIndex].name;
-            const newName = prompt("أدخل الاسم الجديد للنشاط:", currentName);
-
-            if (newName && newName.trim() !== "" && newName.trim() !== currentName) {
-                activities[activityIndex].name = newName.trim();
-                saveActivities();
-                renderActivitiesInSettings();
-                
-                if (currentActivityId == id) {
-                    updateHeaderForActivity(activities[activityIndex]);
-                }
-                showNotification('✅ تم التحديث', 'تم تحديث اسم النشاط بنجاح', 'success');
+            if (activityIndex === -1) {
+                showNotification('⚠️ خطأ', 'النشاط المحدد غير موجود', 'error');
+                return;
             }
+
+            // فتح النافذة الاحترافية الجديدة
+            openEditActivityModal(id);
         }
         
         async function deleteActivity(id) {
@@ -13410,7 +13795,13 @@ if (data.length > 0) {
         }
 
         // ===== Login System Functions =====
+     let loginInProgress = false;
      async function handleLogin() {
+    if (loginInProgress) {
+        console.warn('⚠️ تم تجاهل محاولة تسجيل دخول ثانية قبل انتهاء الأولى');
+        return;
+    }
+    loginInProgress = true;
     const errorMsg = document.getElementById('login-error');
     const email = document.getElementById('loginEmail').value.trim();
     const pass = document.getElementById('loginPassword').value;
@@ -13460,6 +13851,7 @@ if (data.length > 0) {
                                     id: u.id,
                                     name: u.name,
                                     email: u.email,
+                                    phone: u.phone || '', // إضافة حقل الجوال
                                     password: u.password,
                                     role: u.role,
                                     activityId: u.activityId,
@@ -13469,9 +13861,58 @@ if (data.length > 0) {
                             }
                         });
                         
-                        users = Array.from(uniqueUsersMap.values());
+                        // دمج ذكي: الحفاظ على البيانات المحلية المُحدثة
+                        const localUsers = loadFromLocalStorage('diwan_users') || [];
+                        console.log('🔄 دمج البيانات من Firebase مع البيانات المحلية...');
+                        console.log('📊 Firebase users:', Array.from(uniqueUsersMap.values()).length);
+                        console.log('📊 Local users:', localUsers.length);
+                        
+                        // دمج البيانات: Firebase كأساس + البيانات المحلية المُحدثة
+                        const mergedUsersMap = new Map();
+                        
+                        // إضافة البيانات من Firebase أولاً
+                        Array.from(uniqueUsersMap.values()).forEach(user => {
+                            mergedUsersMap.set(user.email, user);
+                        });
+                        
+                        // دمج البيانات المحلية (التي قد تكون أحدث)
+                        localUsers.forEach(localUser => {
+                            const firebaseUser = mergedUsersMap.get(localUser.email);
+                            if (firebaseUser) {
+                                // دمج البيانات: الاحتفاظ بالبيانات المحلية إذا كانت أحدث
+                                const mergedUser = {
+                                    ...firebaseUser,
+                                    // الاحتفاظ بالبيانات المحلية للحقول المهمة
+                                    name: localUser.name || firebaseUser.name,
+                                    phone: localUser.phone || firebaseUser.phone,
+                                    // إذا كان التاريخ المحلي أحدث، استخدم البيانات المحلية
+                                    ...(localUser.updatedAt && localUser.updatedAt > firebaseUser.updatedAt ? {
+                                        name: localUser.name,
+                                        phone: localUser.phone,
+                                        updatedAt: localUser.updatedAt
+                                    } : {})
+                                };
+                                mergedUsersMap.set(localUser.email, mergedUser);
+                                
+                                if (localUser.phone && !firebaseUser.phone) {
+                                    console.log(`🔄 دمج: احتفظ برقم الجوال المحلي لـ ${localUser.email}: ${localUser.phone}`);
+                                }
+                            } else {
+                                // مستخدم موجود محلياً فقط
+                                mergedUsersMap.set(localUser.email, localUser);
+                            }
+                        });
+                        
+                        users = Array.from(mergedUsersMap.values());
                         localStorage.setItem('diwan_users', JSON.stringify(users));
-                        debugLog(`✅ تم تحميل ${users.length} مستخدم من Firebase (بعد إزالة ${rawUsers.length - users.length} مكرر)`);
+                        debugLog(`✅ تم دمج ${users.length} مستخدم (Firebase + Local)`);
+                        
+                        // تشخيص للبيانات المدموجة
+                        const usersWithPhone = users.filter(u => u.phone);
+                        console.log(`📱 المستخدمون الذين لديهم أرقام جوال: ${usersWithPhone.length}`);
+                        usersWithPhone.forEach(u => {
+                            console.log(`  📱 ${u.email}: ${u.phone}`);
+                        });
                     }
                 } catch (error) {
                     console.error('❌ خطأ في تحميل المستخدمين:', error);
@@ -13598,6 +14039,8 @@ if (data.length > 0) {
         console.error('❌ خطأ في تسجيل الدخول:', error);
         errorMsg.textContent = 'خطأ في تسجيل الدخول. حاول مرة أخرى.';
         errorMsg.style.display = 'block';
+    } finally {
+        loginInProgress = false;
     }
 }
         function enterAdminWithoutActivity() {
@@ -13699,7 +14142,8 @@ if (data.length > 0) {
             }
         }
         function renderUsersInSettings() {
-            loadUsers();
+            // تم إزالة loadUsers() لأنه يسبب إعادة تحميل البيانات القديمة
+            // البيانات يجب أن تكون محملة بالفعل في متغير users العام
             const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
             const isAdmin = loggedInUser && loggedInUser.role === 'admin';
             const isManager = loggedInUser && loggedInUser.role === 'manager';
@@ -13911,11 +14355,13 @@ if (data.length > 0) {
             
             // تشخيص خاص لحقل الجوال
             console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+            console.log('📋 فتح نافذة تعديل للمستخدم ID:', userId);
             console.log('📋 جميع خصائص المستخدم:', Object.keys(user));
             console.log('📱 قيمة user.phone:', user.phone);
             console.log('📱 نوع user.phone:', typeof user.phone);
             console.log('📱 هل user.phone فارغ؟', user.phone === '' || user.phone === null || user.phone === undefined);
             console.log('📱 طول user.phone:', user.phone ? user.phone.length : 0);
+            console.log('📋 بيانات المستخدم الكاملة:', JSON.stringify(user, null, 2));
             
             // تعبئة حقل الجوال
             phoneInput.value = user.phone || '';
@@ -13967,6 +14413,144 @@ if (data.length > 0) {
             editingUserSelf = false;
         }
 
+        // ===== دوال نافذة تعديل النشاط الاحترافية =====
+        let editingActivityId = null;
+
+        function openEditActivityModal(activityId) {
+            const activity = activities.find(a => a.id === activityId);
+            if (!activity) {
+                showNotification('⚠️ خطأ', 'النشاط المحدد غير موجود', 'error');
+                return;
+            }
+
+            editingActivityId = activityId;
+            
+            // تعبئة البيانات في النافذة
+            document.getElementById('editActivityName').value = activity.name;
+            document.getElementById('activityCreatedAt').textContent = activity.createdAt || 'غير محدد';
+            document.getElementById('activityCreatedBy').textContent = activity.createdBy || 'غير محدد';
+            
+            // فتح النافذة مع تأثير
+            const overlay = document.getElementById('edit-activity-overlay');
+            overlay.style.display = 'flex';
+            overlay.classList.add('show');
+            
+            // التركيز على حقل الاسم
+            setTimeout(() => {
+                document.getElementById('editActivityName').focus();
+                document.getElementById('editActivityName').select();
+            }, 300);
+        }
+
+        function closeEditActivityModal() {
+            const overlay = document.getElementById('edit-activity-overlay');
+            overlay.classList.remove('show');
+            overlay.classList.add('hide');
+            
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                overlay.classList.remove('hide');
+                editingActivityId = null;
+                document.getElementById('editActivityForm').reset();
+            }, 300);
+        }
+
+        async function saveEditedActivity() {
+            const nameInput = document.getElementById('editActivityName');
+            const newName = nameInput.value.trim();
+            
+            if (!newName) {
+                showNotification('⚠️ خطأ', 'يرجى إدخال اسم النشاط', 'warning');
+                nameInput.focus();
+                return;
+            }
+            
+            if (!editingActivityId) {
+                showNotification('⚠️ خطأ', 'لم يتم تحديد النشاط للتعديل', 'error');
+                return;
+            }
+            
+            const activityIndex = activities.findIndex(a => a.id === editingActivityId);
+            if (activityIndex === -1) {
+                showNotification('⚠️ خطأ', 'النشاط المحدد غير موجود', 'error');
+                return;
+            }
+            
+            const currentName = activities[activityIndex].name;
+            
+            if (newName === currentName) {
+                showNotification('ℹ️ لا يوجد تغيير', 'لم تقم بتغيير اسم النشاط', 'info');
+                closeEditActivityModal();
+                return;
+            }
+            
+            // التحقق من عدم وجود نشاط آخر بنفس الاسم
+            const existingActivity = activities.find(a => a.name === newName && a.id !== editingActivityId);
+            if (existingActivity) {
+                showNotification('⚠️ اسم مكرر', 'يوجد نشاط آخر بنفس هذا الاسم', 'warning');
+                nameInput.focus();
+                nameInput.select();
+                return;
+            }
+            
+            try {
+                // حفظ الاسم الجديد
+                activities[activityIndex].name = newName;
+                activities[activityIndex].updatedAt = new Date().toLocaleString('ar-SA');
+                
+                // حفظ في التخزين المحلي
+                saveActivities();
+                
+                // تحديث الواجهة
+                renderActivitiesInSettings();
+                
+                // تحديث رأس الصفحة إذا كان هذا هو النشاط الحالي
+                if (currentActivityId === editingActivityId) {
+                    updateHeaderForActivity(activities[activityIndex]);
+                }
+                
+                // محاولة حفظ في Firebase إذا كان متاحاً
+                try {
+                    if (typeof firebaseSaveActivityData === 'function' && currentActivityId === editingActivityId) {
+                        await firebaseSaveActivityData();
+                    }
+                } catch (firebaseError) {
+                    console.log('تعذر الحفظ في Firebase:', firebaseError.message);
+                }
+                
+                showNotification('✅ تم الحفظ', `تم تحديث اسم النشاط إلى "${newName}" بنجاح`, 'success');
+                closeEditActivityModal();
+                
+            } catch (error) {
+                console.error('خطأ في حفظ النشاط:', error);
+                showNotification('❌ خطأ', 'حدث خطأ أثناء حفظ التعديلات', 'error');
+            }
+        }
+
+        // إضافة مستمع للضغط على زر Enter في حقل النص
+        document.addEventListener('DOMContentLoaded', function() {
+            const editActivityName = document.getElementById('editActivityName');
+            if (editActivityName) {
+                editActivityName.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        saveEditedActivity();
+                    }
+                });
+            }
+            
+            // إضافة مستمع لإغلاق النافذة بالضغط خارجها
+            const editActivityOverlay = document.getElementById('edit-activity-overlay');
+            if (editActivityOverlay) {
+                editActivityOverlay.addEventListener('click', function(e) {
+                    if (e.target === editActivityOverlay) {
+                        closeEditActivityModal();
+                    }
+                });
+            }
+        });
+        // ===== نهاية دوال نافذة تعديل النشاط =====
+
         function openSelfEditUserModal() {
             const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
             if (!loggedInUser) {
@@ -13977,10 +14561,7 @@ if (data.length > 0) {
             console.log('🔍 بيانات المستخدم من sessionStorage:', loggedInUser);
             console.log('📱 رقم الجوال من sessionStorage:', loggedInUser.phone);
 
-            // إعادة تحميل المستخدمين للتأكد من الحصول على أحدث البيانات
-            loadUsers();
-            
-            // البحث عن المستخدم الحالي في مصفوفة users
+            // البحث عن المستخدم الحالي في مصفوفة users الموجودة (بدون إعادة تحميل)
             const currentUser = users.find(u => String(u.id) === String(loggedInUser.id));
             
             if (!currentUser) {
@@ -14004,6 +14585,8 @@ if (data.length > 0) {
         }
 
         async function saveEditedUser() {
+            console.log('🚀 بدء دالة saveEditedUser...');
+            
             const name = document.getElementById('editUserName').value.trim();
             const email = document.getElementById('editUserEmail').value.trim();
             const phone = document.getElementById('editUserPhone').value.trim();
@@ -14014,16 +14597,55 @@ if (data.length > 0) {
             const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
             const isManager = loggedInUser && loggedInUser.role === 'manager';
 
+            // تشخيص مفصل للقيم المدخلة
+            console.log('📋 القيم المدخلة:');
+            console.log('  📧 Email:', email);
+            console.log('  👤 Name:', name);
+            console.log('  📱 Phone (raw):', `"${document.getElementById('editUserPhone').value}"`);
+            console.log('  📱 Phone (trimmed):', `"${phone}"`);
+            console.log('  📱 Phone length:', phone.length);
+            console.log('  📱 Phone type:', typeof phone);
+            console.log('  🔐 Password:', password ? '***' : 'فارغ');
+            console.log('  🎭 Role:', role);
+            console.log('  🏢 ActivityId:', activityId);
+            console.log('  🔢 editingUserId:', editingUserId);
+
             if (!name) { showNotification('⚠️ اسم مطلوب', 'اسم المستخدم مطلوب', 'warning'); return; }
             if (!email) { showNotification('⚠️ بريد مطلوب', 'البريد الإلكتروني مطلوب', 'warning'); return; }
-            if (!phone) { showNotification('⚠️ جوال مطلوب', 'رقم الجوال مطلوب', 'warning'); return; }
-            if (!phonePattern.test(phone)) { showNotification('⚠️ رقم غير صحيح', 'رقم الجوال يجب أن يحتوي على أرقام فقط ويمكن أن يبدأ بعلامة +', 'warning'); return; }
+            if (!phone) { 
+                console.error('❌ رقم الجوال فارغ!'); 
+                showNotification('⚠️ جوال مطلوب', 'رقم الجوال مطلوب', 'warning'); 
+                return; 
+            }
+            if (!phonePattern.test(phone)) { 
+                console.error('❌ رقم الجوال لا يطابق النمط المطلوب:', phone); 
+                showNotification('⚠️ رقم غير صحيح', 'رقم الجوال يجب أن يحتوي على أرقام فقط ويمكن أن يبدأ بعلامة +', 'warning'); 
+                return; 
+            }
             if (!role) { showNotification('⚠️ صلاحية مطلوبة', 'اختر الصلاحية', 'warning'); return; }
 
             const idx = users.findIndex(u => String(u.id) === String(editingUserId));
-            if (idx === -1) { showNotification('❌ غير موجود', 'لم يتم العثور على المستخدم', 'error'); return; }
+            console.log('🔍 البحث عن المستخدم:');
+            console.log('  🔢 editingUserId:', editingUserId, '(type:', typeof editingUserId, ')');
+            console.log('  📊 users.length:', users.length);
+            console.log('  📝 users IDs:', users.map(u => `${u.id} (${typeof u.id})`));
+            console.log('  🎯 found index:', idx);
+            
+            if (idx === -1) { 
+                console.error('❌ المستخدم غير موجود في مصفوفة users!');
+                showNotification('❌ غير موجود', 'لم يتم العثور على المستخدم', 'error'); 
+                return; 
+            }
 
             const targetUser = users[idx];
+            console.log('👤 المستخدم المستهدف قبل التحديث:', {
+                id: targetUser.id,
+                email: targetUser.email,
+                name: targetUser.name,
+                phone: targetUser.phone,
+                phoneType: typeof targetUser.phone
+            });
+            
             const isSelf = loggedInUser && String(targetUser.id) === String(loggedInUser.id);
 
             if (editingUserSelf || isSelf) {
@@ -14043,10 +14665,21 @@ if (data.length > 0) {
                 return;
             }
 
-            console.log('💾 حفظ التعديلات:');
-            console.log('  📱 رقم الجوال الجديد:', phone);
+            console.log('💾 بدء عملية التحديث...');
+            console.log('  📱 رقم الجوال الجديد:', `"${phone}"`);
             console.log('  📱 طول رقم الجوال:', phone.length);
+            console.log('  📱 نوع رقم الجوال:', typeof phone);
+            console.log('  👤 المستخدم المحدد للتحديث:', {
+                id: targetUser.id,
+                name: targetUser.name,
+                email: targetUser.email,
+                phoneBeforeUpdate: targetUser.phone,
+                phoneBeforeType: typeof targetUser.phone
+            });
 
+            // حفظ القيم القديمة للمقارنة
+            const oldPhone = targetUser.phone;
+            
             targetUser.name = name;
             targetUser.email = email;
             targetUser.phone = phone;
@@ -14054,14 +14687,105 @@ if (data.length > 0) {
             targetUser.role = role;
             targetUser.activityId = (role === 'user' || role === 'manager') ? activityId : null;
 
-            console.log('✅ تم تحديث targetUser.phone إلى:', targetUser.phone);
+            console.log('✅ تم تحديث targetUser:');
+            console.log('  📱 oldPhone:', `"${oldPhone}"`);
+            console.log('  📱 newPhone:', `"${targetUser.phone}"`);
+            console.log('  📱 phoneChanged:', oldPhone !== targetUser.phone);
+            console.log('  👤 targetUser بعد التحديث:', {
+                id: targetUser.id,
+                name: targetUser.name,
+                email: targetUser.email,
+                phone: targetUser.phone,
+                phoneType: typeof targetUser.phone
+            });
+            
+            // التحقق من أن التحديث تم في مصفوفة users
+            const checkUser = users[idx];
+            console.log('🔍 التحقق من users[idx] بعد التحديث:', {
+                id: checkUser.id,
+                phone: checkUser.phone,
+                phoneType: typeof checkUser.phone
+            });
+            console.log('📋 جميع بيانات المستخدم بعد التحديث:', {
+                id: targetUser.id,
+                name: targetUser.name,
+                email: targetUser.email,
+                phone: targetUser.phone,
+                role: targetUser.role
+            });
 
             const updatedUser = targetUser;
-            await saveUsers();
+            
+            // حفظ تفصيلي مع تشخيص
+            console.log('💾 بدء عملية حفظ المستخدمين...');
+            const saveResult = await saveUsers();
+            console.log('💾 نتيجة الحفظ:', saveResult);
+            
+            // حفظ في Firebase أيضاً
+            try {
+                if (USE_FIREBASE && typeof firebase !== 'undefined' && firebase.auth().currentUser) {
+                    console.log('🔥 حفظ المستخدم المُحدث في Firebase...');
+                    console.log('🔥 معرف المستخدم:', updatedUser.id);
+                    console.log('🔥 البيانات للحفظ:', {
+                        name: updatedUser.name,
+                        email: updatedUser.email,
+                        phone: updatedUser.phone,
+                        role: updatedUser.role,
+                        activityId: updatedUser.activityId
+                    });
+                    
+                    const userRef = firebase.database().ref(`users/${updatedUser.id}`);
+                    
+                    // التحقق من وجود المستخدم في Firebase أولاً
+                    const existingUser = await userRef.once('value');
+                    if (existingUser.exists()) {
+                        console.log('👤 المستخدم موجود في Firebase، جاري التحديث...');
+                        await userRef.update({
+                            name: updatedUser.name,
+                            email: updatedUser.email,
+                            phone: updatedUser.phone,
+                            role: updatedUser.role,
+                            activityId: updatedUser.activityId,
+                            updatedAt: new Date().toISOString()
+                        });
+                        console.log('✅ تم تحديث المستخدم في Firebase بنجاح');
+                    } else {
+                        console.log('👤 المستخدم غير موجود في Firebase، جاري إنشاؤه...');
+                        await userRef.set({
+                            id: updatedUser.id,
+                            name: updatedUser.name,
+                            email: updatedUser.email,
+                            phone: updatedUser.phone,
+                            role: updatedUser.role,
+                            activityId: updatedUser.activityId,
+                            createdAt: updatedUser.createdAt || new Date().toISOString(),
+                            updatedAt: new Date().toISOString()
+                        });
+                        console.log('✅ تم إنشاء المستخدم في Firebase بنجاح');
+                    }
+                    
+                    // التحقق من الحفظ في Firebase
+                    const verification = await userRef.once('value');
+                    const savedData = verification.val();
+                    console.log('🔍 التحقق من Firebase:', savedData.phone);
+                    
+                } else {
+                    console.log('⚠️ Firebase غير متاح أو المستخدم غير مسجل دخول');
+                }
+            } catch (firebaseError) {
+                console.error('❌ خطأ في حفظ المستخدم في Firebase:', firebaseError);
+            }
             
             console.log('💾 بعد saveUsers() - التحقق من البيانات المحفوظة:');
             const savedUser = users.find(u => String(u.id) === String(editingUserId));
             console.log('📱 رقم الجوال المحفوظ:', savedUser ? savedUser.phone : 'لم يتم العثور على المستخدم');
+            
+            // تحقق إضافي من localStorage مباشرة
+            const directCheck = loadFromLocalStorage('diwan_users');
+            if (directCheck) {
+                const directUser = directCheck.find(u => String(u.id) === String(editingUserId));
+                console.log('📱 تحقق مباشر من localStorage - رقم الجوال:', directUser ? directUser.phone : 'لم يتم العثور على المستخدم');
+            }
             
             if (loggedInUser && String(loggedInUser.id) === String(updatedUser.id)) {
                 sessionStorage.setItem('loggedInUser', JSON.stringify(updatedUser));
@@ -14690,35 +15414,98 @@ function emailSaleInvoice(saleId) {
             console.log('تحميل قائمة الأنشطة...');
         }
 
-        // ===== نظام النسخ الاحتياطي التلقائي =====
+        // ===== نظام تنبيهات النسخ الاحتياطي الاحترافي =====
         
         /**
-         * نظام ذكي للنسخ الاحتياطي التلقائي كل 24 ساعة
-         * يحفظ نسخة محلية من البيانات تلقائياً ويحذف النسخ القديمة
+         * نظام تنبيهات ذكي للنسخ الاحتياطي كل 24 ساعة
+         * يُنبه المستخدم لإجراء نسخة احتياطية بدلاً من القيام بها تلقائياً
          */
-        function initAutoBackupSystem() {
+        function initBackupReminderSystem() {
             if (!currentActivityId) return;
             
-            const backupKey = `diwan_lastAutoBackup_${currentActivityId}`;
-            const lastBackupTime = Number(localStorage.getItem(backupKey) || 0);
+            const reminderKey = `diwan_lastBackupReminder_${currentActivityId}`;
+            const lastReminderTime = Number(localStorage.getItem(reminderKey) || 0);
             const now = Date.now();
             const twentyFourHours = 24 * 60 * 60 * 1000;
             
-            // التحقق إذا مر 24 ساعة منذ آخر نسخة
-            if ((now - lastBackupTime) >= twentyFourHours) {
-                performAutoBackup();
+            // التحقق إذا مر 24 ساعة منذ آخر تنبيه
+            if ((now - lastReminderTime) >= twentyFourHours) {
+                showBackupReminder();
             }
             
-            // جدولة النسخ الاحتياطي التلقائي كل 24 ساعة
+            // جدولة التنبيهات كل 24 ساعة
             setInterval(() => {
-                performAutoBackup();
+                const currentTime = Date.now();
+                const lastCheck = Number(localStorage.getItem(reminderKey) || 0);
+                if ((currentTime - lastCheck) >= twentyFourHours) {
+                    showBackupReminder();
+                }
             }, twentyFourHours);
         }
         
         /**
-         * تنفيذ النسخ الاحتياطي التلقائي
+         * عرض تنبيه احترافي للنسخ الاحتياطي
          */
-        async function performAutoBackup() {
+        async function showBackupReminder() {
+        /**
+         * عرض تنبيه احترافي للنسخ الاحتياطي
+         */
+        async function showBackupReminder() {
+            if (!currentActivityId) return;
+            
+            try {
+                const activity = activities.find(a => a.id == currentActivityId);
+                if (!activity) return;
+                
+                // تحديث وقت آخر تنبيه
+                const reminderKey = `diwan_lastBackupReminder_${currentActivityId}`;
+                localStorage.setItem(reminderKey, String(Date.now()));
+                
+                // إحصائيات سريعة عن البيانات
+                const totalRecords = (items?.length || 0) + (customers?.length || 0) + (suppliers?.length || 0) + 
+                                   (purchases?.length || 0) + (sales?.length || 0) + (expenses?.length || 0) + 
+                                   (revenues?.length || 0) + (salaries?.length || 0);
+                
+                // عرض تنبيه بسيط
+                const userChoice = confirm(`🛡️ وقت النسخ الاحتياطي!\n\nنشاط: ${activity.name}\nإجمالي السجلات: ${totalRecords}\n\nلم يتم إنشاء نسخة احتياطية منذ أكثر من 24 ساعة.\nننصح بإجراء نسخة احتياطية للحفاظ على أمان بياناتك.\n\nهل تريد إنشاء نسخة احتياطية الآن؟`);
+                
+                if (userChoice) {
+                    // المستخدم اختار إجراء نسخة احتياطية فوراً
+                    const success = await performManualBackup();
+                    if (success) {
+                        showNotification('✅ تم إنشاء النسخة الاحتياطية', 'تم حفظ نسخة احتياطية من بياناتك بنجاح', 'success');
+                    } else {
+                        showNotification('❌ فشل النسخ الاحتياطي', 'حدث خطأ أثناء إنشاء النسخة الاحتياطية', 'error');
+                    }
+                } else {
+                    showNotification('ℹ️ تم تأجيل النسخ الاحتياطي', 'سيتم تذكيرك مرة أخرى بعد 24 ساعة', 'info');
+                }
+                
+            } catch (error) {
+                console.error('❌ خطأ في عرض تنبيه النسخ الاحتياطي:', error);
+            }
+        }
+        
+        /**
+         * عرض نافذة تنبيه احترافية للنسخ الاحتياطي
+         */
+        async function showBackupReminderDialog(activityName, totalRecords, dataStats) {
+            return new Promise((resolve) => {
+                // إنشاء نافذة التنبيه المبسطة
+                const confirmed = confirm(`وقت النسخ الاحتياطي! 🛡️\n\nنشاط: ${activityName}\nإجمالي السجلات: ${totalRecords}\n\nلم يتم إنشاء نسخة احتياطية منذ أكثر من 24 ساعة.\nننصح بإجراء نسخة احتياطية للحفاظ على أمان بياناتك.\n\nهل تريد إنشاء نسخة احتياطية الآن؟`);
+                
+                if (confirmed) {
+                    resolve('backup_now');
+                } else {
+                    resolve('dismiss');
+                }
+            });
+        }
+        
+        /**
+         * تنفيذ النسخ الاحتياطي اليدوي (عند طلب المستخدم)
+         */
+        async function performManualBackup() {
             if (!currentActivityId) return;
             
             try {
@@ -14738,12 +15525,13 @@ function emailSaleInvoice(saleId) {
                     salaries: salaries || [],
                     backupDate: new Date().toISOString(),
                     backupTimestamp: Date.now(),
-                    version: '20.0'
+                    version: '23.0',
+                    backupType: 'manual' // تمييز النسخ اليدوية
                 };
                 
                 // حفظ النسخة الاحتياطية في localStorage
-                const backupKey = `diwan_autoBackup_${currentActivityId}`;
-                const oldBackupsKey = `diwan_autoBackup_old_${currentActivityId}`;
+                const backupKey = `diwan_manualBackup_${currentActivityId}`;
+                const oldBackupsKey = `diwan_manualBackup_old_${currentActivityId}`;
                 
                 // نقل النسخة السابقة إلى النسخ القديمة
                 const oldBackup = localStorage.getItem(backupKey);
@@ -14753,42 +15541,38 @@ function emailSaleInvoice(saleId) {
                 
                 // حفظ النسخة الجديدة
                 localStorage.setItem(backupKey, JSON.stringify(backupData));
-                localStorage.setItem(`diwan_lastAutoBackup_${currentActivityId}`, String(Date.now()));
+                localStorage.setItem(`diwan_lastBackupReminder_${currentActivityId}`, String(Date.now()));
                 
-                // عرض إشعار للمستخدم
-                showNotification(
-                    '✅ تم إنشاء نسخة احتياطية تلقائية',
-                    `تم حفظ نسخة احتياطية من نشاط "${activity.name}" بنجاح`,
-                    'success'
-                );
+                debugLog(`✅ تم إنشاء نسخة احتياطية يدوية للنشاط: ${activity.name}`);
                 
-                debugLog(`✅ تم إنشاء نسخة احتياطية تلقائية للنشاط: ${activity.name}`);
+                return true;
                 
             } catch (error) {
-                console.error('❌ خطأ في النسخ الاحتياطي التلقائي:', error);
+                console.error('❌ خطأ في النسخ الاحتياطي اليدوي:', error);
+                return false;
             }
         }
         
         /**
-         * استعادة آخر نسخة احتياطية تلقائية
+         * استعادة آخر نسخة احتياطية يدوية
          */
-        async function restoreAutoBackup() {
+        async function restoreManualBackup() {
             if (!currentActivityId) {
                 showNotification('⚠️ تنبيه', 'يرجى تحديد نشاط أولاً', 'warning');
                 return;
             }
             
-            const backupKey = `diwan_autoBackup_${currentActivityId}`;
+            const backupKey = `diwan_manualBackup_${currentActivityId}`;
             const backupData = localStorage.getItem(backupKey);
             
             if (!backupData) {
-                showNotification('⚠️ لا توجد نسخة احتياطية', 'لم يتم العثور على نسخة احتياطية تلقائية لهذا النشاط', 'warning');
+                showNotification('⚠️ لا توجد نسخة احتياطية', 'لم يتم العثور على نسخة احتياطية يدوية لهذا النشاط', 'warning');
                 return;
             }
             
             const confirmed = await showConfirmDialog(
                 'استعادة النسخة الاحتياطية',
-                'هل أنت متأكد من استعادة آخر نسخة احتياطية تلقائية؟ سيتم استبدال البيانات الحالية.',
+                'هل أنت متأكد من استعادة آخر نسخة احتياطية يدوية؟ سيتم استبدال البيانات الحالية.',
                 'warning',
                 'استعادة',
                 'إلغاء'
@@ -14845,19 +15629,19 @@ function emailSaleInvoice(saleId) {
         }
         
         /**
-         * عرض معلومات آخر نسخة احتياطية
+         * عرض معلومات آخر نسخة احتياطية يدوية
          */
-        function showAutoBackupInfo() {
+        function showManualBackupInfo() {
             if (!currentActivityId) return;
             
-            const backupKey = `diwan_autoBackup_${currentActivityId}`;
-            const lastBackupKey = `diwan_lastAutoBackup_${currentActivityId}`;
+            const backupKey = `diwan_manualBackup_${currentActivityId}`;
+            const lastReminderKey = `diwan_lastBackupReminder_${currentActivityId}`;
             
             const backupData = localStorage.getItem(backupKey);
-            const lastBackupTime = Number(localStorage.getItem(lastBackupKey) || 0);
+            const lastReminderTime = Number(localStorage.getItem(lastReminderKey) || 0);
             
             if (!backupData) {
-                showNotification('ℹ️ معلومات النسخ الاحتياطي', 'لا توجد نسخة احتياطية تلقائية لهذا النشاط بعد', 'info');
+                showNotification('ℹ️ معلومات النسخ الاحتياطي', 'لا توجد نسخة احتياطية يدوية لهذا النشاط بعد', 'info');
                 return;
             }
             
@@ -14883,19 +15667,19 @@ function emailSaleInvoice(saleId) {
         }
         
         /**
-         * تنزيل النسخة الاحتياطية التلقائية كملف JSON
+         * تنزيل النسخة الاحتياطية اليدوية كملف JSON
          */
-        function downloadAutoBackup() {
+        function downloadManualBackup() {
             if (!currentActivityId) {
                 showNotification('⚠️ تنبيه', 'يرجى تحديد نشاط أولاً', 'warning');
                 return;
             }
             
-            const backupKey = `diwan_autoBackup_${currentActivityId}`;
+            const backupKey = `diwan_manualBackup_${currentActivityId}`;
             const backupData = localStorage.getItem(backupKey);
             
             if (!backupData) {
-                showNotification('⚠️ لا توجد نسخة احتياطية', 'لم يتم العثور على نسخة احتياطية تلقائية لهذا النشاط', 'warning');
+                showNotification('⚠️ لا توجد نسخة احتياطية', 'لم يتم العثور على نسخة احتياطية يدوية لهذا النشاط', 'warning');
                 return;
             }
             
@@ -14910,7 +15694,7 @@ function emailSaleInvoice(saleId) {
                 const timeStr = date.toTimeString().split(' ')[0].replace(/:/g, '-'); // HH-MM-SS
                 
                 // إنشاء اسم الملف
-                const fileName = `نسخة_احتياطية_تلقائية_${activityName}_${dateStr}_${timeStr}.json`;
+                const fileName = `نسخة_احتياطية_يدوية_${activityName}_${dateStr}_${timeStr}.json`;
                 
                 // تحويل البيانات إلى JSON منسق
                 const jsonString = JSON.stringify(backup, null, 2);
@@ -14969,105 +15753,9 @@ function emailSaleInvoice(saleId) {
             }
         }
 
-        // ===== Initial App Load =====
-        async function initializeApp() {
-            if (!currentActivityId) { showActivityModal(); return; }
-            
-            // تحميل البيانات من Firebase أو LocalStorage
-            if (USE_FIREBASE) {
-                debugLog('🔥 تحميل البيانات من Firebase...');
-                
-                items = await firebaseGetActivityData(currentActivityId, 'items') || [];
-                customers = await firebaseGetActivityData(currentActivityId, 'customers') || [];
-                suppliers = await firebaseGetActivityData(currentActivityId, 'suppliers') || [];
-                purchases = await firebaseGetActivityData(currentActivityId, 'purchases') || [];
-                sales = await firebaseGetActivityData(currentActivityId, 'sales') || [];
-                expenses = await firebaseGetActivityData(currentActivityId, 'expenses') || [];
-                revenues = await firebaseGetActivityData(currentActivityId, 'revenues') || [];
-                salaries = await firebaseGetActivityData(currentActivityId, 'salaries') || [];
-                assets = await firebaseGetActivityData(currentActivityId, 'assets') || [];
-                salesReturns = await firebaseGetActivityData(currentActivityId, 'salesReturns') || [];
-                advances = await firebaseGetActivityData(currentActivityId, 'advances') || [];
-                purchaseReturns = await firebaseGetActivityData(currentActivityId, 'purchaseReturns') || [];
-                
-                debugLog('✅ تم تحميل البيانات من Firebase');
-            } else {
-                debugLog('📦 تحميل البيانات من LocalStorage...');
-                
-                items = (loadFromLocalStorage('items')) || [];
-                customers = (loadFromLocalStorage('customers')) || [];
-                suppliers = (loadFromLocalStorage('suppliers')) || [];
-                purchases = (loadFromLocalStorage('purchases')) || [];
-                sales = (loadFromLocalStorage('sales')) || [];
-                expenses = (loadFromLocalStorage('expenses')) || [];
-                revenues = (loadFromLocalStorage('revenues')) || [];
-                salaries = (loadFromLocalStorage('salaries')) || [];
-                assets = (loadFromLocalStorage('assets')) || [];
-                salesReturns = (loadFromLocalStorage('salesReturns')) || [];
-                advances = (loadFromLocalStorage('advances')) || [];
-                purchaseReturns = (loadFromLocalStorage('purchaseReturns')) || [];
-            }
+        // ملاحظة: تم نقل تعريف initializeApp إلى مكان مبكر في الكود لحل مشكلة التوقيت
 
-            currentPurchaseNumber = purchases.length > 0 ? Math.max(0, ...purchases.map(p => p.number)) + 1 : 1;
-            currentSaleNumber = sales.length > 0 ? Math.max(0, ...sales.map(s => s.number)) + 1 : 1;
-            currentSaleReturnNumber = salesReturns.length > 0 ? Math.max(0, ...salesReturns.map(r => r.number)) + 1 : 1;
-            
-            // ترقية البيانات القديمة لإضافة حقول الخصم المفقودة
-            await upgradeSalesData();
-            currentPurchaseReturnNumber = purchaseReturns.length > 0 ? Math.max(0, ...purchaseReturns.map(r => r.number)) + 1 : 1;
-            
-            const today = new Date().toISOString().split('T')[0];
-            ['purchaseDate', 'saleDate', 'expenseDate', 'revenueDate', 'reportFrom', 'reportTo'].forEach(id => document.getElementById(id).value = today);
-            const monthInput = document.getElementById('salaryMonth');
-            if (monthInput) {
-                if (!monthInput.value) {
-                    monthInput.value = new Date().toISOString().slice(0, 7);
-                }
-                monthInput.onchange = updateSalarySummary;
-            }
-            
-            generatePurchaseCode();
-            generateSaleCode();
-
-            const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
-            updateLoggedInUserDisplay(loggedInUser);
-            
-            updateDashboard(); updateExpenseStats(); updateRevenueStats(); updateDataStats();
-            renderItems(); renderCustomers(); renderSuppliers(); renderExpenses(); renderRevenues();
-            renderSalaries(); updateSalarySummary();
-            displayAssets(); updateAssetsStats();
-            clearSalaryForm();
-            renderSalesList(); renderPurchasesList();
-            renderSalesReturns(); renderPurchaseReturns();
-            updatePurchaseDropdowns(); updateSaleDropdowns(); updateReportItemFilter();
-            
-            // تحميل سلة المحذوفات وعرض الإشعارات
-            loadTrashFromLocalStorage();
-            updateTrashBadge();
-            
-            // عرض إشعارات المخزون والديون فقط بعد 10 ثواني (لتجنب إزعاج المستخدم عند تسجيل الدخول)
-            setTimeout(() => {
-                checkLowStock();
-                checkUnpaidDebts();
-            }, 10000);
-            
-            // إضافة event listeners للأصول
-            const searchAssetsInput = document.getElementById('searchAssets');
-            const filterAssetTypeSelect = document.getElementById('filterAssetType');
-            const filterAssetStatusSelect = document.getElementById('filterAssetStatus');
-            
-            if (searchAssetsInput) searchAssetsInput.addEventListener('input', displayAssets);
-            if (filterAssetTypeSelect) filterAssetTypeSelect.addEventListener('change', displayAssets);
-            if (filterAssetStatusSelect) filterAssetStatusSelect.addEventListener('change', displayAssets);
-            
-            // تفعيل نظام النسخ الاحتياطي التلقائي
-            setTimeout(() => {
-                initAutoBackupSystem();
-            }, 3000);
-            
-            const activity = activities.find(a => a.id == currentActivityId);
-            console.log(`✅ تم تهيئة النظام للنشاط: ${activity ? activity.name : 'غير معروف'}`);
-        }
+        // ملاحظة: تم نقل تعريف initializeApp إلى مكان مبكر في الكود لحل مشكلة التوقيت
 
         // دالة للتحقق من صحة الجلسة
         function validateSession() {
@@ -17320,7 +18008,8 @@ function loadRecentActivities() {
     console.log('جاري تحميل الأنشطة الحديثة...');
     return [];
 }
-
+}
+// نهاية الكود JavaScript
     </script>
 
 </body>
