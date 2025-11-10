@@ -7,7 +7,7 @@
     
     📋 أحدث التحسينات والميزات المضافة:
     
-    🆕 الميزات الجديدة - الإصدار 23.0 (Firebase Integration):
+    🆕 الميزات الجديدة - الإصدار 23.0 (Firebaب ,e Integration):
     
     ✅ 15. تكامل Firebase الكامل 🔥
        - ربط شامل مع Firebase Realtime Database
@@ -351,6 +351,123 @@
         };
 
         console.log('✅ Firebase initialized successfully!');
+
+        // معالجة الأخطاء العامة لتجاهل أخطاء Google services
+        window.addEventListener('error', function(event) {
+            // تجاهل أخطاء iframe.js وall-frames.js (Google services)
+            if (event.filename && (event.filename.includes('iframe.js') || event.filename.includes('all-frames.js'))) {
+                console.log('🔇 تم تجاهل خطأ Google service:', event.message);
+                event.preventDefault();
+                return false;
+            }
+            
+            // تسجيل الأخطاء المهمة فقط
+            if (event.error && event.error.message && !event.error.message.includes('postMessage')) {
+                console.warn('⚠️ خطأ عام:', event.error.message);
+            }
+        });
+
+        // تجاهل أخطاء postMessage 
+        window.addEventListener('unhandledrejection', function(event) {
+            if (event.reason && event.reason.message && 
+                (event.reason.message.includes('Could not establish connection') ||
+                 event.reason.message.includes('postMessage') ||
+                 event.reason.message.includes('target origin'))) {
+                console.log('🔇 تم تجاهل خطأ postMessage:', event.reason.message);
+                event.preventDefault();
+            }
+        });
+    </script>
+    
+    <!-- 🔥 نظام "تذكرني" الجديد - مستقل تماماً -->
+    <script>
+        (function() {
+            'use strict';
+            
+            console.log('🚀 بدء تشغيل نظام "تذكرني" الجديد...');
+            
+            // فحص فوري عند تحميل السكريبت (قبل DOMContentLoaded)
+            function checkAndAutoLogin() {
+                console.log('🔍 فحص بيانات "تذكرني"...');
+                
+                const rememberedUser = localStorage.getItem('rememberedUser');
+                if (!rememberedUser) {
+                    console.log('❌ لا توجد بيانات "تذكرني"');
+                    return false;
+                }
+                
+                try {
+                    const userData = JSON.parse(rememberedUser);
+                    const now = new Date().getTime();
+                    const dayInMs = 30 * 24 * 60 * 60 * 1000; // 30 يوم
+                    
+                    if (userData.timestamp && (now - userData.timestamp) < dayInMs) {
+                        console.log('✅ بيانات "تذكرني" صالحة - سيتم التسجيل التلقائي');
+                        
+                        // إنتظار تحميل العناصر ثم التسجيل
+                        const waitForElements = setInterval(() => {
+                            const loginEmail = document.getElementById('loginEmail');
+                            const loginPassword = document.getElementById('loginPassword');
+                            const rememberMe = document.getElementById('rememberMe');
+                            const loginOverlay = document.getElementById('login-overlay');
+                            
+                            if (loginEmail && loginPassword && rememberMe && loginOverlay) {
+                                clearInterval(waitForElements);
+                                
+                                // إخفاء شاشة تسجيل الدخول فوراً
+                                loginOverlay.style.display = 'none';
+                                
+                                // تعبئة البيانات
+                                loginEmail.value = userData.email;
+                                loginPassword.value = userData.password;
+                                rememberMe.checked = true;
+                                
+                                console.log('🔑 تم تعبئة بيانات التسجيل - بدء التسجيل التلقائي...');
+                                
+                                // التسجيل بعد وقت قصير للتأكد من تحميل كل شيء
+                                setTimeout(() => {
+                                    if (typeof handleLogin === 'function') {
+                                        handleLogin();
+                                        console.log('✅ تم التسجيل التلقائي بنجاح!');
+                                    } else {
+                                        console.error('❌ دالة handleLogin غير موجودة');
+                                        loginOverlay.style.display = 'flex';
+                                    }
+                                }, 500);
+                                
+                                return true;
+                            }
+                        }, 50); // فحص كل 50ms
+                        
+                        // إيقاف الفحص بعد 10 ثوانٍ كحد أقصى
+                        setTimeout(() => {
+                            clearInterval(waitForElements);
+                            console.warn('⚠️ انتهت مهلة انتظار عناصر التسجيل');
+                        }, 10000);
+                        
+                        return true;
+                    } else {
+                        console.log('⚠️ بيانات "تذكرني" منتهية الصلاحية');
+                        localStorage.removeItem('rememberedUser');
+                        return false;
+                    }
+                } catch (e) {
+                    console.error('❌ خطأ في قراءة بيانات "تذكرني":', e);
+                    localStorage.removeItem('rememberedUser');
+                    return false;
+                }
+            }
+            
+            // تشغيل فوري
+            const autoLoginSuccessful = checkAndAutoLogin();
+            
+            // حفظ حالة التسجيل التلقائي لمنع تدخل الدوال الأخرى
+            if (autoLoginSuccessful) {
+                window.AUTO_LOGIN_IN_PROGRESS = true;
+                console.log('🔒 تم تعيين علامة AUTO_LOGIN_IN_PROGRESS');
+            }
+            
+        })();
     </script>
     
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -1464,6 +1581,11 @@
         .login-role-selector button { width: 100%; margin-bottom: 10px; padding: 15px; font-size: 1.1em; }
         .login-form { display: none; }
         .back-to-roles { color: var(--primary-color); cursor: pointer; display: block; margin-top: 20px; font-weight: bold; }
+        
+        /* First Setup Overlay Styles */
+        #first-setup-overlay button:hover { background: rgba(255,255,255,0.3) !important; transform: translateY(-2px); }
+        #first-setup-overlay .login-input::placeholder { color: rgba(0,0,0,0.6); }
+        #first-setup-overlay .login-input:focus { outline: none; box-shadow: 0 0 0 3px rgba(255,255,255,0.3); }
 
         #activity-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); display: flex; justify-content: center; align-items: center; z-index: 10000; backdrop-filter: blur(8px); }
         #activity-box { background: white; padding: 40px; border-radius: var(--border-radius); box-shadow: 0 10px 30px rgba(0,0,0,0.25); width: 100%; max-width: 500px; text-align: center; animation: fadeIn 0.5s ease; }
@@ -1508,14 +1630,43 @@
         .developer-credit { position: absolute; left: 20px; bottom: 20px; color: rgba(255, 255, 255, 0.8); font-size: calc(var(--font-size) * 0.8); font-style: italic; }
     .design-toggle { position: fixed; top: 20px; left: 20px; background: var(--primary-color); color: white; border: none; border-radius: 50%; width: 50px; height: 50px; cursor: pointer; font-size: 20px; box-shadow: var(--shadow); transition: all 0.3s ease; z-index: 101; }
     .design-toggle:hover { transform: scale(1.1); background: var(--secondary-color); }
-        .control-panel { position: fixed; top: 20px; right: calc(var(--sidebar-width) + 20px); background: white; padding: 20px; border-radius: var(--border-radius); box-shadow: var(--shadow); z-index: 1000; max-width: 300px; display: none; }
+        .control-panel { 
+            position: fixed; 
+            top: 20px; 
+            right: calc(var(--sidebar-width) + 20px); 
+            background: white; 
+            padding: 20px; 
+            border-radius: var(--border-radius); 
+            box-shadow: var(--shadow); 
+            z-index: 1000; 
+            max-width: 300px; 
+            max-height: 85vh; 
+            overflow-y: auto; 
+            display: none; 
+        }
         .control-panel.show { display: block; animation: slideIn 0.3s ease; }
         @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        .control-panel h3 { color: var(--primary-color); margin-bottom: 15px; text-align: center; }
-        .control-group { margin-bottom: 15px; }
-        .control-group label { display: block; margin-bottom: 5px; font-weight: 600; color: var(--secondary-color); }
-        .color-picker { width: 100%; height: 40px; border: none; border-radius: 5px; cursor: pointer; }
+        .control-panel h3 { color: var(--primary-color); margin-bottom: 15px; text-align: center; font-size: 1.1em; }
+        .control-group { margin-bottom: 12px; }
+        .control-group label { display: block; margin-bottom: 4px; font-weight: 600; color: var(--secondary-color); font-size: 0.9em; }
+        .color-picker { width: 100%; height: 35px; border: none; border-radius: 5px; cursor: pointer; }
         .font-size-control { width: 100%; }
+        
+        /* تحسين نافذة التحكم */
+        .control-panel::-webkit-scrollbar {
+            width: 6px;
+        }
+        .control-panel::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+        .control-panel::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 3px;
+        }
+        .control-panel::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary-color);
+        }
         .section { display: none; background: white; padding: 30px; border-radius: var(--border-radius); box-shadow: var(--shadow); margin-bottom: 20px; min-height: 500px; }
         .section.active { display: block; animation: fadeIn 0.5s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
@@ -1788,7 +1939,14 @@
         .user-status { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-left: 10px; }
         .status-active { background: #27ae60; }
         .status-inactive { background: #e74c3c; }
-        @media (max-width: 1024px) { .sidebar { width: 250px; } .container { margin-right: 250px; } .control-panel { right: calc(250px + 20px); } }
+        @media (max-width: 1024px) { 
+            .sidebar { width: 250px; } 
+            .container { margin-right: 250px; } 
+            .control-panel { 
+                right: calc(250px + 20px); 
+                max-height: 80vh; 
+            } 
+        }
         @media (max-width: 768px) { 
             * { max-width: 100vw; }
             body { flex-direction: column; overflow-x: hidden; width: 100%; } 
@@ -1800,7 +1958,18 @@
             .nav button { width: 100%; } 
             .form-grid { grid-template-columns: 1fr !important; gap: 10px; padding: 0; } 
             .form-grid input, .form-grid select, .form-grid textarea { width: 100%; max-width: 100%; box-sizing: border-box; }
-            .control-panel { position: fixed; top: 0; right: 0; left: 0; bottom: 0; max-width: 100vw; z-index: 2000; overflow-y: auto; } 
+            .control-panel { 
+                position: fixed; 
+                top: 0; 
+                right: 0; 
+                left: 0; 
+                bottom: 0; 
+                max-width: 100vw; 
+                max-height: 100vh; 
+                z-index: 2000; 
+                overflow-y: auto; 
+                padding: 15px; 
+            } 
             .design-toggle { position: fixed; top: 20px; left: 20px; z-index: 2001; } 
             .invoice-header { flex-direction: column; gap: 10px; align-items: stretch; } 
             .report-controls { flex-direction: column; align-items: stretch; gap: 8px; } 
@@ -3435,6 +3604,43 @@ textarea.editing-mode {
             <p id="login-error">بيانات الدخول غير صحيحة أو غير مصرح لك بالدخول.</p>
         </div>
     </div>
+
+    <!-- نافذة إنشاء مدير النظام الأول -->
+    <div id="first-setup-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); justify-content: center; align-items: center; z-index: 10001; backdrop-filter: blur(5px);">
+        <div id="first-setup-box" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.3); width: 100%; max-width: 500px; text-align: center;">
+            <div style="font-size: 4em; margin-bottom: 20px;">🚀</div>
+            <h2 style="color: white; margin-bottom: 10px; font-size: 2em;">مرحباً بك في ديواني!</h2>
+            <p style="margin-bottom: 30px; opacity: 0.9; font-size: 1.1em;">لبدء استخدام النظام، يجب إنشاء حساب مدير النظام الأول</p>
+            
+            <form id="firstSetupForm" onsubmit="return false;" autocomplete="off" style="text-align: right;">
+                <input type="text" id="adminName" class="login-input" placeholder="اسم المدير الكامل" 
+                       style="background: rgba(255,255,255,0.9); border: none; margin-bottom: 15px;"
+                       onkeypress="if(event.key==='Enter')createFirstAdmin()" autocomplete="off" required>
+                
+                <input type="email" id="adminEmail" class="login-input" placeholder="البريد الإلكتروني للمدير" 
+                       style="background: rgba(255,255,255,0.9); border: none; margin-bottom: 15px;"
+                       onkeypress="if(event.key==='Enter')createFirstAdmin()" autocomplete="off" required>
+                
+                <input type="tel" id="adminPhone" class="login-input" placeholder="رقم الجوال (اختياري)" 
+                       style="background: rgba(255,255,255,0.9); border: none; margin-bottom: 15px;"
+                       onkeypress="if(event.key==='Enter')createFirstAdmin()" autocomplete="off">
+                
+                <input type="password" id="adminPassword" class="login-input" placeholder="كلمة المرور (6 أحرف على الأقل)" 
+                       style="background: rgba(255,255,255,0.9); border: none; margin-bottom: 15px;"
+                       onkeypress="if(event.key==='Enter')createFirstAdmin()" autocomplete="off" required>
+                
+                <input type="password" id="adminPasswordConfirm" class="login-input" placeholder="تأكيد كلمة المرور" 
+                       style="background: rgba(255,255,255,0.9); border: none; margin-bottom: 20px;"
+                       onkeypress="if(event.key==='Enter')createFirstAdmin()" autocomplete="off" required>
+                
+                <button class="btn-success" onclick="createFirstAdmin()" style="width: 100%; padding: 15px; font-size: 1.1em; background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.5); color: white; border-radius: 10px; transition: all 0.3s;">
+                    🎯 إنشاء حساب المدير وبدء الاستخدام
+                </button>
+            </form>
+            
+            <p id="setup-error" style="color: #ffcccb; margin-top: 15px; display: none; background: rgba(255,255,255,0.1); padding: 10px; border-radius: 5px;"></p>
+        </div>
+    </div>
     
     <div id="activity-overlay" style="display: none;">
         <div id="activity-box">
@@ -3473,9 +3679,12 @@ textarea.editing-mode {
     </div>
 
     <!-- نافذة إعدادات البريد الإلكتروني -->
-    <div id="email-settings-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); justify-content: center; align-items: center; z-index: 10002; backdrop-filter: blur(5px);">
-        <div style="background: white; padding: 30px; border-radius: var(--border-radius); box-shadow: 0 10px 25px rgba(0,0,0,0.2); width: 100%; max-width: 700px; max-height: 90vh; overflow-y: auto;">
-            <h2 style="color: var(--primary-color); margin-bottom: 10px; text-align: center;">📧 إعدادات البريد الإلكتروني</h2>
+    <div id="email-settings-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); justify-content: center; align-items: center; z-index: 10002; backdrop-filter: blur(5px);" onclick="if(event.target === this) closeEmailSettingsModal();">
+        <div style="background: white; padding: 30px; border-radius: var(--border-radius); box-shadow: 0 10px 25px rgba(0,0,0,0.2); width: 100%; max-width: 700px; max-height: 90vh; overflow-y: auto;" onclick="event.stopPropagation();">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h2 style="color: var(--primary-color); margin: 0;">📧 إعدادات البريد الإلكتروني</h2>
+                <button onclick="closeEmailSettingsModal()" style="background: #f0f0f0; border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #666; font-size: 18px;" title="إغلاق">✕</button>
+            </div>
             <p style="text-align: center; color: #666; margin-bottom: 20px; font-size: 0.95em;">
                 هذه الإعدادات ضرورية لتفعيل إرسال الفواتير عبر البريد. احصل عليها من <a href="https://www.emailjs.com/" target="_blank" style="color: var(--primary-color);">EmailJS</a>
             </p>
@@ -3611,6 +3820,17 @@ textarea.editing-mode {
                                 <div id="activityCreatedBy" style="color: var(--text-color); margin-top: 4px;"></div>
                             </div>
                         </div>
+                        
+                        <!-- قسم رأس المال -->
+                        <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #d1e7fd;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                                <span style="color: #666; font-weight: 600;">💰 رأس المال الأولي:</span>
+                                <button onclick="editInitialCapital()" style="background: var(--primary-color); color: white; border: none; padding: 5px 10px; border-radius: 5px; font-size: 0.8em; cursor: pointer;">
+                                    ✏️ تعديل
+                                </button>
+                            </div>
+                            <div id="initialCapitalDisplay" style="color: var(--primary-color); font-weight: bold; font-size: 1.1em;">0.00 ريال</div>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -3692,22 +3912,32 @@ textarea.editing-mode {
             </div>
 
             <div class="control-group">
-                <label>اللون الرئيسي:</label>
+                <label>🎨 اللون الرئيسي:</label>
                 <input type="color" class="color-picker" value="#2c5aa0" onchange="updateColor('--primary-color', this.value)">
             </div>
 
             <div class="control-group">
-                <label>لون الخلفية:</label>
+                <label>🖼️ لون الخلفية:</label>
                 <input type="color" class="color-picker" value="#ecf0f1" onchange="updateColor('--bg-color', this.value)">
             </div>
 
             <div class="control-group">
-                <label>لون النص:</label>
+                <label>📝 لون النص:</label>
                 <input type="color" class="color-picker" value="#2c3e50" onchange="updateColor('--text-color', this.value)">
             </div>
 
-            <button onclick="resetDesign()" class="btn-primary" style="width: 100%; margin-top: 10px;">🔄 إعادة تعيين</button>
-            <button onclick="toggleControlPanel()" class="btn-danger" style="width: 100%; margin-top: 10px;">❌ إغلاق</button>
+            <div class="control-group">
+                <label>🏛️ لون الترويسة:</label>
+                <input type="color" class="color-picker" value="#2c5aa0" onchange="updateHeaderColor(this.value)" id="headerColorPicker">
+            </div>
+
+            <div class="control-group">
+                <label>📋 لون خلفية القائمة الجانبية:</label>
+                <input type="color" class="color-picker" value="#2c3e50" onchange="updateColor('--sidebar-bg', this.value)" id="sidebarColorPicker">
+            </div>
+
+            <button onclick="resetDesign()" class="btn-primary" style="width: 100%; margin-top: 8px; padding: 8px 12px; font-size: 0.9em;">🔄 إعادة تعيين</button>
+            <button onclick="toggleControlPanel()" class="btn-danger" style="width: 100%; margin-top: 8px; padding: 8px 12px; font-size: 0.9em;">❌ إغلاق</button>
         </div>
 
 <div class="container">
@@ -3836,6 +4066,15 @@ textarea.editing-mode {
     <div class="stat-card">
         <div class="stat-label">إجمالي الإيرادات</div>
         <div class="stat-number" id="totalRevenuesHome">0</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">💰 رأس المال الأولي</div>
+        <div class="stat-number" id="initialCapitalHome">0.00</div>
+        <div style="margin-top: 5px;">
+            <button onclick="editInitialCapital()" style="background: var(--primary-color); color: white; border: none; padding: 3px 8px; border-radius: 4px; font-size: 0.75em; cursor: pointer; opacity: 0.8;">
+                ✏️ تعديل
+            </button>
+        </div>
     </div>
     <div class="stat-card">
     <div class="stat-label">إجمالي العهد والسلف</div>
@@ -5166,18 +5405,42 @@ textarea.editing-mode {
                     <option value="">-- تعيين لنشاط --</option>
                 </select>
             </div>
+                <!-- زر إضافة المستخدم -->
+                <div class="form-grid grid-3" style="margin-top: 15px;">
+                    <button class="btn-primary btn-add" onclick="addUser()" style="padding: 15px; font-size: 1.1em; font-weight: 600;">➕ إضافة المستخدم</button>
+                    <div></div>
+                    <div></div>
+                </div>
             </form>
-            <div class="form-grid grid-2">
-                <button class="btn-primary btn-add" onclick="addUser()">➕ إضافة مستخدم</button>
-                <button class="btn-secondary" onclick="fixUsersPhoneField()" style="background: linear-gradient(135deg, #3498db 0%, #2ecc71 100%);">
-                    📱 إصلاح حقول الهاتف
+            
+            <!-- معلومات حالة النظام -->
+            <div style="background: #e8f5e8; border: 1px solid #4CAF50; border-radius: 12px; padding: 15px; margin-bottom: 25px;">
+                <h3 style="margin: 0 0 10px 0; color: #2E7D32; font-size: 1em; display: flex; align-items: center; gap: 8px;">
+                    🔥 حالة النظام الهجين
+                </h3>
+                <div style="font-size: 0.9em; color: #2E7D32; line-height: 1.4;">
+                    ✅ <strong>المستخدمين الجدد:</strong> يحفظون تلقائياً في Firebase + LocalStorage<br>
+                    ✅ <strong>الأنشطة الجديدة:</strong> تحفظ تلقائياً في Firebase + LocalStorage<br>
+                    ✅ <strong>بيانات النشاط:</strong> تحفظ تلقائياً في Firebase + LocalStorage<br>
+                    💡 <strong>الأزرار أدناه:</strong> فقط لمزامنة البيانات القديمة أو إعادة المزامنة
+                </div>
+            </div>
+            
+            <h4>🔧 أدوات المزامنة والصيانة</h4>
+            <div class="form-grid grid-3">
+                <button class="btn-secondary" onclick="fixUsersPhoneField()" style="background: linear-gradient(135deg, #3498db 0%, #2ecc71 100%); font-size: 0.8em; padding: 8px;">
+                    📱 إصلاح الهاتف
                 </button>
-                <button class="btn-secondary" onclick="migrateUsersToFirebase()" style="background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);">
-                    🔥 نقل المستخدمين إلى Firebase
+                <button class="btn-secondary" onclick="migrateUsersToFirebase()" style="background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%); opacity: 0.7; font-size: 0.8em; padding: 8px;">
+                    � مزامنة المستخدمين القدامى لـ Firebase
                 </button>
-                <button class="btn-secondary" onclick="fixFirebaseUserData()" style="background: linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%);">
-                    🔧 إصلاح بيانات Firebase
+                <button class="btn-secondary" onclick="fixFirebaseUserData()" style="background: linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%); font-size: 0.8em; padding: 8px;">
+                    🔧 إصلاح Firebase
                 </button>
+            </div>
+            <p style="font-size: 0.8em; color: #666; margin: 10px 0; font-style: italic; text-align: center;">
+                💡 ملاحظة: المستخدمين الجدد يحفظون تلقائياً في Firebase
+            </p>
             </div>
             <div class="user-selector">
                 <label for="usersDropdown" class="user-selector-label">قائمة المستخدمين:</label>
@@ -5222,12 +5485,18 @@ textarea.editing-mode {
             <div class="form-grid grid-3">
                 <input type="text" id="settingNewActivityName" placeholder="اسم النشاط الجديد">
                 <button class="btn-primary btn-add" onclick="addNewActivity(true)">➕ إضافة نشاط</button>
-                <button class="btn-secondary" onclick="migrateActivitiesToFirebase()" style="background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);">
-                    🔥 نقل الأنشطة إلى Firebase
+                <button class="btn-secondary" onclick="migrateActivitiesToFirebase()" style="background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%); opacity: 0.7;">
+                    � مزامنة الأنشطة القديمة لـ Firebase
                 </button>
-                <button class="btn-secondary" onclick="migrateActivityDataToFirebase()" style="background: linear-gradient(135deg, #9C27B0 0%, #E91E63 100%);">
-                    📦 نقل بيانات النشاط الحالي
+                <p style="font-size: 0.8em; color: #666; margin: 5px 0; font-style: italic;">
+                    💡 ملاحظة: الأنشطة الجديدة تحفظ تلقائياً في Firebase
+                </p>
+                <button class="btn-secondary" onclick="migrateActivityDataToFirebase()" style="background: linear-gradient(135deg, #9C27B0 0%, #E91E63 100%); opacity: 0.7;">
+                    � مزامنة بيانات النشاط القديمة
                 </button>
+                <p style="font-size: 0.8em; color: #666; margin: 5px 0; font-style: italic;">
+                    💡 ملاحظة: البيانات الجديدة تحفظ تلقائياً في Firebase
+                </p>
             </div>
             <div class="activity-selector" style="margin-top: 20px;">
                 <label for="activitiesDropdown" class="activity-selector-label">قائمة الأنشطة:</label>
@@ -5311,11 +5580,8 @@ textarea.editing-mode {
                 <button class="btn-success" onclick="createBackup()" style="background: #10b981;">
                     💾 إنشاء نسخة احتياطية الآن
                 </button>
-                <button class="btn-info" onclick="showAutoBackupInfo()" style="background: #3b82f6;">
-                    ℹ️ معلومات آخر نسخة
-                </button>
-                <button class="btn-warning" onclick="restoreAutoBackup()" style="background: #f59e0b;">
-                    ↩️ استعادة آخر نسخة
+                <button class="btn-warning" onclick="showBackupInfoWithRestore()" style="background: #f59e0b;">
+                    📋 استعادة آخر نسخة
                 </button>
                 <button class="btn-secondary" onclick="downloadAutoBackup()" style="background: #6366f1;">
                     📥 تنزيل النسخة كملف
@@ -5629,7 +5895,7 @@ async function uploadFile(file, path) {
 // 🔥 Firebase Integration - وضع التشغيل
 // ========================================
 const USE_FIREBASE = true; // true = Firebase, false = LocalStorage فقط
-const DEBUG_MODE = true;
+const DEBUG_MODE = false; // تقليل رسائل Debug لتجنب الإزعاج
 
 function debugLog(...args) {
     if (DEBUG_MODE) {
@@ -5659,6 +5925,13 @@ const GOSI_SALARY_CAP = 45000;
 // ========================================
 async function initializeApp() {
     console.log('🎯 بدء تهيئة التطبيق...');
+    console.log('🚀 مرحباً بك في الديوان - النظام المحاسبي v23.0');
+    
+    // تحميل المستخدمين والأنشطة من Firebase/LocalStorage
+    console.log('📋 تحميل البيانات الأساسية...');
+    await loadUsers();
+    await loadActivities();
+    
     if (!currentActivityId) { 
         console.log('⚠️ لا يوجد نشاط محدد - عرض نافذة الأنشطة');
         showActivityModal(); 
@@ -5775,6 +6048,26 @@ async function initializeApp() {
     
     const activity = activities.find(a => a.id == currentActivityId);
     console.log(`✅ تم تهيئة النظام للنشاط: ${activity ? activity.name : 'غير معروف'}`);
+    
+    // تحميل تخصيصات التصميم المحفوظة
+    if (typeof loadDesignPreferences === 'function') {
+        loadDesignPreferences();
+        console.log('🎨 تم تحميل تخصيصات التصميم');
+    }
+    
+    // تحقق نهائي من حالة تسجيل الدخول بعد الاستعادة
+    if (window.currentUser) {
+        console.log('✅ المستخدم مسجل دخول:', window.currentUser.name);
+        // التأكد من إخفاء شاشة تسجيل الدخول
+        const loginSection = document.getElementById('loginSection');
+        const appContent = document.getElementById('appContent');
+        if (loginSection && appContent) {
+            loginSection.style.display = 'none';
+            appContent.style.display = 'block';
+        }
+    } else {
+        console.log('⚠️ لا يوجد مستخدم مسجل دخول');
+    }
 }
 
 // كشف الدالة للعالمية فوراً
@@ -5782,6 +6075,97 @@ if (typeof window !== 'undefined') {
     window.initializeApp = initializeApp;
     console.log('🎯 تم تعريف window.initializeApp بنجاح في مكان مبكر!');
 }
+
+// ========================================
+// 📧 دوال إعدادات البريد الإلكتروني (EmailJS)
+// ========================================
+function toggleEmailSettings() {
+    console.log('📧 فتح إعدادات البريد الإلكتروني...');
+    
+    // تحميل القيم من emailJsConfig و LocalStorage
+    const savedConfig = localStorage.getItem('diwan_email_config');
+    if (savedConfig) {
+        try {
+            const config = JSON.parse(savedConfig);
+            Object.assign(emailJsConfig, config);
+        } catch (error) {
+            console.warn('خطأ في تحليل إعدادات البريد:', error);
+        }
+    }
+    
+    // تحميل القيم الحالية (من المتغيرات أو LocalStorage)
+    const serviceId = emailJsConfig.serviceID || localStorage.getItem('emailjs_service_id') || '';
+    const templateId = emailJsConfig.templateID || localStorage.getItem('emailjs_template_id') || '';
+    const resetTemplateId = emailJsConfig.resetTemplateID || localStorage.getItem('emailjs_reset_template_id') || '';
+    const publicKey = emailJsConfig.publicKey || localStorage.getItem('emailjs_public_key') || '';
+    
+    // تعبئة الحقول
+    document.getElementById('emailJsServiceId').value = serviceId;
+    document.getElementById('emailJsTemplateId').value = templateId;
+    document.getElementById('emailJsResetTemplateId').value = resetTemplateId;
+    document.getElementById('emailJsPublicKey').value = publicKey;
+    
+    // فتح النافذة
+    const overlay = document.getElementById('email-settings-overlay');
+    if (overlay) {
+        overlay.style.display = 'flex';
+        console.log('✅ تم فتح نافذة إعدادات البريد');
+    } else {
+        console.error('❌ لا يمكن العثور على نافذة إعدادات البريد');
+        showNotification('❌ خطأ', 'لا يمكن فتح نافذة إعدادات البريد', 'error');
+    }
+}
+
+function closeEmailSettingsModal() {
+    const overlay = document.getElementById('email-settings-overlay');
+    if (overlay) {
+        overlay.style.display = 'none';
+        console.log('✅ تم إغلاق نافذة إعدادات البريد');
+    }
+}
+
+async function saveEmailJsSettings() {
+    console.log('💾 حفظ إعدادات البريد الإلكتروني...');
+    
+    const serviceId = document.getElementById('emailJsServiceId').value.trim();
+    const templateId = document.getElementById('emailJsTemplateId').value.trim();
+    const resetTemplateId = document.getElementById('emailJsResetTemplateId').value.trim();
+    const publicKey = document.getElementById('emailJsPublicKey').value.trim();
+    
+    // تحديث المتغير العالمي
+    emailJsConfig = {
+        serviceID: serviceId,
+        templateID: templateId,
+        resetTemplateID: resetTemplateId,
+        publicKey: publicKey
+    };
+    
+    // حفظ في LocalStorage
+    try {
+        localStorage.setItem('diwan_email_config', JSON.stringify(emailJsConfig));
+        
+        // حفظ القيم منفصلة أيضاً للتوافق مع النظام القديم
+        localStorage.setItem('emailjs_service_id', serviceId);
+        localStorage.setItem('emailjs_template_id', templateId);
+        localStorage.setItem('emailjs_reset_template_id', resetTemplateId);
+        localStorage.setItem('emailjs_public_key', publicKey);
+        
+        console.log('✅ تم حفظ إعدادات البريد بنجاح');
+        showNotification('✅ نجح', 'تم حفظ إعدادات البريد الإلكتروني بنجاح', 'success');
+        
+        // إغلاق النافذة
+        closeEmailSettingsModal();
+        
+    } catch (error) {
+        console.error('❌ خطأ في حفظ إعدادات البريد:', error);
+        showNotification('❌ خطأ', 'فشل حفظ إعدادات البريد الإلكتروني', 'error');
+    }
+}
+
+// إتاحة الدوال عالمياً
+window.toggleEmailSettings = toggleEmailSettings;
+window.closeEmailSettingsModal = closeEmailSettingsModal;
+window.saveEmailJsSettings = saveEmailJsSettings;
 
 // ========================================
 // 🔥 إنشاء مستخدم افتراضي (LocalStorage فقط - معطل في Firebase)
@@ -5873,6 +6257,23 @@ const EMAILJS_DEFAULTS = {
     publicKey: '-FKicwCTdzG90IoY6'
 };
 let emailJsConfig = { ...EMAILJS_DEFAULTS };
+
+// تحميل إعدادات البريد المحفوظة عند بدء التطبيق
+function loadSavedEmailSettings() {
+    try {
+        const savedConfig = localStorage.getItem('diwan_email_config');
+        if (savedConfig) {
+            const config = JSON.parse(savedConfig);
+            Object.assign(emailJsConfig, config);
+            console.log('✅ تم تحميل إعدادات البريد المحفوظة');
+        }
+    } catch (error) {
+        console.warn('خطأ في تحميل إعدادات البريد:', error);
+    }
+}
+
+// تحميل الإعدادات فوراً
+loadSavedEmailSettings();
     // ===== وظائف التشفير للأمان =====
     async function hashPassword(password) {
         // استخدام SHA-256 لتشفير كلمة المرور
@@ -7271,7 +7672,69 @@ let emailJsConfig = { ...EMAILJS_DEFAULTS };
             }
         }
 
-        function saveUsers() {
+        // === حفظ مباشر للمستخدمين في Firebase (تجاهل GLOBAL_STORAGE_KEYS) ===
+        async function firebaseSaveUsersDirectly(usersArray) {
+            if (!USE_FIREBASE) return false;
+            
+            try {
+                const { ref, set } = window.firebaseModules;
+                const database = window.firebaseDatabase;
+                
+                if (!database) {
+                    console.warn('⚠️ Firebase Database غير متاح');
+                    return false;
+                }
+                
+                // حفظ كل مستخدم في Firebase Authentication + Database
+                for (const user of usersArray) {
+                    if (!user.firebaseUid) {
+                        // إنشاء المستخدم في Firebase Authentication إذا لم يكن موجود
+                        try {
+                            const firebaseUser = await firebaseCreateUser(user.email, user.password, {
+                                name: user.name,
+                                phone: user.phone,
+                                role: user.role,
+                                activityId: user.activityId,
+                                createdAt: user.createdAt
+                            });
+                            
+                            if (firebaseUser) {
+                                user.firebaseUid = firebaseUser.uid;
+                                console.log(`✅ تم إنشاء المستخدم في Firebase: ${user.email}`);
+                            }
+                        } catch (authError) {
+                            if (authError.code === 'auth/email-already-in-use') {
+                                console.log(`ℹ️ المستخدم موجود في Firebase: ${user.email}`);
+                            } else {
+                                console.warn(`⚠️ خطأ في إنشاء المستخدم في Authentication: ${authError.message}`);
+                            }
+                        }
+                    }
+                }
+                
+                // حفظ قائمة المستخدمين في Database
+                const usersRef = ref(database, 'users'); // تغيير المسار من 'system/users' إلى 'users'
+                
+                // تحويل Array إلى Object مفهرس بالـ email لضمان بنية ثابتة
+                const usersObject = {};
+                usersArray.forEach(user => {
+                    if (user.email) {
+                        usersObject[user.email.replace(/[.#$[\]]/g, '_')] = user; // تنظيف المفاتيح من الرموز المحظورة
+                    }
+                });
+                
+                await set(usersRef, usersObject);
+                
+                console.log('🔥✅ تم حفظ جميع المستخدمين في Firebase Database');
+                return true;
+                
+            } catch (error) {
+                console.error('🔥❌ خطأ في حفظ المستخدمين في Firebase:', error);
+                return false;
+            }
+        }
+
+        async function saveUsers() {
             console.log('💾 محاولة حفظ المستخدمين...', users.length, 'مستخدم');
             
             // تشخيص تفصيلي قبل الحفظ
@@ -7285,7 +7748,19 @@ let emailJsConfig = { ...EMAILJS_DEFAULTS };
                 });
             }
             
+            // 1. حفظ في LocalStorage أولاً (كالمعتاد)
             const success = saveToLocalStorage('diwan_users', users);
+            
+            // 2. حفظ في Firebase مباشرة للمستخدمين (تجاهل GLOBAL_STORAGE_KEYS)
+            if (success && USE_FIREBASE) {
+                console.log('🔥 حفظ المستخدمين في Firebase...');
+                const firebaseSuccess = await firebaseSaveUsersDirectly(users);
+                if (firebaseSuccess) {
+                    console.log('✅ تم حفظ المستخدمين في Firebase بنجاح');
+                    // إشعار اختياري للمستخدم
+                    // showNotification('🔥 Firebase', 'تم حفظ المستخدمين في Firebase', 'success');
+                }
+            }
             if (success) {
                 console.log('✅ تم حفظ المستخدمين بنجاح في localStorage');
                 // تحقق مباشر
@@ -7749,9 +8224,104 @@ let emailJsConfig = { ...EMAILJS_DEFAULTS };
             }
         }
 
-       function loadUsers() {
+        // === تحميل مباشر للمستخدمين من Firebase ===
+        async function firebaseLoadUsersDirectly() {
+            if (!USE_FIREBASE) return null;
+            
+            try {
+                const { ref, get } = window.firebaseModules;
+                const database = window.firebaseDatabase;
+                
+                if (!database) {
+                    console.warn('⚠️ Firebase Database غير متاح');
+                    return null;
+                }
+                
+                const usersRef = ref(database, 'users'); // تغيير المسار من 'system/users' إلى 'users'
+                const snapshot = await get(usersRef);
+                
+                if (snapshot.exists()) {
+                    const firebaseUsers = snapshot.val();
+                    
+                    // تحويل Object إلى Array إذا كانت البيانات على شكل Object
+                    let usersArray = [];
+                    if (Array.isArray(firebaseUsers)) {
+                        usersArray = firebaseUsers;
+                    } else if (firebaseUsers && typeof firebaseUsers === 'object') {
+                        // تحويل Object إلى Array باستخدام Object.values
+                        usersArray = Object.values(firebaseUsers).filter(u => u && u.id && u.email);
+                    }
+                    
+                    console.log('🔥✅ تم تحميل المستخدمين من Firebase:', usersArray?.length || 0);
+                    return usersArray;
+                } else {
+                    console.log('🔥ℹ️ لا توجد مستخدمين في Firebase - بناء قاعدة بيانات جديدة');
+                    return [];
+                }
+                
+            } catch (error) {
+                console.error('🔥❌ خطأ في تحميل المستخدمين من Firebase:', error);
+                return null;
+            }
+        }
+
+        // === تحميل مباشر للأنشطة من Firebase ===
+        async function firebaseLoadActivitiesDirectly() {
+            if (!USE_FIREBASE) return null;
+            
+            try {
+                const { ref, get } = window.firebaseModules;
+                const database = window.firebaseDatabase;
+                
+                if (!database) {
+                    console.warn('⚠️ Firebase Database غير متاح');
+                    return null;
+                }
+                
+                const activitiesRef = ref(database, 'activities'); // تغيير المسار من 'system/activities' إلى 'activities'
+                const snapshot = await get(activitiesRef);
+                
+                if (snapshot.exists()) {
+                    const firebaseActivities = snapshot.val();
+                    
+                    // تحويل Object إلى Array إذا كانت البيانات على شكل Object
+                    let activitiesArray = [];
+                    if (Array.isArray(firebaseActivities)) {
+                        activitiesArray = firebaseActivities;
+                    } else if (firebaseActivities && typeof firebaseActivities === 'object') {
+                        // تحويل Object إلى Array باستخدام Object.values
+                        activitiesArray = Object.values(firebaseActivities).filter(a => a && a.id && a.name);
+                    }
+                    
+                    console.log('🔥✅ تم تحميل الأنشطة من Firebase:', activitiesArray?.length || 0);
+                    return activitiesArray;
+                } else {
+                    console.log('🔥ℹ️ لا توجد أنشطة في Firebase - بناء قاعدة بيانات جديدة');
+                    return [];
+                }
+                
+            } catch (error) {
+                console.error('🔥❌ خطأ في تحميل الأنشطة من Firebase:', error);
+                return null;
+            }
+        }
+
+       async function loadUsers() {
     try {
-        console.log("تحميل المستخدمين من التخزين المحلي...");
+        console.log("تحميل المستخدمين...");
+        
+        // محاولة التحميل من Firebase أولاً
+        if (USE_FIREBASE) {
+            const firebaseUsers = await firebaseLoadUsersDirectly();
+            if (firebaseUsers && firebaseUsers.length > 0) {
+                users = firebaseUsers;
+                console.log(`🔥✅ تم تحميل ${users.length} مستخدم من Firebase`);
+                return;
+            }
+        }
+        
+        // إذا فشل Firebase، حمّل من LocalStorage
+        console.log("🔄 التحميل من التخزين المحلي...");
         let storedUsers = loadFromLocalStorage('diwan_users');
 
         if (!Array.isArray(storedUsers)) {
@@ -7833,20 +8403,106 @@ let emailJsConfig = { ...EMAILJS_DEFAULTS };
         function updateFontSize(size) {
             document.documentElement.style.setProperty('--font-size', size + 'px');
             document.getElementById('font-size-value').textContent = size + 'px';
+            saveDesignPreferences(); // حفظ التخصيصات تلقائياً
         }
 
         function updateColor(variable, color) {
             document.documentElement.style.setProperty(variable, color);
+            saveDesignPreferences(); // حفظ التخصيصات تلقائياً
+        }
+
+        function updateHeaderColor(color) {
+            // تحديث لون الترويسة مع الحفاظ على التدرج
+            const gradient = `linear-gradient(135deg, ${color} 0%, #34495e 100%)`;
+            document.documentElement.style.setProperty('--header-bg', gradient);
+            saveDesignPreferences(); // حفظ التخصيصات تلقائياً
+        }
+
+        function saveDesignPreferences() {
+            const preferences = {
+                primaryColor: getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim(),
+                bgColor: getComputedStyle(document.documentElement).getPropertyValue('--bg-color').trim(),
+                textColor: getComputedStyle(document.documentElement).getPropertyValue('--text-color').trim(),
+                headerBg: getComputedStyle(document.documentElement).getPropertyValue('--header-bg').trim(),
+                sidebarBg: getComputedStyle(document.documentElement).getPropertyValue('--sidebar-bg').trim(),
+                fontSize: getComputedStyle(document.documentElement).getPropertyValue('--font-size').trim(),
+                fontFamily: getComputedStyle(document.documentElement).getPropertyValue('--font-family').trim()
+            };
+            localStorage.setItem('designPreferences', JSON.stringify(preferences));
+        }
+
+        function loadDesignPreferences() {
+            const saved = localStorage.getItem('designPreferences');
+            if (saved) {
+                try {
+                    const preferences = JSON.parse(saved);
+                    
+                    if (preferences.primaryColor) {
+                        document.documentElement.style.setProperty('--primary-color', preferences.primaryColor);
+                        const primaryPicker = document.querySelector('input[onchange*="--primary-color"]');
+                        if (primaryPicker) primaryPicker.value = preferences.primaryColor;
+                    }
+                    
+                    if (preferences.bgColor) {
+                        document.documentElement.style.setProperty('--bg-color', preferences.bgColor);
+                        const bgPicker = document.querySelector('input[onchange*="--bg-color"]');
+                        if (bgPicker) bgPicker.value = preferences.bgColor;
+                    }
+                    
+                    if (preferences.textColor) {
+                        document.documentElement.style.setProperty('--text-color', preferences.textColor);
+                        const textPicker = document.querySelector('input[onchange*="--text-color"]');
+                        if (textPicker) textPicker.value = preferences.textColor;
+                    }
+                    
+                    if (preferences.headerBg) {
+                        document.documentElement.style.setProperty('--header-bg', preferences.headerBg);
+                        // استخراج اللون الأساسي من التدرج
+                        const colorMatch = preferences.headerBg.match(/linear-gradient\(135deg,\s*([^,]+)/);
+                        if (colorMatch && colorMatch[1]) {
+                            const headerPicker = document.getElementById('headerColorPicker');
+                            if (headerPicker) headerPicker.value = colorMatch[1].trim();
+                        }
+                    }
+                    
+                    if (preferences.sidebarBg) {
+                        document.documentElement.style.setProperty('--sidebar-bg', preferences.sidebarBg);
+                        const sidebarPicker = document.getElementById('sidebarColorPicker');
+                        if (sidebarPicker) sidebarPicker.value = preferences.sidebarBg;
+                    }
+                    
+                    if (preferences.fontSize) {
+                        document.documentElement.style.setProperty('--font-size', preferences.fontSize);
+                        const sizeValue = parseInt(preferences.fontSize);
+                        const rangeInput = document.querySelector('input[type="range"]');
+                        const sizeDisplay = document.getElementById('font-size-value');
+                        if (rangeInput) rangeInput.value = sizeValue;
+                        if (sizeDisplay) sizeDisplay.textContent = preferences.fontSize;
+                    }
+                    
+                    if (preferences.fontFamily) {
+                        document.documentElement.style.setProperty('--font-family', preferences.fontFamily);
+                        const fontSelect = document.getElementById('fontFamilySelect');
+                        if (fontSelect) fontSelect.value = preferences.fontFamily;
+                    }
+                    
+                } catch (e) {
+                    console.error('خطأ في تحميل تخصيصات التصميم:', e);
+                }
+            }
         }
 
         function updateFontFamily(font) {
             document.documentElement.style.setProperty('--font-family', font);
+            saveDesignPreferences(); // حفظ التخصيصات تلقائياً
         }
 
         function resetDesign() {
             document.documentElement.style.setProperty('--primary-color', '#2c5aa0');
             document.documentElement.style.setProperty('--bg-color', '#ecf0f1');
             document.documentElement.style.setProperty('--text-color', '#2c3e50');
+            document.documentElement.style.setProperty('--header-bg', 'linear-gradient(135deg, #2c5aa0 0%, #34495e 100%)');
+            document.documentElement.style.setProperty('--sidebar-bg', '#2c3e50');
             document.documentElement.style.setProperty('--font-size', '16px');
             document.documentElement.style.setProperty('--font-family', "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif");
             
@@ -7855,13 +8511,305 @@ let emailJsConfig = { ...EMAILJS_DEFAULTS };
             document.querySelector('input[value="#2c5aa0"]').value = '#2c5aa0';
             document.querySelector('input[value="#ecf0f1"]').value = '#ecf0f1';
             document.querySelector('input[value="#2c3e50"]').value = '#2c3e50';
+            document.getElementById('headerColorPicker').value = '#2c5aa0';
+            document.getElementById('sidebarColorPicker').value = '#2c3e50';
             document.getElementById('fontFamilySelect').value = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+            
+            // حذف التخصيصات المحفوظة
+            localStorage.removeItem('designPreferences');
+            
+            // إظهار رسالة تأكيد
+            showNotification('تم إعادة تعيين التصميم بنجاح! 🎨', 'success');
+        }
+
+        // === دوال النسخ الاحتياطي (مؤقتة) ===
+        function showAutoBackupInfo() {
+            try {
+                // حساب حجم البيانات في LocalStorage
+                let totalSize = 0;
+                let itemsCount = 0;
+                
+                for (let key in localStorage) {
+                    if (localStorage.hasOwnProperty(key)) {
+                        totalSize += localStorage[key].length;
+                        itemsCount++;
+                    }
+                }
+                
+                // تحويل الحجم إلى وحدة مناسبة
+                let sizeText = '';
+                if (totalSize < 1024) {
+                    sizeText = `${totalSize} بايت`;
+                } else if (totalSize < 1024 * 1024) {
+                    sizeText = `${(totalSize / 1024).toFixed(1)} كيلوبايت`;
+                } else {
+                    sizeText = `${(totalSize / (1024 * 1024)).toFixed(1)} ميجابايت`;
+                }
+                
+                // معلومات Firebase
+                const firebaseStatus = USE_FIREBASE ? 'مُفعّل ✅' : 'معطّل ❌';
+                
+                // آخر تحديث
+                const lastActivity = sessionStorage.getItem('lastActivityTime') || 'غير محدد';
+                
+                const message = `
+🔄 النظام الهجين النشط:
+• Firebase: ${firebaseStatus}
+• LocalStorage: نشط ✅
+• حجم البيانات المحلية: ${sizeText}
+• عدد المفاتيح: ${itemsCount}
+• آخر نشاط: ${lastActivity}
+
+💡 النظام يحفظ تلقائياً في كلا المكانين لضمان أقصى حماية للبيانات.`;
+                
+                showNotification('ℹ️ معلومات النسخ الاحتياطي', message, 'info');
+                
+            } catch (error) {
+                showNotification('ℹ️ النسخ الاحتياطي', 'النظام الهجين يحفظ تلقائياً في Firebase + LocalStorage كنسخة احتياطية', 'info');
+            }
+        }
+        
+        /**
+         * دالة موحدة تعرض معلومات آخر نسخة مع إمكانية الاستعادة
+         */
+        async function showBackupInfoWithRestore() {
+            try {
+                // حساب حجم البيانات في LocalStorage
+                let totalSize = 0;
+                let itemsCount = 0;
+                
+                for (let key in localStorage) {
+                    if (localStorage.hasOwnProperty(key)) {
+                        totalSize += localStorage[key].length;
+                        itemsCount++;
+                    }
+                }
+                
+                // تحويل الحجم إلى وحدة مناسبة
+                let sizeText = '';
+                if (totalSize < 1024) {
+                    sizeText = `${totalSize} بايت`;
+                } else if (totalSize < 1024 * 1024) {
+                    sizeText = `${(totalSize / 1024).toFixed(1)} كيلوبايت`;
+                } else {
+                    sizeText = `${(totalSize / (1024 * 1024)).toFixed(1)} ميجابايت`;
+                }
+                
+                // معلومات Firebase
+                const firebaseStatus = USE_FIREBASE ? 'مُفعّل ✅' : 'معطّل ❌';
+                
+                // آخر تحديث
+                const lastActivity = sessionStorage.getItem('lastActivityTime') || 'غير محدد';
+                
+                const message = `
+🔄 معلومات النسخة الاحتياطية:
+• Firebase: ${firebaseStatus}
+• LocalStorage: نشط ✅
+• حجم البيانات المحلية: ${sizeText}
+• عدد المفاتيح: ${itemsCount}
+• آخر نشاط: ${lastActivity}
+
+💡 النظام يحفظ تلقائياً في كلا المكانين لضمان أقصى حماية للبيانات.
+
+هل تريد استعادة البيانات من النسخة الاحتياطية المحلية؟`;
+                
+                const confirmed = await showConfirmDialog(
+                    '📋 معلومات واستعادة النسخة الاحتياطية',
+                    message,
+                    'info',
+                    'نعم، استعد البيانات',
+                    'إلغاء'
+                );
+
+                if (confirmed) {
+                    // تنفيذ الاستعادة بدون عرض نافذة تأكيد أخرى
+                    await restoreAutoBackup(true);
+                }
+                
+            } catch (error) {
+                console.error('خطأ في عرض معلومات النسخ الاحتياطي:', error);
+                showNotification('ℹ️ النسخ الاحتياطي', 'النظام الهجين يحفظ تلقائياً في Firebase + LocalStorage كنسخة احتياطية', 'info');
+            }
+        }
+        
+        async function restoreAutoBackup(skipConfirmation = false) {
+            if (!skipConfirmation) {
+                const confirmed = await showConfirmDialog(
+                    '🔄 استعادة النسخة الاحتياطية',
+                    'هل تريد استعادة البيانات من النسخة الاحتياطية المحلية (LocalStorage)؟\n\n⚠️ تحذير: هذا سيستبدل جميع البيانات الحالية في الجلسة.',
+                    'warning',
+                    'نعم، استعد البيانات',
+                    'إلغاء'
+                );
+
+                if (!confirmed) return;
+            }
+
+            try {
+                showLoading('🔄 جاري استعادة البيانات...');
+                
+                console.log('🔄 بدء عملية الاستعادة من LocalStorage...');
+                
+                // إعادة تحميل البيانات من LocalStorage مباشرة بدون إعادة تحميل الصفحة
+                await loadUsers();
+                await loadActivities();
+                
+                // إعادة تحميل بيانات النشاط الحالي
+                if (window.currentActivityId) {
+                    console.log('📊 إعادة تحميل بيانات النشاط:', window.currentActivityId);
+                    
+                    // تحميل جميع البيانات من LocalStorage
+                    items = JSON.parse(localStorage.getItem(`diwan_items_${window.currentActivityId}`) || '[]');
+                    customers = JSON.parse(localStorage.getItem(`diwan_customers_${window.currentActivityId}`) || '[]');
+                    suppliers = JSON.parse(localStorage.getItem(`diwan_suppliers_${window.currentActivityId}`) || '[]');
+                    purchases = JSON.parse(localStorage.getItem(`diwan_purchases_${window.currentActivityId}`) || '[]');
+                    sales = JSON.parse(localStorage.getItem(`diwan_sales_${window.currentActivityId}`) || '[]');
+                    expenses = JSON.parse(localStorage.getItem(`diwan_expenses_${window.currentActivityId}`) || '[]');
+                    revenues = JSON.parse(localStorage.getItem(`diwan_revenues_${window.currentActivityId}`) || '[]');
+                    salaries = JSON.parse(localStorage.getItem(`diwan_salaries_${window.currentActivityId}`) || '[]');
+                    assets = JSON.parse(localStorage.getItem(`diwan_assets_${window.currentActivityId}`) || '[]');
+                    salesReturns = JSON.parse(localStorage.getItem(`diwan_salesReturns_${window.currentActivityId}`) || '[]');
+                    purchaseReturns = JSON.parse(localStorage.getItem(`diwan_purchaseReturns_${window.currentActivityId}`) || '[]');
+                    advances = JSON.parse(localStorage.getItem(`diwan_advances_${window.currentActivityId}`) || '[]');
+                    
+                    console.log('✅ تم تحميل البيانات من LocalStorage:');
+                    console.log(`  - الأصناف: ${items.length}`);
+                    console.log(`  - العملاء: ${customers.length}`);
+                    console.log(`  - الموردين: ${suppliers.length}`);
+                    console.log(`  - المبيعات: ${sales.length}`);
+                    console.log(`  - المشتريات: ${purchases.length}`);
+                }
+                
+                // تحديث الواجهات إذا كانت مفتوحة
+                const currentSection = document.querySelector('.section:not([style*="display: none"])');
+                if (currentSection && currentSection.id) {
+                    console.log('🔄 تحديث الواجهة الحالية:', currentSection.id);
+                    
+                    // إعادة تحميل القسم الحالي
+                    const sectionName = currentSection.id.replace('Section', '');
+                    if (typeof showSection === 'function') {
+                        showSection(sectionName);
+                    }
+                }
+                
+                // تحديث وقت آخر استعادة
+                sessionStorage.setItem('lastRestoreTime', new Date().toLocaleString('ar-SA'));
+                
+                hideLoading();
+                showNotification('✅ تمت الاستعادة بنجاح', 'تم استعادة جميع البيانات من LocalStorage مع الحفاظ على تسجيل الدخول', 'success');
+                
+            } catch (error) {
+                hideLoading();
+                console.error('خطأ في الاستعادة:', error);
+                showNotification('❌ فشل الاستعادة', 'حدث خطأ أثناء استعادة البيانات: ' + error.message, 'error');
+            }
+        }
+        
+        function downloadAutoBackup() {
+            try {
+                // جمع جميع البيانات من LocalStorage
+                const backupData = {
+                    timestamp: new Date().toISOString(),
+                    type: 'local_storage_backup',
+                    users: JSON.parse(localStorage.getItem('users') || '[]'),
+                    activities: JSON.parse(localStorage.getItem('activities') || '[]'),
+                    activityData: {}
+                };
+                
+                // جمع بيانات كل نشاط
+                backupData.activities.forEach(activity => {
+                    const activityId = activity.id;
+                    backupData.activityData[activityId] = {
+                        items: JSON.parse(localStorage.getItem(`items_${activityId}`) || '[]'),
+                        customers: JSON.parse(localStorage.getItem(`customers_${activityId}`) || '[]'),
+                        suppliers: JSON.parse(localStorage.getItem(`suppliers_${activityId}`) || '[]'),
+                        purchases: JSON.parse(localStorage.getItem(`purchases_${activityId}`) || '[]'),
+                        sales: JSON.parse(localStorage.getItem(`sales_${activityId}`) || '[]'),
+                        expenses: JSON.parse(localStorage.getItem(`expenses_${activityId}`) || '[]'),
+                        revenues: JSON.parse(localStorage.getItem(`revenues_${activityId}`) || '[]'),
+                        salaries: JSON.parse(localStorage.getItem(`salaries_${activityId}`) || '[]'),
+                        assets: JSON.parse(localStorage.getItem(`assets_${activityId}`) || '[]'),
+                        salesReturns: JSON.parse(localStorage.getItem(`salesReturns_${activityId}`) || '[]'),
+                        purchaseReturns: JSON.parse(localStorage.getItem(`purchaseReturns_${activityId}`) || '[]'),
+                        advances: JSON.parse(localStorage.getItem(`advances_${activityId}`) || '[]')
+                    };
+                });
+                
+                // إنشاء ملف للتنزيل
+                const dataStr = JSON.stringify(backupData, null, 2);
+                const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                
+                // إنشاء رابط التنزيل
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(dataBlob);
+                link.download = `backup_localStorage_${new Date().toISOString().split('T')[0]}.json`;
+                
+                // تنزيل الملف
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                showNotification('✅ تم التنزيل', 'تم تنزيل نسخة احتياطية من LocalStorage بنجاح', 'success');
+                
+            } catch (error) {
+                console.error('خطأ في تنزيل النسخة الاحتياطية:', error);
+                showNotification('❌ خطأ', 'فشل في تنزيل النسخة الاحتياطية', 'error');
+            }
         }
 
         // === تبديل القائمة الجانبية للهواتف ===
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             sidebar.classList.toggle('open');
+        }
+
+        // === تعديل رأس المال الأولي ===
+        function editInitialCapital() {
+            if (!currentActivityId) {
+                showNotification('⚠️ خطأ', 'لا يوجد نشاط محدد', 'warning');
+                return;
+            }
+            
+            const activity = activities.find(a => a.id == currentActivityId);
+            if (!activity) {
+                showNotification('⚠️ خطأ', 'لا يمكن العثور على بيانات النشاط', 'warning');
+                return;
+            }
+            
+            const currentCapital = activity.initialCapital || 0;
+            
+            // استخدام prompt لإدخال القيمة الجديدة
+            const newCapital = prompt(`💰 تعديل رأس المال الأولي\n\nالقيمة الحالية: ${currentCapital.toFixed(2)} ريال\n\nأدخل القيمة الجديدة:`, currentCapital);
+            
+            if (newCapital === null) return; // إلغاء
+            
+            const parsedCapital = parseFloat(newCapital);
+            if (isNaN(parsedCapital) || parsedCapital < 0) {
+                showNotification('⚠️ قيمة خاطئة', 'يرجى إدخال قيمة رقمية صحيحة', 'warning');
+                return;
+            }
+            
+            // تحديث بيانات النشاط
+            activity.initialCapital = parsedCapital;
+            
+            // حفظ التغييرات
+            saveActivities();
+            
+            // تحديث العرض
+            updateInitialCapitalDisplay();
+            updateDashboard();
+            
+            showNotification('✅ تم التحديث', `تم تحديث رأس المال إلى ${parsedCapital.toFixed(2)} ريال`, 'success');
+        }
+        
+        // === تحديث عرض رأس المال ===
+        function updateInitialCapitalDisplay() {
+            const activity = activities.find(a => a.id == currentActivityId);
+            const capitalEl = document.getElementById('initialCapitalDisplay');
+            if (capitalEl && activity) {
+                const capital = activity.initialCapital || 0;
+                capitalEl.textContent = `${capital.toFixed(2)} ريال`;
+            }
         }
 
         function updateAccountInfoSection(user) {
@@ -8285,7 +9233,15 @@ let emailJsConfig = { ...EMAILJS_DEFAULTS };
         if (advanceDateEl) advanceDateEl.value = new Date().toISOString().split('T')[0];
  
     } else if (sectionId === 'advanced-dashboard') {
-        initAdvancedDashboard();
+        try {
+            if (typeof initAdvancedDashboard === 'function') {
+                initAdvancedDashboard();
+            } else {
+                console.warn('⚠️ دالة initAdvancedDashboard غير متاحة');
+            }
+        } catch (error) {
+            console.error('❌ خطأ في تهيئة لوحة التحكم المتقدمة:', error);
+        }
     } else if (sectionId === 'returns') {
         showReturnTab('sales');
     } else if (sectionId === 'settings') {
@@ -8302,11 +9258,18 @@ let emailJsConfig = { ...EMAILJS_DEFAULTS };
         }
 
         if (activityManagementSection) {
+            // فقط مدير النظام يستطيع إدارة الأنشطة (إنشاء، تعديل، حذف)
             if (loggedInUser && loggedInUser.role === 'admin') {
                 activityManagementSection.style.display = 'block';
             } else {
+                // مدير النشاط لا يستطيع إدارة الأنشطة
                 activityManagementSection.style.display = 'none';
             }
+        }
+
+        // تطبيق قيود مدير النشاط على إدارة المستخدمين
+        if (loggedInUser && loggedInUser.role === 'manager') {
+            restrictManagerUserManagement(loggedInUser);
         }
 
         if (loggedInUser && (loggedInUser.role === 'admin' || loggedInUser.role === 'manager')) {
@@ -8321,6 +9284,103 @@ let emailJsConfig = { ...EMAILJS_DEFAULTS };
         renderUsersInSettings();
     }
 }
+
+        /**
+         * تطبيق قيود على صلاحيات مدير النشاط في إدارة المستخدمين
+         */
+        function restrictManagerUserManagement(loggedInUser) {
+            // إخفاء إمكانية إنشاء مدير نظام أو مدير نشاط آخر
+            const roleSelect = document.getElementById('newUserRole');
+            if (roleSelect) {
+                // إخفاء خيارات المدير - فقط يستطيع إنشاء مستخدمين عاديين
+                Array.from(roleSelect.options).forEach(option => {
+                    if (option.value === 'admin' || option.value === 'manager') {
+                        option.style.display = 'none';
+                    } else if (option.value === 'user') {
+                        option.style.display = 'block';
+                        option.selected = true; // تحديد مستخدم عادي كخيار افتراضي
+                    }
+                });
+            }
+
+            // قيد اختيار النشاط - فقط نشاط مدير النشاط الحالي
+            const activitySelect = document.getElementById('newUserActivity');
+            if (activitySelect && loggedInUser.activityId) {
+                // إخفاء كل الأنشطة عدا نشاط المدير
+                Array.from(activitySelect.options).forEach(option => {
+                    if (option.value === '' || option.value === loggedInUser.activityId) {
+                        option.style.display = 'block';
+                        if (option.value === loggedInUser.activityId) {
+                            option.selected = true; // تحديد نشاط المدير كافتراضي
+                        }
+                    } else {
+                        option.style.display = 'none';
+                    }
+                });
+
+                // إضافة رسالة توضيحية
+                const managerNote = document.createElement('p');
+                managerNote.id = 'manager-restriction-note';
+                managerNote.style.cssText = 'color: #2196F3; font-size: 0.9em; margin: 10px 0; padding: 15px; background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%); border-radius: 8px; border-right: 4px solid #2196F3; box-shadow: 0 2px 4px rgba(33,150,243,0.1);';
+                managerNote.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 1.5em;">🧭</span>
+                        <div>
+                            <strong>صلاحيات مدير النشاط:</strong>
+                            <ul style="margin: 5px 0; padding-right: 15px;">
+                                <li>إضافة مستخدمين عاديين لنشاطك فقط</li>
+                                <li>تعديل مستخدمي نشاطك فقط</li>
+                                <li>لا يمكن إدارة مديري النظام أو مديري الأنشطة الأخرى</li>
+                            </ul>
+                        </div>
+                    </div>
+                `;
+                
+                // إزالة الرسالة القديمة إن وجدت
+                const existingNote = document.getElementById('manager-restriction-note');
+                if (existingNote) {
+                    existingNote.remove();
+                }
+                
+                // إضافة الرسالة بعد form إضافة المستخدم
+                const newUserForm = document.getElementById('newUserForm');
+                if (newUserForm && newUserForm.parentNode) {
+                    newUserForm.parentNode.insertBefore(managerNote, newUserForm.nextSibling);
+                }
+            }
+
+            // تقييد عرض المستخدمين - إظهار مستخدمي نشاطه فقط
+            restrictManagerUsersList(loggedInUser);
+        }
+
+        /**
+         * تقييد قائمة المستخدمين لمدير النشاط - إظهار مستخدمي نشاطه فقط
+         */
+        function restrictManagerUsersList(loggedInUser) {
+            const usersDropdown = document.getElementById('usersDropdown');
+            if (usersDropdown && loggedInUser.activityId) {
+                // فلترة المستخدمين حسب النشاط
+                Array.from(usersDropdown.options).forEach(option => {
+                    if (option.value === '') {
+                        option.style.display = 'block'; // الخيار الافتراضي "اختر مستخدمًا"
+                        return;
+                    }
+
+                    // البحث عن المستخدم في قائمة المستخدمين
+                    const user = users.find(u => u.email === option.value);
+                    if (user) {
+                        if (user.activityId === loggedInUser.activityId || user.email === loggedInUser.email) {
+                            option.style.display = 'block'; // إظهار مستخدمي نفس النشاط + المدير نفسه
+                        } else {
+                            option.style.display = 'none'; // إخفاء مستخدمي الأنشطة الأخرى
+                        }
+                    } else {
+                        option.style.display = 'none'; // إخفاء المستخدمين غير الموجودين
+                    }
+                });
+            }
+        }
+
         // ===== Activity and Header Functions =====
         function updateHeaderForActivity(activity) {
             if (activity) {
@@ -8347,9 +9407,31 @@ let emailJsConfig = { ...EMAILJS_DEFAULTS };
             return `activity_${currentActivityId}_${baseKey}`;
         }
         
-        function loadActivities() {
+        async function loadActivities() {
             try {
-                console.log("تحميل الأنشطة من التخزين المحلي...");
+                console.log("تحميل الأنشطة...");
+                
+                // محاولة التحميل من Firebase أولاً
+                if (USE_FIREBASE) {
+                    const firebaseActivities = await firebaseLoadActivitiesDirectly();
+                    if (firebaseActivities && firebaseActivities.length > 0) {
+                        activities = firebaseActivities;
+                        console.log(`🔥✅ تم تحميل ${activities.length} نشاط من Firebase`);
+                        
+                        // تحديث القوائم
+                        const activitySelect = document.getElementById('userActivitySelect');
+                        if (activitySelect) {
+                            activitySelect.innerHTML = '<option value="">-- اختر النشاط التجاري أولاً --</option>';
+                            activities.forEach(act => {
+                                activitySelect.innerHTML += `<option value="${act.id}">${act.name}</option>`;
+                            });
+                        }
+                        return;
+                    }
+                }
+                
+                // إذا فشل Firebase، حمّل من LocalStorage
+                console.log("🔄 التحميل من التخزين المحلي...");
                 let rawData = loadFromLocalStorage('diwan_activities');
                 console.log("البيانات الخام من التخزين المحلي:", rawData);
 
@@ -8413,8 +9495,65 @@ let emailJsConfig = { ...EMAILJS_DEFAULTS };
             }
         }
 
+        // === حفظ مباشر للأنشطة في Firebase (تجاهل GLOBAL_STORAGE_KEYS) ===
+        async function firebaseSaveActivitiesDirectly(activitiesArray) {
+            if (!USE_FIREBASE) return false;
+            
+            try {
+                const { ref, set } = window.firebaseModules;
+                const database = window.firebaseDatabase;
+                
+                if (!database) {
+                    console.warn('⚠️ Firebase Database غير متاح');
+                    return false;
+                }
+
+                console.log('🔥 حفظ الأنشطة في Firebase...');
+                
+                // حفظ الأنشطة في Firebase Database
+                const activitiesRef = ref(database, 'activities');
+                
+                // تحويل Array إلى Object مفهرس بالـ id مع تنظيف البيانات
+                const activitiesObject = {};
+                activitiesArray.forEach(activity => {
+                    if (activity.id) {
+                        // تنظيف البيانات وضمان وجود الحقول المطلوبة
+                        activitiesObject[activity.id] = {
+                            id: activity.id,
+                            name: activity.name || 'نشاط بدون اسم',
+                            createdAt: activity.createdAt || new Date().toISOString(),
+                            createdBy: activity.createdBy || 'غير محدد',
+                            initialCapital: activity.initialCapital || 0
+                        };
+                    }
+                });
+                
+                await set(activitiesRef, activitiesObject);
+                
+                console.log('🔥✅ تم حفظ جميع الأنشطة في Firebase Database');
+                return true;
+                
+            } catch (error) {
+                console.error('🔥❌ خطأ في حفظ الأنشطة في Firebase:', error);
+                return false;
+            }
+        }
+
         async function saveActivities() {
+            // 1. حفظ في LocalStorage أولاً (كالمعتاد)
             const success = saveToLocalStorage('diwan_activities', activities);
+            
+            // 2. حفظ في Firebase مباشرة للأنشطة (تجاهل GLOBAL_STORAGE_KEYS)
+            if (success && USE_FIREBASE) {
+                console.log('🔥 حفظ الأنشطة في Firebase...');
+                const firebaseSuccess = await firebaseSaveActivitiesDirectly(activities);
+                if (firebaseSuccess) {
+                    console.log('✅ تم حفظ الأنشطة في Firebase بنجاح');
+                    // إشعار اختياري للمستخدم
+                    // showNotification('🔥 Firebase', 'تم حفظ الأنشطة في Firebase', 'success');
+                }
+            }
+            
             if (success) {
                 loadActivities();
             }
@@ -8458,7 +9597,8 @@ let emailJsConfig = { ...EMAILJS_DEFAULTS };
 
             const newActivity = {
                 id: Date.now(),
-                name: activityName
+                name: activityName,
+                initialCapital: 0  // رأس المال الأولي - يمكن تعديله لاحقاً من الإعدادات
             };
             activities.push(newActivity);
             saveActivities();
@@ -8481,6 +9621,18 @@ let emailJsConfig = { ...EMAILJS_DEFAULTS };
                 console.log(`تم حفظ النشاط في sessionStorage: ${id}`);
                 
                 const activity = activities.find(a => a.id == id);
+                
+                // إضافة رأس المال للأنشطة القديمة (للتوافق مع النسخة القديمة)
+                if (activity && typeof activity.initialCapital === 'undefined') {
+                    activity.initialCapital = 0;
+                    saveActivities();
+                    console.log('🔄 تم إضافة حقل رأس المال للنشاط القديم');
+                    
+                    // إشعار للمستخدم عن إمكانية إدخال رأس المال
+                    setTimeout(() => {
+                        showNotification('💰 رأس المال', 'يمكنك الآن إدخال رأس المال الأولي من قسم الإعدادات > معلومات النشاط', 'info');
+                    }, 2000);
+                }
                 console.log('تفاصيل النشاط:', activity);
                 
                 // حفظ بيانات النشاط الحالي في sessionStorage للاستخدام في رفع الشعار
@@ -12767,12 +13919,19 @@ function generateReport() {
                 .filter(s => (!fromDate || s.date >= fromDate) && (!toDate || s.date <= toDate));
             const filteredExpenses = (Array.isArray(expenses) ? expenses : [])
                 .filter(e => (!fromDate || e.date >= fromDate) && (!toDate || e.date <= toDate));
+            const filteredRevenues = (Array.isArray(revenues) ? revenues : [])
+                .filter(r => (!fromDate || r.date >= fromDate) && (!toDate || r.date <= toDate));
 
+            // الحصول على رأس المال
+            const activity = activities.find(a => a.id == currentActivityId);
+            const initialCapital = activity ? (activity.initialCapital || 0) : 0;
+            
             const totalSalesRevenue = filteredSales.reduce((sum, sale) => sum + (Number(sale.total) || 0), 0);
+            const totalOtherRevenues = filteredRevenues.reduce((sum, revenue) => sum + (Number(revenue.amount) || 0), 0);
             const totalCOGS = calculateCOGS(filteredSales);
             const grossProfit = totalSalesRevenue - totalCOGS;
             const totalExpenses = filteredExpenses.reduce((sum, expense) => sum + (Number(expense.amount) || 0), 0);
-            const netProfit = grossProfit - totalExpenses;
+            const netProfit = initialCapital + grossProfit + totalOtherRevenues - totalExpenses;
 
             let summaryHtml = `<h3>ملخص ${reportTitle}</h3>
                 <p><strong>الفترة من:</strong> ${fromDate || '-'} <strong>إلى:</strong> ${toDate || '-'}</p>`;
@@ -12781,17 +13940,25 @@ function generateReport() {
             let resultsHtml = `
                 <h3 style="margin-top:20px;">نتائج التقرير</h3>
                 <table style="text-align: right;">
+                    <tr style="border-bottom: 1px solid #ddd; background: #e8f5e8;">
+                        <td style="padding: 10px;"><strong>💰 رأس المال الأولي</strong></td>
+                        <td style="padding: 10px; color: var(--success-color); font-weight: bold;">${initialCapital.toFixed(2)}</td>
+                    </tr>
                     <tr style="border-bottom: 1px solid #ddd;">
-                        <td style="padding: 10px;"><strong>إجمالي إيرادات المبيعات</strong></td>
+                        <td style="padding: 10px;"><strong>📊 إجمالي إيرادات المبيعات</strong></td>
                         <td style="padding: 10px; color: var(--success-color); font-weight: bold;">${totalSalesRevenue.toFixed(2)}</td>
                     </tr>
                     <tr style="border-bottom: 1px solid #ddd;">
                         <td style="padding: 10px;">(-) تكلفة البضاعة المباعة</td>
                         <td style="padding: 10px; color: var(--accent-color);">${totalCOGS.toFixed(2)}</td>
                     </tr>
-                    <tr style="border-bottom: 2px solid #333; font-size: 1.1em;">
-                        <td style="padding: 10px;"><strong>(=) مجمل الربح</strong></td>
+                    <tr style="border-bottom: 1px solid #ddd; font-size: 1.05em;">
+                        <td style="padding: 10px;"><strong>(=) مجمل ربح المبيعات</strong></td>
                         <td style="padding: 10px; font-weight: bold;">${grossProfit.toFixed(2)}</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #ddd;">
+                        <td style="padding: 10px;">💡 إيرادات أخرى</td>
+                        <td style="padding: 10px; color: var(--success-color);">${totalOtherRevenues.toFixed(2)}</td>
                     </tr>
                     <tr style="border-bottom: 1px solid #ddd;">
                         <td style="padding: 10px; padding-top: 20px;">(-) إجمالي المصروفات</td>
@@ -13563,6 +14730,12 @@ if (data.length > 0) {
     setText('totalPurchases', purchases.reduce((s, i) => s + (Number(i.total) || 0), 0).toFixed(2));
     setText('totalExpensesHome', expenses.reduce((s, e) => s + (Number(e.amount) || 0), 0).toFixed(2));
     setText('totalRevenuesHome', revenues.reduce((s, r) => s + (Number(r.amount) || 0), 0).toFixed(2));
+    
+    // عرض رأس المال الأولي
+    const currentActivity = activities.find(a => a.id == currentActivityId);
+    const initialCapital = currentActivity ? (currentActivity.initialCapital || 0) : 0;
+    setText('initialCapitalHome', initialCapital.toFixed(2));
+    
     setText('totalStockQuantity', calculateTotalStock());
     
     // حساب إجمالي الأصول (صافي القيمة بعد الإهلاك)
@@ -13719,6 +14892,102 @@ if (data.length > 0) {
             } catch (error) {
                 console.error('❌ خطأ في جلب بيانات المستخدم:', error);
                 return null;
+            }
+        }
+
+        /**
+         * إنشاء مدير النظام الأول في Firebase Authentication + Database
+         */
+        async function createFirstSystemAdmin(email, password, name, phone = '') {
+            if (!USE_FIREBASE) return null;
+
+            try {
+                const { createUserWithEmailAndPassword } = window.firebaseModules;
+                const { ref, set } = window.firebaseModules;
+                const auth = window.firebaseAuth;
+                const db = window.firebaseDatabase;
+                
+                console.log('🆕 إنشاء مدير النظام الأول...');
+                
+                // إنشاء المستخدم في Firebase Authentication
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const firebaseUser = userCredential.user;
+                
+                // إنشاء بيانات المدير في Database
+                const adminData = {
+                    id: firebaseUser.uid,
+                    name: name,
+                    email: email,
+                    password: password, // للتوافق مع النظام الحالي
+                    phone: phone,
+                    role: 'admin',
+                    activityId: null, // المدير ليس مرتبط بنشاط محدد
+                    firebaseUid: firebaseUser.uid,
+                    createdAt: new Date().toISOString(),
+                    createdBy: 'system'
+                };
+                
+                // حفظ البيانات في Firebase Database
+                const userRef = ref(db, `users/${firebaseUser.uid}`);
+                await set(userRef, adminData);
+                
+                console.log('✅ تم إنشاء مدير النظام الأول بنجاح');
+                
+                return { firebaseUser, userData: adminData };
+            } catch (error) {
+                console.error('❌ خطأ في إنشاء مدير النظام:', error);
+                if (error.code === 'auth/email-already-in-use') {
+                    return { error: 'البريد الإلكتروني مستخدم بالفعل' };
+                } else if (error.code === 'auth/weak-password') {
+                    return { error: 'كلمة المرور ضعيفة جداً' };
+                } else if (error.code === 'auth/invalid-email') {
+                    return { error: 'البريد الإلكتروني غير صحيح' };
+                }
+                return { error: 'حدث خطأ في إنشاء الحساب' };
+            }
+        }
+
+        /**
+         * التحقق من عدم وجود مدير نظام والانتقال لصفحة إنشاء المدير الأول
+         */
+        async function checkForFirstSetup() {
+            console.log('🔍 checkForFirstSetup: بدء الفحص');
+            
+            if (!USE_FIREBASE) {
+                console.log('⚠️ Firebase معطل');
+                return false;
+            }
+
+            try {
+                const { ref, get } = window.firebaseModules;
+                const db = window.firebaseDatabase;
+                
+                console.log('📊 فحص قاعدة البيانات للمستخدمين...');
+                const usersRef = ref(db, 'users');
+                const snapshot = await get(usersRef);
+                
+                if (!snapshot.exists()) {
+                    console.log('🚀 لا يوجد مستخدمون - إظهار نموذج إنشاء مدير النظام الأول');
+                    return true; // يحتاج إعداد أولي
+                }
+                
+                // التحقق من وجود مدير واحد على الأقل
+                const usersData = snapshot.val();
+                console.log('👥 تم العثور على بيانات المستخدمين:', Object.keys(usersData).length, 'مستخدم');
+                
+                const admins = Object.values(usersData).filter(user => user && user.role === 'admin');
+                console.log('👑 عدد المديرين الموجودين:', admins.length);
+                
+                if (admins.length === 0) {
+                    console.log('⚠️ لا يوجد مدير نظام - إظهار نموذج إنشاء مدير');
+                    return true;
+                }
+                
+                console.log('✅ النظام معد بالفعل - يوجد', admins.length, 'مدير');
+                return false; // النظام معد بالفعل
+            } catch (error) {
+                console.error('❌ خطأ في فحص الإعداد الأولي:', error);
+                return false;
             }
         }
 
@@ -14003,10 +15272,12 @@ if (data.length > 0) {
             localStorage.setItem('rememberedUser', JSON.stringify({
                 email: email,
                 password: pass, // محفوظ محلياً فقط في نفس المتصفح
-                timestamp: new Date().getTime()
+                timestamp: new Date().getTime() // تحديث التاريخ في كل دخول ناجح
             }));
+            console.log('💾 تم حفظ بيانات "تذكرني" بنجاح');
         } else {
             localStorage.removeItem('rememberedUser');
+            console.log('🗑️ تم حذف بيانات "تذكرني" (غير مُفعّل)');
         }
         
         // التأكد من حذف أي بيانات قديمة
@@ -14017,6 +15288,12 @@ if (data.length > 0) {
         updateLoggedInUserDisplay(user);
         document.getElementById('login-overlay').style.display = 'none';
         document.querySelector('.app-container').style.display = 'flex';
+
+        // إنهاء حالة التسجيل التلقائي
+        if (window.AUTO_LOGIN_IN_PROGRESS) {
+            window.AUTO_LOGIN_IN_PROGRESS = false;
+            console.log('🔓 تم إنهاء حالة التسجيل التلقائي');
+        }
 
         if (user.role === 'admin') {
             currentActivityId = sessionStorage.getItem('currentActivityId');
@@ -14043,6 +15320,136 @@ if (data.length > 0) {
         loginInProgress = false;
     }
 }
+
+        // ===== First Setup System Functions =====
+        
+        /**
+         * إنشاء مدير النظام الأول
+         */
+        async function createFirstAdmin() {
+            const errorMsg = document.getElementById('setup-error');
+            const name = document.getElementById('adminName').value.trim();
+            const email = document.getElementById('adminEmail').value.trim();
+            const phone = document.getElementById('adminPhone').value.trim();
+            const password = document.getElementById('adminPassword').value;
+            const confirmPassword = document.getElementById('adminPasswordConfirm').value;
+
+            // التحقق من البيانات
+            if (!name || !email || !password) {
+                errorMsg.textContent = '⚠️ يرجى ملء جميع الحقول المطلوبة';
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            if (password.length < 6) {
+                errorMsg.textContent = '⚠️ كلمة المرور يجب أن تكون 6 أحرف على الأقل';
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                errorMsg.textContent = '⚠️ كلمة المرور وتأكيدها غير متطابقتين';
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            // التحقق من صحة البريد الإلكتروني
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                errorMsg.textContent = '⚠️ يرجى إدخال بريد إلكتروني صحيح';
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            showLoading('جاري إنشاء حساب مدير النظام...');
+            errorMsg.style.display = 'none';
+
+            try {
+                const result = await createFirstSystemAdmin(email, password, name, phone);
+                
+                if (result && !result.error) {
+                    hideLoading();
+                    document.getElementById('first-setup-overlay').style.display = 'none';
+                    
+                    // حفظ البيانات في Session للدخول التلقائي
+                    sessionStorage.setItem('loggedInUser', JSON.stringify(result.userData));
+                    sessionStorage.setItem('isLoggedIn', 'true');
+                    
+                    // إظهار التطبيق
+                    document.getElementById('login-overlay').style.display = 'none';
+                    document.querySelector('.app-container').style.display = 'flex';
+                    
+                    updateLoggedInUserDisplay(result.userData);
+                    enterAdminWithoutActivity();
+                    
+                    showNotification('🎉 تم بنجاح!', `مرحباً ${name}, تم إنشاء حسابك كمدير للنظام بنجاح!`, 'success');
+                    
+                } else {
+                    hideLoading();
+                    errorMsg.textContent = result.error || 'حدث خطأ في إنشاء الحساب';
+                    errorMsg.style.display = 'block';
+                }
+            } catch (error) {
+                hideLoading();
+                console.error('❌ خطأ في إنشاء مدير النظام:', error);
+                errorMsg.textContent = 'حدث خطأ في إنشاء الحساب. حاول مرة أخرى.';
+                errorMsg.style.display = 'block';
+            }
+        }
+
+        /**
+         * فحص الإعداد الأولي عند تحميل الصفحة
+         */
+        async function checkFirstSetup() {
+            console.log('🔍 checkFirstSetup: بدء الفحص');
+            
+            if (!USE_FIREBASE) {
+                console.log('⚠️ Firebase معطل - تم تجاهل فحص الإعداد الأولي');
+                return;
+            }
+
+            console.log('🔥 Firebase مفعل - فحص قاعدة البيانات...');
+
+            try {
+                const needsSetup = await checkForFirstSetup();
+                console.log('📊 نتيجة الفحص - يحتاج إعداد أولي:', needsSetup);
+                
+                if (needsSetup) {
+                    console.log('🚀 إظهار نموذج إنشاء مدير النظام الأول');
+                    document.getElementById('login-overlay').style.display = 'none';
+                    document.getElementById('first-setup-overlay').style.display = 'flex';
+                } else {
+                    console.log('✅ النظام معد بالفعل');
+                    
+                    // التحقق من حالة "تذكرني" قبل إظهار شاشة تسجيل الدخول
+                    const rememberedUser = localStorage.getItem('rememberedUser');
+                    const manualLogout = sessionStorage.getItem('manualLogout');
+                    
+                    if (!manualLogout && rememberedUser) {
+                        try {
+                            const userData = JSON.parse(rememberedUser);
+                            const now = new Date().getTime();
+                            const dayInMs = 30 * 24 * 60 * 60 * 1000; // 30 يوم
+                            
+                            if (userData.timestamp && (now - userData.timestamp) < dayInMs) {
+                                console.log('🔄 يوجد بيانات "تذكرني" صالحة - لا حاجة لإظهار شاشة تسجيل الدخول');
+                                return; // لا تظهر شاشة تسجيل الدخول
+                            }
+                        } catch (e) {
+                            console.warn('خطأ في قراءة بيانات تذكرني:', e);
+                        }
+                    }
+                    
+                    console.log('📝 إظهار شاشة تسجيل الدخول العادية');
+                    document.getElementById('login-overlay').style.display = 'flex';
+                }
+            } catch (error) {
+                console.error('❌ خطأ في فحص الإعداد الأولي:', error);
+                // في حالة الخطأ، أظهر شاشة تسجيل الدخول العادية
+                document.getElementById('login-overlay').style.display = 'flex';
+            }
+        }
+
         function enterAdminWithoutActivity() {
             currentActivityId = null;
             sessionStorage.removeItem('currentActivityId');
@@ -14137,6 +15544,10 @@ if (data.length > 0) {
                 
                 // حذف بيانات "تذكرني" عند تسجيل الخروج اليدوي
                 localStorage.removeItem('rememberedUser');
+                console.log('🗑️ تم حذف بيانات "تذكرني" عند تسجيل الخروج');
+                
+                // وضع علامة أن المستخدم سجل خروج يدوياً لمنع التسجيل التلقائي
+                sessionStorage.setItem('manualLogout', 'true');
                 
                 location.reload();
             }
@@ -14335,9 +15746,28 @@ if (data.length > 0) {
             const isSelf = loggedInUser && String(user.id) === String(loggedInUser.id);
 
             if (isManager) {
-                const sameActivity = String(user.activityId) == String(loggedInUser.activityId);
-                if (user.role === 'admin' || (user.role === 'manager' && !isSelf) || (!sameActivity && !isSelf)) {
-                    showNotification('⚠️ غير مسموح', 'لا تملك صلاحية تعديل هذا المستخدم', 'warning');
+                // مدير النشاط يستطيع تعديل:
+                // 1. نفسه (معلوماته الأساسية فقط)
+                // 2. المستخدمين العاديين في نشاطه فقط
+                // لا يستطيع تعديل:
+                // - مديري النظام (admin)
+                // - مديري أنشطة أخرى (manager من أنشطة مختلفة)
+                // - مستخدمين من أنشطة أخرى
+
+                const sameActivity = String(user.activityId) === String(loggedInUser.activityId);
+                
+                if (user.role === 'admin') {
+                    showNotification('⚠️ غير مسموح', 'لا يمكن لمدير النشاط تعديل مدير النظام', 'warning');
+                    return;
+                }
+                
+                if (user.role === 'manager' && !isSelf) {
+                    showNotification('⚠️ غير مسموح', 'لا يمكن لمدير النشاط تعديل مدير نشاط آخر', 'warning');
+                    return;
+                }
+                
+                if (user.role === 'user' && !sameActivity) {
+                    showNotification('⚠️ غير مسموح', 'يمكنك تعديل مستخدمي نشاطك فقط', 'warning');
                     return;
                 }
             }
@@ -14429,6 +15859,9 @@ if (data.length > 0) {
             document.getElementById('editActivityName').value = activity.name;
             document.getElementById('activityCreatedAt').textContent = activity.createdAt || 'غير محدد';
             document.getElementById('activityCreatedBy').textContent = activity.createdBy || 'غير محدد';
+            
+            // تحديث عرض رأس المال
+            updateInitialCapitalDisplay();
             
             // فتح النافذة مع تأثير
             const overlay = document.getElementById('edit-activity-overlay');
@@ -14648,12 +16081,31 @@ if (data.length > 0) {
             
             const isSelf = loggedInUser && String(targetUser.id) === String(loggedInUser.id);
 
-            if (editingUserSelf || isSelf) {
+            // تطبيق قيود مدير النشاط
+            if (isManager && !isSelf) {
+                // التأكد من أن المستخدم ينتمي لنفس النشاط
+                if (String(targetUser.activityId) !== String(loggedInUser.activityId)) {
+                    showNotification('⚠️ غير مسموح', 'يمكنك تعديل مستخدمي نشاطك فقط', 'warning');
+                    return;
+                }
+                
+                // التأكد من أن المستخدم المُستهدف ليس مدير أو مدير نظام
+                if (targetUser.role === 'admin' || targetUser.role === 'manager') {
+                    showNotification('⚠️ غير مسموح', 'لا يمكنك تعديل هذا النوع من المستخدمين', 'warning');
+                    return;
+                }
+                
+                // فرض دور مستخدم عادي ونفس النشاط
+                role = 'user';
+                activityId = loggedInUser.activityId;
+            } else if (isSelf) {
+                // عند تعديل نفسه، المحافظة على الدور والنشاط الحالي
                 role = targetUser.role;
                 activityId = targetUser.activityId || '';
-            } else if (isManager) {
-                role = 'user';
-                activityId = loggedInUser.activityId || '';
+            } else if (editingUserSelf) {
+                // التحقق من التعديل الذاتي
+                role = targetUser.role;
+                activityId = targetUser.activityId || '';
             }
 
             if ((role === 'user' || role === 'manager') && !activityId) { showNotification('⚠️ نشاط مطلوب', 'يجب تعيين نشاط للمستخدم', 'warning'); return; }
@@ -14884,21 +16336,28 @@ if (data.length > 0) {
                     return;
                 }
 
+                // قيود مدير النشاط
+                if (role !== 'user') {
+                    showNotification('⚠️ صلاحية محدودة', 'مدير النشاط يمكنه إضافة مستخدمين عاديين فقط', 'warning');
+                    return;
+                }
+
+                if (activityId && String(activityId) !== String(loggedInUser.activityId)) {
+                    showNotification('⚠️ نشاط غير مسموح', 'يمكنك إضافة مستخدمين إلى نشاطك فقط', 'warning');
+                    return;
+                }
+
                 // تحويل معرف النشاط إلى رقم للتأكد من التطابق
                 const managerActivityId = loggedInUser.activityId;
-                normalizedRole = 'user';
-                normalizedActivityId = managerActivityId;
+                normalizedRole = 'user'; // فقط مستخدمين عاديين
+                normalizedActivityId = managerActivityId; // فقط نشاط المدير
 
-                console.log('🔧 مدير النشاط يضيف مستخدم:', {
+                console.log('🧭 مدير النشاط يضيف مستخدم عادي:', {
+                    managerEmail: loggedInUser.email,
                     managerActivityId: managerActivityId,
-                    typeOfManagerActivityId: typeof managerActivityId,
-                    normalizedActivityId: normalizedActivityId,
-                    typeOfNormalizedActivityId: typeof normalizedActivityId
+                    newUserRole: normalizedRole,
+                    newUserActivityId: normalizedActivityId
                 });
-
-                if (role !== 'user' || (activityId && String(activityId) !== String(managerActivityId))) {
-                    showNotification('ℹ️ تم التعديل تلقائياً', 'تم تقييد المستخدم الجديد ليكون مستخدماً ضمن نشاطك الحالي', 'info');
-                }
             }
 
             if ((normalizedRole === 'user' || normalizedRole === 'manager') && !normalizedActivityId) {
@@ -15293,16 +16752,36 @@ if (data.length > 0) {
 
         // ===== Email Functions =====
         function saveEmailJsSettings() {
-            emailJsConfig.serviceID = document.getElementById('emailJsServiceId').value.trim();
-            emailJsConfig.templateID = document.getElementById('emailJsTemplateId').value.trim();
-            emailJsConfig.resetTemplateID = document.getElementById('emailJsResetTemplateId').value.trim();
-            emailJsConfig.publicKey = document.getElementById('emailJsPublicKey').value.trim();
+            const serviceId = document.getElementById('emailJsServiceId').value.trim();
+            const templateId = document.getElementById('emailJsTemplateId').value.trim();
+            const resetTemplateId = document.getElementById('emailJsResetTemplateId').value.trim();
+            const publicKey = document.getElementById('emailJsPublicKey').value.trim();
+            
+            // التحقق من إدخال جميع الحقول المطلوبة
+            if (!serviceId || !templateId || !publicKey) {
+                showNotification('⚠️ حقول مطلوبة', 'يرجى إدخال جميع الحقول المطلوبة', 'warning');
+                return;
+            }
+            
+            // تحديث الكونفيجريشن
+            emailJsConfig.serviceID = serviceId;
+            emailJsConfig.templateID = templateId;
+            emailJsConfig.resetTemplateID = resetTemplateId;
+            emailJsConfig.publicKey = publicKey;
+            
+            // حفظ في LocalStorage
             localStorage.setItem('diwan_email_config', JSON.stringify(emailJsConfig));
+            localStorage.setItem('emailjs_service_id', serviceId);
+            localStorage.setItem('emailjs_template_id', templateId);
+            localStorage.setItem('emailjs_reset_template_id', resetTemplateId);
+            localStorage.setItem('emailjs_public_key', publicKey);
+            
+            console.log('✅ تم حفظ إعدادات البريد:', emailJsConfig);
             
             // إغلاق النافذة
             closeEmailSettingsModal();
             
-            showNotification('✅ تم الحفظ', 'تم حفظ إعدادات البريد بنجاح', 'success');
+            showNotification('✅ تم الحفظ', 'تم حفظ إعدادات البريد الإلكتروني بنجاح', 'success');
         }
 
         function loadEmailJsSettings() {
@@ -15799,13 +17278,26 @@ function emailSaleInvoice(saleId) {
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            // تنظيف بيانات تسجيل الدخول القديمة من localStorage (إجراء أمني)
-            localStorage.removeItem('loggedInUser');
-            localStorage.removeItem('isLoggedIn');
-            localStorage.removeItem('justLoggedOut');
+            // تحقق من حالة التسجيل التلقائي
+            if (window.AUTO_LOGIN_IN_PROGRESS) {
+                console.log('🔒 تم تجاهل DOMContentLoaded لأن التسجيل التلقائي قيد التشغيل');
+                return;
+            }
+            
+            // التحقق من وجود تسجيل خروج يدوي في هذه الجلسة
+            const manualLogout = sessionStorage.getItem('manualLogout');
+            if (manualLogout) {
+                console.log('🚫 تم منع التسجيل التلقائي بسبب تسجيل خروج يدوي سابق');
+                sessionStorage.removeItem('manualLogout');
+                // إظهار شاشة تسجيل الدخول
+                document.getElementById('login-overlay').style.display = 'flex';
+                return;
+            }
             
             // التحقق من وجود بيانات "تذكرني" للدخول التلقائي
             const rememberedUser = localStorage.getItem('rememberedUser');
+            let autoLoginAttempted = false;
+            
             if (rememberedUser) {
                 try {
                     const userData = JSON.parse(rememberedUser);
@@ -15814,6 +17306,8 @@ function emailSaleInvoice(saleId) {
                     
                     // التحقق من صلاحية البيانات (30 يوم)
                     if (userData.timestamp && (now - userData.timestamp) < dayInMs) {
+                        autoLoginAttempted = true;
+                        
                         // إخفاء شاشة تسجيل الدخول فوراً
                         document.getElementById('login-overlay').style.display = 'none';
                         
@@ -15822,18 +17316,30 @@ function emailSaleInvoice(saleId) {
                         document.getElementById('loginPassword').value = userData.password;
                         document.getElementById('rememberMe').checked = true;
                         
+                        console.log('🔄 تسجيل دخول تلقائي من بيانات "تذكرني"...');
+                        
                         // تسجيل الدخول التلقائي
                         setTimeout(() => {
                             handleLogin();
                         }, 100);
-                        return;
+                        
                     } else {
                         // البيانات منتهية الصلاحية
+                        console.log('⚠️ بيانات "تذكرني" منتهية الصلاحية، سيتم حذفها');
                         localStorage.removeItem('rememberedUser');
                     }
                 } catch (e) {
+                    console.error('❌ خطأ في قراءة بيانات "تذكرني":', e);
                     localStorage.removeItem('rememberedUser');
                 }
+            }
+            
+            // تنظيف بيانات تسجيل الدخول القديمة فقط إذا لم يتم محاولة تسجيل دخول تلقائي
+            if (!autoLoginAttempted) {
+                localStorage.removeItem('loggedInUser');
+                localStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('justLoggedOut');
+                console.log('🧹 تنظيف بيانات الجلسة القديمة');
             }
             
             // تحميل الشعار المحفوظ
@@ -17008,26 +18514,6 @@ function emailSaleInvoice(saleId) {
             populateSpecificCustomerFilter();
             populateSpecificEmployeeFilter();
         }
-        
-        function toggleEmailSettings() {
-            // تحميل القيم الحالية إذا كانت موجودة
-            const savedServiceId = localStorage.getItem('emailjs_service_id') || '';
-            const savedTemplateId = localStorage.getItem('emailjs_template_id') || '';
-            const savedResetTemplateId = localStorage.getItem('emailjs_reset_template_id') || '';
-            const savedPublicKey = localStorage.getItem('emailjs_public_key') || '';
-            
-            document.getElementById('emailJsServiceId').value = savedServiceId;
-            document.getElementById('emailJsTemplateId').value = savedTemplateId;
-            document.getElementById('emailJsResetTemplateId').value = savedResetTemplateId;
-            document.getElementById('emailJsPublicKey').value = savedPublicKey;
-            
-            // فتح النافذة
-            document.getElementById('email-settings-overlay').style.display = 'flex';
-        }
-        
-        function closeEmailSettingsModal() {
-            document.getElementById('email-settings-overlay').style.display = 'none';
-        }
 
         // ===== Password Management =====
         function openChangePasswordModal() {
@@ -17152,12 +18638,16 @@ function updateLiveStats() {
     const liveRevenueEl = document.getElementById('liveRevenue');
     if (liveRevenueEl) liveRevenueEl.textContent = monthRevenue.toFixed(2);
     
-    // صافي الربح (مبيعات - مشتريات - مصروفات)
+    // صافي الربح (رأس المال + مبيعات + إيرادات - مشتريات - مصروفات)
+    const activity = activities.find(a => a.id == currentActivityId);
+    const initialCapital = activity ? (activity.initialCapital || 0) : 0;
     const monthPurchases = purchases.filter(p => p.date.substring(0, 7) === currentMonth)
                                    .reduce((sum, purchase) => sum + purchase.total, 0);
     const monthExpenses = expenses.filter(e => e.date.substring(0, 7) === currentMonth)
                                  .reduce((sum, expense) => sum + expense.amount, 0);
-    const netProfit = monthRevenue - monthPurchases - monthExpenses;
+    const monthRevenues = revenues.filter(r => r.date.substring(0, 7) === currentMonth)
+                                 .reduce((sum, revenue) => sum + revenue.amount, 0);
+    const netProfit = initialCapital + monthRevenue + monthRevenues - monthPurchases - monthExpenses;
     const liveProfitEl = document.getElementById('liveProfit');
     if (liveProfitEl) liveProfitEl.textContent = netProfit.toFixed(2);
     
@@ -17172,12 +18662,13 @@ function updateLiveStats() {
         monthlyExpensesEl.innerHTML = `<p>المصروفات هذا الشهر: ${monthExpenses.toFixed(2)} ريال</p>`;
     }
 
-    // الأرباح المتراكمة (من بداية السنة)
+    // الأرباح المتراكمة (من بداية السنة) مع رأس المال
     const yearStart = new Date().getFullYear() + '-01-01';
     const cumulativeRevenue = sales.filter(s => s.date >= yearStart).reduce((sum, sale) => sum + sale.total, 0);
+    const cumulativeRevenuesExtra = revenues.filter(r => r.date >= yearStart).reduce((sum, revenue) => sum + revenue.amount, 0);
     const cumulativePurchases = purchases.filter(p => p.date >= yearStart).reduce((sum, purchase) => sum + purchase.total, 0);
     const cumulativeExpenses = expenses.filter(e => e.date >= yearStart).reduce((sum, expense) => sum + expense.amount, 0);
-    const cumulativeProfits = cumulativeRevenue - cumulativePurchases - cumulativeExpenses;
+    const cumulativeProfits = initialCapital + cumulativeRevenue + cumulativeRevenuesExtra - cumulativePurchases - cumulativeExpenses;
     const cumulativeProfitsEl = document.getElementById('cumulativeProfits');
     if (cumulativeProfitsEl) {
         cumulativeProfitsEl.innerHTML = `<p>الأرباح المتراكمة: ${cumulativeProfits.toFixed(2)} ريال</p>`;
@@ -18008,6 +19499,54 @@ function loadRecentActivities() {
     console.log('جاري تحميل الأنشطة الحديثة...');
     return [];
 }
+
+// تحميل تخصيصات التصميم عند تحميل الصفحة
+document.addEventListener('DOMContentLoaded', function() {
+    // تحقق من حالة التسجيل التلقائي
+    if (window.AUTO_LOGIN_IN_PROGRESS) {
+        console.log('🔒 تم تجاهل DOMContentLoaded الأخير لأن التسجيل التلقائي قيد التشغيل');
+        return;
+    }
+    
+    console.log('📄 تم تحميل الصفحة - تحميل تخصيصات التصميم...');
+    if (typeof loadDesignPreferences === 'function') {
+        loadDesignPreferences();
+        console.log('🎨 تم تحميل تخصيصات التصميم المحفوظة');
+    }
+    
+    // فحص الإعداد الأولي للنظام بعد التحقق من "تذكرني"
+    if (typeof checkFirstSetup === 'function') {
+        console.log('🚀 تم العثور على وظيفة checkFirstSetup - سيتم استدعاؤها بعد فحص "تذكرني"');
+        setTimeout(() => {
+            console.log('🔍 بدء فحص الإعداد الأولي للنظام...');
+            
+            // لا نستدعي checkFirstSetup إذا كان هناك تسجيل دخول تلقائي
+            const rememberedUser = localStorage.getItem('rememberedUser');
+            const manualLogout = sessionStorage.getItem('manualLogout');
+            
+            if (!manualLogout && rememberedUser) {
+                try {
+                    const userData = JSON.parse(rememberedUser);
+                    const now = new Date().getTime();
+                    const dayInMs = 30 * 24 * 60 * 60 * 1000; // 30 يوم
+                    
+                    if (userData.timestamp && (now - userData.timestamp) < dayInMs) {
+                        console.log('🔄 بيانات "تذكرني" موجودة وصالحة - تجاهل checkFirstSetup');
+                        return; // لا نستدعي checkFirstSetup
+                    }
+                } catch (e) {
+                    console.warn('خطأ في قراءة بيانات تذكرني:', e);
+                }
+            }
+            
+            // استدعاء checkFirstSetup فقط إذا لم يكن هناك تسجيل دخول تلقائي
+            checkFirstSetup();
+        }, 1500); // تأخير أطول للسماح لمنطق "تذكرني" بالعمل أولاً
+    } else {
+        console.error('❌ لم يتم العثور على وظيفة checkFirstSetup');
+    }
+});
+
 }
 // نهاية الكود JavaScript
     </script>
