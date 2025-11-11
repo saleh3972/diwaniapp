@@ -5676,9 +5676,6 @@ textarea.editing-mode {
                 <button id="toggleEmailSettingsBtn" class="btn-success" onclick="toggleEmailSettings()" style="background: #16a34a;">
                     📧 إعدادات البريد الإلكتروني
                 </button>
-                <button id="dataProtectionToggleBtn" class="btn-warning" onclick="toggleDataProtection()" style="background: #f59e0b;">
-                    🛡️ <span id="dataProtectionStatus">حماية البيانات مُفعّلة</span>
-                </button>
                 <button class="btn-info" onclick="showDataMonitorModal()" style="background: #3b82f6;">
                     📊 مراقب البيانات المتقدم
                 </button>
@@ -5970,9 +5967,6 @@ async function uploadFile(file, path) {
 // ========================================
 const USE_FIREBASE = true; // true = Firebase, false = LocalStorage فقط
 
-// 🛡️ آلية حماية البيانات من المسح غير المرغوب فيه
-const DATA_PROTECTION_ENABLED = true;
-
 // 📊 نظام مراقبة البيانات المتقدم
 const DATA_MONITOR = {
     enabled: true,
@@ -6142,41 +6136,6 @@ const DATA_MONITOR = {
     }
 };
 
-// دالة حماية البيانات
-function protectDataFromDeletion(newData, dataType, currentData) {
-    // التحقق من الحالة الديناميكية
-    const protectionEnabled = window.DATA_PROTECTION_ENABLED !== false && 
-                             localStorage.getItem('dataProtectionEnabled') !== 'false';
-    
-    if (!protectionEnabled) return newData;
-    
-    // إذا كانت البيانات الجديدة فارغة والبيانات الحالية تحتوي على بيانات
-    if ((!newData || newData.length === 0) && currentData && currentData.length > 0) {
-        console.warn(`🛡️ حماية البيانات: منع مسح ${dataType} (${currentData.length} عنصر)`);
-        showNotification('🛡️ تم منع مسح البيانات', `تم منع مسح ${dataType} (${currentData.length} عنصر)`, 'warning');
-        
-        // حفظ لقطة طارئة
-        DATA_MONITOR.saveSnapshot(`protection_${dataType}_${Date.now()}`);
-        
-        return currentData; // احتفظ بالبيانات القديمة
-    }
-    
-    // إذا كانت البيانات الجديدة أقل بكثير من القديمة (انخفاض أكثر من 50%)
-    if (newData && currentData && newData.length > 0 && currentData.length > 0) {
-        const reductionRatio = (currentData.length - newData.length) / currentData.length;
-        if (reductionRatio > 0.5) {
-            console.warn(`🛡️ حماية البيانات: منع انخفاض كبير في ${dataType} (${currentData.length} إلى ${newData.length})`);
-            showNotification('🛡️ تم منع انخفاض البيانات', `تم منع انخفاض كبير في ${dataType}`, 'warning');
-            
-            // حفظ لقطة طارئة
-            DATA_MONITOR.saveSnapshot(`reduction_${dataType}_${Date.now()}`);
-            
-            return currentData; // احتفظ بالبيانات القديمة
-        }
-    }
-    
-    return newData;
-}
 let DEBUG_MODE = false; // تقليل رسائل Debug لتجنب الإزعاج
 
 function debugLog(...args) {
@@ -6262,23 +6221,7 @@ async function initializeApp() {
     if (USE_FIREBASE) {
         debugLog('🔥 تحميل البيانات من Firebase...');
         
-        // 🛡️ حفظ البيانات الحالية قبل التحديث (للحماية)
-        const currentDataBackup = {
-            items: items || [],
-            customers: customers || [],
-            suppliers: suppliers || [],
-            purchases: purchases || [],
-            sales: sales || [],
-            expenses: expenses || [],
-            revenues: revenues || [],
-            salaries: salaries || [],
-            assets: assets || [],
-            salesReturns: salesReturns || [],
-            advances: advances || [],
-            purchaseReturns: purchaseReturns || []
-        };
-        
-        // تحميل البيانات من Firebase مع الحماية
+        // تحميل البيانات من Firebase
         console.log(`🔍 بدء تحميل البيانات للنشاط: ${currentActivityId}`);
         
         const firebaseItems = await firebaseGetActivityData(currentActivityId, 'items') || [];
@@ -6317,23 +6260,21 @@ async function initializeApp() {
         const firebasePurchaseReturns = await firebaseGetActivityData(currentActivityId, 'purchaseReturns') || [];
         console.log(`🔙 تم تحميل ${firebasePurchaseReturns.length} مرتجعات مشتريات من Firebase`);
         
-        console.log('🛡️ تطبيق نظام الحماية على البيانات...');
+        // تعيين البيانات مباشرة
+        items = firebaseItems;
+        customers = firebaseCustomers;
+        suppliers = firebaseSuppliers;
+        purchases = firebasePurchases;
+        sales = firebaseSales;
+        expenses = firebaseExpenses;
+        revenues = firebaseRevenues;
+        salaries = firebaseSalaries;
+        assets = firebaseAssets;
+        salesReturns = firebaseSalesReturns;
+        advances = firebaseAdvances;
+        purchaseReturns = firebasePurchaseReturns;
         
-        // تطبيق الحماية على كل نوع بيانات
-        items = protectDataFromDeletion(firebaseItems, 'الأصناف', currentDataBackup.items);
-        customers = protectDataFromDeletion(firebaseCustomers, 'العملاء', currentDataBackup.customers);
-        suppliers = protectDataFromDeletion(firebaseSuppliers, 'الموردين', currentDataBackup.suppliers);
-        purchases = protectDataFromDeletion(firebasePurchases, 'المشتريات', currentDataBackup.purchases);
-        sales = protectDataFromDeletion(firebaseSales, 'المبيعات', currentDataBackup.sales);
-        expenses = protectDataFromDeletion(firebaseExpenses, 'المصروفات', currentDataBackup.expenses);
-        revenues = protectDataFromDeletion(firebaseRevenues, 'الإيرادات', currentDataBackup.revenues);
-        salaries = protectDataFromDeletion(firebaseSalaries, 'الرواتب', currentDataBackup.salaries);
-        assets = protectDataFromDeletion(firebaseAssets, 'الأصول', currentDataBackup.assets);
-        salesReturns = protectDataFromDeletion(firebaseSalesReturns, 'مرتجعات المبيعات', currentDataBackup.salesReturns);
-        advances = protectDataFromDeletion(firebaseAdvances, 'العهد والسلف', currentDataBackup.advances);
-        purchaseReturns = protectDataFromDeletion(firebasePurchaseReturns, 'مرتجعات المشتريات', currentDataBackup.purchaseReturns);
-        
-        debugLog('✅ تم تحميل البيانات من Firebase مع الحماية');
+        debugLog('✅ تم تحميل البيانات من Firebase');
     } else {
         debugLog('📦 تحميل البيانات من LocalStorage...');
         
@@ -6431,12 +6372,6 @@ async function initializeApp() {
     if (typeof loadDesignPreferences === 'function') {
         loadDesignPreferences();
         console.log('🎨 تم تحميل تخصيصات التصميم');
-    }
-    
-    // تحميل حالة حماية البيانات
-    if (typeof loadDataProtectionState === 'function') {
-        loadDataProtectionState();
-        console.log('🛡️ تم تحميل إعدادات حماية البيانات');
     }
     
     // 📊 تهيئة نظام مراقبة البيانات
@@ -6563,56 +6498,7 @@ if (typeof window !== 'undefined') {
 }
 
 // ========================================
-// �️ دوال حماية البيانات
-// ========================================
-
-function toggleDataProtection() {
-    const currentState = localStorage.getItem('dataProtectionEnabled') !== 'false';
-    const newState = !currentState;
-    
-    localStorage.setItem('dataProtectionEnabled', newState.toString());
-    
-    // تحديث المتغير العام
-    window.DATA_PROTECTION_ENABLED = newState;
-    
-    // تحديث النص في الزر
-    const statusText = document.getElementById('dataProtectionStatus');
-    const btn = document.getElementById('dataProtectionToggleBtn');
-    
-    if (newState) {
-        statusText.textContent = 'حماية البيانات مُفعّلة';
-        btn.style.background = '#f59e0b'; // أصفر (مُفعّل)
-        showNotification('🛡️ تم التفعيل', 'حماية البيانات من المسح غير المرغوب مُفعّلة', 'success');
-    } else {
-        statusText.textContent = 'حماية البيانات معطّلة';
-        btn.style.background = '#dc2626'; // أحمر (معطّل)
-        showNotification('⚠️ تم الإلغاء', 'حماية البيانات معطّلة - كن حذراً!', 'warning');
-    }
-}
-
-// تحميل حالة الحماية عند بدء التطبيق
-function loadDataProtectionState() {
-    const isEnabled = localStorage.getItem('dataProtectionEnabled') !== 'false'; // افتراضياً مُفعّلة
-    window.DATA_PROTECTION_ENABLED = isEnabled;
-    
-    setTimeout(() => {
-        const statusText = document.getElementById('dataProtectionStatus');
-        const btn = document.getElementById('dataProtectionToggleBtn');
-        
-        if (statusText && btn) {
-            if (isEnabled) {
-                statusText.textContent = 'حماية البيانات مُفعّلة';
-                btn.style.background = '#f59e0b';
-            } else {
-                statusText.textContent = 'حماية البيانات معطّلة';
-                btn.style.background = '#dc2626';
-            }
-        }
-    }, 1000);
-}
-
-// ========================================
-// �📧 دوال إعدادات البريد الإلكتروني (EmailJS)
+// 📧 دوال إعدادات البريد الإلكتروني (EmailJS)
 // ========================================
 function toggleEmailSettings() {
     console.log('📧 فتح إعدادات البريد الإلكتروني...');
@@ -8897,11 +8783,8 @@ loadSavedEmailSettings();
         if (USE_FIREBASE) {
             const firebaseUsers = await firebaseLoadUsersDirectly();
             if (firebaseUsers && firebaseUsers.length > 0) {
-                // 🛡️ حماية البيانات من المسح غير المرغوب
-                const currentUsers = users || [];
-                const protectedUsers = protectDataFromDeletion(firebaseUsers, 'المستخدمين', currentUsers);
-                users = protectedUsers;
-                console.log(`🔥✅ تم تحميل ${users.length} مستخدم من Firebase مع الحماية`);
+                users = firebaseUsers;
+                console.log(`🔥✅ تم تحميل ${users.length} مستخدم من Firebase`);
                 return;
             }
         }
@@ -10739,6 +10622,7 @@ function formatDate(dateString) {
                     
                     tryInitialize();
                 }
+                
                 hideLoading();
             } catch (error) {
                 hideLoading();
