@@ -318,11 +318,60 @@
     <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Reem+Kufi&display=swap" rel="stylesheet">
     
+    <!-- CSS مخصص للنوافذ المنبثقة -->
+    <style>
+        /* التأكد من إخفاء النوافذ المنبثقة بشكل افتراضي */
+        #data-monitor-modal {
+            display: none !important;
+            position: fixed !important;
+            z-index: 10001 !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            background-color: rgba(0,0,0,0.6) !important;
+            justify-content: center !important;
+            align-items: center !important;
+        }
+        
+        #data-monitor-modal.show {
+            display: flex !important;
+        }
+        
+        #data-monitor-modal .modal-content {
+            background: white !important;
+            margin: auto !important;
+            padding: 20px !important;
+            border-radius: 10px !important;
+            max-width: 800px !important;
+            width: 90% !important;
+            max-height: 90% !important;
+            overflow-y: auto !important;
+            position: relative !important;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3) !important;
+        }
+        
+        #data-monitor-modal .close {
+            cursor: pointer !important;
+            font-size: 28px !important;
+            color: #999 !important;
+            font-weight: bold !important;
+            line-height: 1 !important;
+            padding: 0 !important;
+            border: none !important;
+            background: none !important;
+        }
+        
+        #data-monitor-modal .close:hover {
+            color: #333 !important;
+        }
+    </style>
+    
     <!-- السكربتات الخارجية - Firebase بدون defer لأنه مطلوب فوراً -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
-    <!-- ✅ Firebase SDK v9 (Modular) -->
     <script type="module">
         // Import Firebase modules
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
@@ -396,9 +445,102 @@
         });
     </script>
     
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script>
+        (function() {
+            'use strict';
+            
+            console.log('🚀 بدء تشغيل نظام "تذكرني" الجديد...');
+            
+            // فحص فوري عند تحميل السكريبت (قبل DOMContentLoaded)
+            function checkAndAutoLogin() {
+                console.log('🔍 فحص بيانات "تذكرني"...');
+                
+                const rememberedUser = localStorage.getItem('rememberedUser');
+                if (!rememberedUser) {
+                    console.log('❌ لا توجد بيانات "تذكرني"');
+                    return false;
+                }
+                
+                try {
+                    const userData = JSON.parse(rememberedUser);
+                    const now = new Date().getTime();
+                    const dayInMs = 30 * 24 * 60 * 60 * 1000; // 30 يوم
+                    
+                    if (userData.timestamp && (now - userData.timestamp) < dayInMs) {
+                        console.log('✅ بيانات "تذكرني" صالحة - سيتم التسجيل التلقائي');
+                        
+                        // إنتظار تحميل العناصر ثم التسجيل
+                        let loginAttempted = false;
+                        const waitForElements = setInterval(() => {
+                            const loginEmail = document.getElementById('loginEmail');
+                            const loginPassword = document.getElementById('loginPassword');
+                            const rememberMe = document.getElementById('rememberMe');
+                            const loginOverlay = document.getElementById('login-overlay');
+                            
+                            if (loginEmail && loginPassword && rememberMe && loginOverlay) {
+                                clearInterval(waitForElements);
+                                loginAttempted = true;
+                                
+                                // إخفاء شاشة تسجيل الدخول فوراً
+                                loginOverlay.style.display = 'none';
+                                
+                                // تعبئة البيانات
+                                loginEmail.value = userData.email;
+                                loginPassword.value = userData.password;
+                                rememberMe.checked = true;
+                                
+                                console.log('🔑 تم تعبئة بيانات التسجيل - بدء التسجيل التلقائي...');
+                                
+                                // التسجيل بعد وقت قصير للتأكد من تحميل كل شيء
+                                setTimeout(() => {
+                                    if (typeof handleLogin === 'function') {
+                                        handleLogin();
+                                        console.log('✅ تم التسجيل التلقائي بنجاح!');
+                                    } else {
+                                        console.error('❌ دالة handleLogin غير موجودة');
+                                        loginOverlay.style.display = 'flex';
+                                    }
+                                }, 500);
+                                
+                                return true;
+                            }
+                        }, 50); // فحص كل 50ms
+                        
+                        // إيقاف الفحص بعد 10 ثوانٍ كحد أقصى
+                        setTimeout(() => {
+                            clearInterval(waitForElements);
+                            if (!loginAttempted) {
+                                console.warn('⚠️ انتهت مهلة انتظار عناصر التسجيل - لكن التطبيق يعمل بشكل طبيعي');
+                                // لا نُظهر شاشة تسجيل الدخول هنا لأن التسجيل قد نجح بالفعل
+                            }
+                        }, 3000); // تقليل المهلة إلى 3 ثوان
+                        
+                        return true;
+                    } else {
+                        console.log('⚠️ بيانات "تذكرني" منتهية الصلاحية');
+                        localStorage.removeItem('rememberedUser');
+                        return false;
+                    }
+                } catch (e) {
+                    console.error('❌ خطأ في قراءة بيانات "تذكرني":', e);
+                    localStorage.removeItem('rememberedUser');
+                    return false;
+                }
+            }
+            
+            // تشغيل فوري
+            const autoLoginSuccessful = checkAndAutoLogin();
+            
+            // حفظ حالة التسجيل التلقائي لمنع تدخل الدوال الأخرى
+            if (autoLoginSuccessful) {
+                window.AUTO_LOGIN_IN_PROGRESS = true;
+                console.log('🔒 تم تعيين علامة AUTO_LOGIN_IN_PROGRESS');
+            }
+            
+        })();
+    </script>
     
-
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
     <style>
         /* تنسيقات لوحة التحكم المتقدمة */
@@ -5534,6 +5676,12 @@ textarea.editing-mode {
                 <button id="toggleEmailSettingsBtn" class="btn-success" onclick="toggleEmailSettings()" style="background: #16a34a;">
                     📧 إعدادات البريد الإلكتروني
                 </button>
+                <button id="dataProtectionToggleBtn" class="btn-warning" onclick="toggleDataProtection()" style="background: #f59e0b;">
+                    🛡️ <span id="dataProtectionStatus">حماية البيانات مُفعّلة</span>
+                </button>
+                <button class="btn-info" onclick="showDataMonitorModal()" style="background: #3b82f6;">
+                    📊 مراقب البيانات المتقدم
+                </button>
             </div>
             
             <div style="background: rgba(255, 255, 255, 0.15); padding: 15px; border-radius: 8px; margin-top: 20px; backdrop-filter: blur(10px);">
@@ -5821,6 +5969,214 @@ async function uploadFile(file, path) {
 // 🔥 Firebase Integration - وضع التشغيل
 // ========================================
 const USE_FIREBASE = true; // true = Firebase, false = LocalStorage فقط
+
+// 🛡️ آلية حماية البيانات من المسح غير المرغوب فيه
+const DATA_PROTECTION_ENABLED = true;
+
+// 📊 نظام مراقبة البيانات المتقدم
+const DATA_MONITOR = {
+    enabled: true,
+    backupInterval: 60000, // نسخة احتياطية كل دقيقة
+    lastBackup: 0,
+    dataSnapshots: {},
+    
+    // حفظ لقطة من البيانات الحالية
+    saveSnapshot(label = 'auto') {
+        if (!this.enabled) return;
+        
+        const snapshot = {
+            timestamp: Date.now(),
+            label: label,
+            data: {
+                items: [...(items || [])],
+                customers: [...(customers || [])],
+                suppliers: [...(suppliers || [])],
+                purchases: [...(purchases || [])],
+                sales: [...(sales || [])],
+                expenses: [...(expenses || [])],
+                revenues: [...(revenues || [])],
+                salaries: [...(salaries || [])],
+                assets: [...(assets || [])],
+                salesReturns: [...(salesReturns || [])],
+                advances: [...(advances || [])],
+                purchaseReturns: [...(purchaseReturns || [])],
+                users: [...(users || [])],
+                activities: [...(activities || [])]
+            },
+            counts: {
+                items: items?.length || 0,
+                customers: customers?.length || 0,
+                suppliers: suppliers?.length || 0,
+                purchases: purchases?.length || 0,
+                sales: sales?.length || 0,
+                expenses: expenses?.length || 0,
+                revenues: revenues?.length || 0,
+                salaries: salaries?.length || 0,
+                assets: assets?.length || 0,
+                salesReturns: salesReturns?.length || 0,
+                advances: advances?.length || 0,
+                purchaseReturns: purchaseReturns?.length || 0,
+                users: users?.length || 0,
+                activities: activities?.length || 0
+            }
+        };
+        
+        this.dataSnapshots[label] = snapshot;
+        localStorage.setItem('diwan_data_snapshots', JSON.stringify(this.dataSnapshots));
+        
+        console.log(`📊 تم حفظ لقطة البيانات: ${label}`, snapshot.counts);
+        return snapshot;
+    },
+    
+    // مقارنة البيانات الحالية مع آخر لقطة
+    detectDataLoss() {
+        if (!this.enabled || !this.dataSnapshots.auto) return false;
+        
+        const lastSnapshot = this.dataSnapshots.auto;
+        const currentCounts = {
+            items: items?.length || 0,
+            customers: customers?.length || 0,
+            suppliers: suppliers?.length || 0,
+            purchases: purchases?.length || 0,
+            sales: sales?.length || 0,
+            expenses: expenses?.length || 0,
+            revenues: revenues?.length || 0,
+            salaries: salaries?.length || 0,
+            assets: assets?.length || 0,
+            salesReturns: salesReturns?.length || 0,
+            advances: advances?.length || 0,
+            purchaseReturns: purchaseReturns?.length || 0,
+            users: users?.length || 0,
+            activities: activities?.length || 0
+        };
+        
+        let dataLossDetected = false;
+        const losses = [];
+        
+        for (const [key, currentCount] of Object.entries(currentCounts)) {
+            const previousCount = lastSnapshot.counts[key] || 0;
+            if (currentCount < previousCount) {
+                dataLossDetected = true;
+                losses.push(`${key}: ${previousCount} → ${currentCount}`);
+            }
+        }
+        
+        if (dataLossDetected) {
+            console.error('🚨 تم اكتشاف فقدان بيانات!', losses);
+            this.showDataLossAlert(losses, lastSnapshot);
+        }
+        
+        return dataLossDetected;
+    },
+    
+    // عرض تنبيه فقدان البيانات مع إمكانية الاستعادة
+    async showDataLossAlert(losses, lastSnapshot) {
+        const lossText = losses.join('\n');
+        console.error('🚨 تحذير: تم اكتشاف فقدان بيانات!', losses);
+        
+        const confirmed = await showConfirmDialog(
+            '🚨 تم اكتشاف فقدان بيانات!',
+            `تم اكتشاف انخفاض في البيانات:\n\n${lossText}\n\nهل تريد استعادة البيانات من آخر نسخة احتياطية؟\n\nأو إعادة تحميل من Firebase؟`,
+            'danger',
+            'استعادة من النسخة الاحتياطية',
+            'إعادة تحميل من Firebase'
+        );
+        
+        if (confirmed) {
+            this.restoreFromSnapshot(lastSnapshot);
+        } else {
+            // إعادة تحميل من Firebase
+            if (USE_FIREBASE && typeof initializeApp === 'function') {
+                console.log('🔄 إعادة تحميل البيانات من Firebase...');
+                showNotification('🔄 إعادة التحميل', 'جاري إعادة تحميل البيانات من Firebase...', 'info');
+                setTimeout(() => initializeApp(), 500);
+            }
+        }
+    },
+    
+    // استعادة البيانات من لقطة
+    restoreFromSnapshot(snapshot) {
+        if (!snapshot || !snapshot.data) {
+            showNotification('❌ خطأ', 'لا توجد بيانات للاستعادة', 'error');
+            return;
+        }
+        
+        const data = snapshot.data;
+        
+        items = [...data.items];
+        customers = [...data.customers];
+        suppliers = [...data.suppliers];
+        purchases = [...data.purchases];
+        sales = [...data.sales];
+        expenses = [...data.expenses];
+        revenues = [...data.revenues];
+        salaries = [...data.salaries];
+        assets = [...data.assets];
+        salesReturns = [...data.salesReturns];
+        advances = [...data.advances];
+        purchaseReturns = [...data.purchaseReturns];
+        users = [...data.users];
+        activities = [...data.activities];
+        
+        console.log('✅ تم استعادة البيانات من اللقطة:', snapshot.counts);
+        showNotification('✅ تم الاستعادة', 'تم استعادة البيانات بنجاح من آخر نسخة احتياطية', 'success');
+        
+        // تحديث الواجهة
+        if (typeof updateDashboard === 'function') updateDashboard();
+        if (typeof renderItems === 'function') renderItems();
+        if (typeof renderCustomers === 'function') renderCustomers();
+        if (typeof renderSuppliers === 'function') renderSuppliers();
+    },
+    
+    // تحميل اللقطات المحفوظة
+    loadSnapshots() {
+        try {
+            const saved = localStorage.getItem('diwan_data_snapshots');
+            if (saved) {
+                this.dataSnapshots = JSON.parse(saved);
+                console.log('📊 تم تحميل لقطات البيانات:', Object.keys(this.dataSnapshots));
+            }
+        } catch (error) {
+            console.error('خطأ في تحميل لقطات البيانات:', error);
+        }
+    }
+};
+
+// دالة حماية البيانات
+function protectDataFromDeletion(newData, dataType, currentData) {
+    // التحقق من الحالة الديناميكية
+    const protectionEnabled = window.DATA_PROTECTION_ENABLED !== false && 
+                             localStorage.getItem('dataProtectionEnabled') !== 'false';
+    
+    if (!protectionEnabled) return newData;
+    
+    // إذا كانت البيانات الجديدة فارغة والبيانات الحالية تحتوي على بيانات
+    if ((!newData || newData.length === 0) && currentData && currentData.length > 0) {
+        console.warn(`🛡️ حماية البيانات: منع مسح ${dataType} (${currentData.length} عنصر)`);
+        showNotification('🛡️ تم منع مسح البيانات', `تم منع مسح ${dataType} (${currentData.length} عنصر)`, 'warning');
+        
+        // حفظ لقطة طارئة
+        DATA_MONITOR.saveSnapshot(`protection_${dataType}_${Date.now()}`);
+        
+        return currentData; // احتفظ بالبيانات القديمة
+    }
+    
+    // إذا كانت البيانات الجديدة أقل بكثير من القديمة (انخفاض أكثر من 50%)
+    if (newData && currentData && newData.length > 0 && currentData.length > 0) {
+        const reductionRatio = (currentData.length - newData.length) / currentData.length;
+        if (reductionRatio > 0.5) {
+            console.warn(`🛡️ حماية البيانات: منع انخفاض كبير في ${dataType} (${currentData.length} إلى ${newData.length})`);
+            showNotification('🛡️ تم منع انخفاض البيانات', `تم منع انخفاض كبير في ${dataType}`, 'warning');
+            
+            // حفظ لقطة طارئة
+            DATA_MONITOR.saveSnapshot(`reduction_${dataType}_${Date.now()}`);
+            
+            return currentData; // احتفظ بالبيانات القديمة
+        }
+    }
+    
+    return newData;
+}
 let DEBUG_MODE = false; // تقليل رسائل Debug لتجنب الإزعاج
 
 function debugLog(...args) {
@@ -5906,20 +6262,78 @@ async function initializeApp() {
     if (USE_FIREBASE) {
         debugLog('🔥 تحميل البيانات من Firebase...');
         
-        items = await firebaseGetActivityData(currentActivityId, 'items') || [];
-        customers = await firebaseGetActivityData(currentActivityId, 'customers') || [];
-        suppliers = await firebaseGetActivityData(currentActivityId, 'suppliers') || [];
-        purchases = await firebaseGetActivityData(currentActivityId, 'purchases') || [];
-        sales = await firebaseGetActivityData(currentActivityId, 'sales') || [];
-        expenses = await firebaseGetActivityData(currentActivityId, 'expenses') || [];
-        revenues = await firebaseGetActivityData(currentActivityId, 'revenues') || [];
-        salaries = await firebaseGetActivityData(currentActivityId, 'salaries') || [];
-        assets = await firebaseGetActivityData(currentActivityId, 'assets') || [];
-        salesReturns = await firebaseGetActivityData(currentActivityId, 'salesReturns') || [];
-        advances = await firebaseGetActivityData(currentActivityId, 'advances') || [];
-        purchaseReturns = await firebaseGetActivityData(currentActivityId, 'purchaseReturns') || [];
+        // 🛡️ حفظ البيانات الحالية قبل التحديث (للحماية)
+        const currentDataBackup = {
+            items: items || [],
+            customers: customers || [],
+            suppliers: suppliers || [],
+            purchases: purchases || [],
+            sales: sales || [],
+            expenses: expenses || [],
+            revenues: revenues || [],
+            salaries: salaries || [],
+            assets: assets || [],
+            salesReturns: salesReturns || [],
+            advances: advances || [],
+            purchaseReturns: purchaseReturns || []
+        };
         
-        debugLog('✅ تم تحميل البيانات من Firebase');
+        // تحميل البيانات من Firebase مع الحماية
+        console.log(`🔍 بدء تحميل البيانات للنشاط: ${currentActivityId}`);
+        
+        const firebaseItems = await firebaseGetActivityData(currentActivityId, 'items') || [];
+        console.log(`📦 تم تحميل ${firebaseItems.length} صنف من Firebase`);
+        
+        const firebaseCustomers = await firebaseGetActivityData(currentActivityId, 'customers') || [];
+        console.log(`👥 تم تحميل ${firebaseCustomers.length} عميل من Firebase`);
+        
+        const firebaseSuppliers = await firebaseGetActivityData(currentActivityId, 'suppliers') || [];
+        console.log(`🏪 تم تحميل ${firebaseSuppliers.length} مورد من Firebase`);
+        
+        const firebasePurchases = await firebaseGetActivityData(currentActivityId, 'purchases') || [];
+        console.log(`🛒 تم تحميل ${firebasePurchases.length} مشتريات من Firebase`);
+        
+        const firebaseSales = await firebaseGetActivityData(currentActivityId, 'sales') || [];
+        console.log(`💰 تم تحميل ${firebaseSales.length} مبيعات من Firebase`);
+        
+        const firebaseExpenses = await firebaseGetActivityData(currentActivityId, 'expenses') || [];
+        console.log(`💸 تم تحميل ${firebaseExpenses.length} مصروفات من Firebase`);
+        
+        const firebaseRevenues = await firebaseGetActivityData(currentActivityId, 'revenues') || [];
+        console.log(`💵 تم تحميل ${firebaseRevenues.length} إيرادات من Firebase`);
+        
+        const firebaseSalaries = await firebaseGetActivityData(currentActivityId, 'salaries') || [];
+        console.log(`💼 تم تحميل ${firebaseSalaries.length} راتب من Firebase`);
+        
+        const firebaseAssets = await firebaseGetActivityData(currentActivityId, 'assets') || [];
+        console.log(`🏦 تم تحميل ${firebaseAssets.length} أصل من Firebase`);
+        
+        const firebaseSalesReturns = await firebaseGetActivityData(currentActivityId, 'salesReturns') || [];
+        console.log(`↩️ تم تحميل ${firebaseSalesReturns.length} مرتجعات مبيعات من Firebase`);
+        
+        const firebaseAdvances = await firebaseGetActivityData(currentActivityId, 'advances') || [];
+        console.log(`💳 تم تحميل ${firebaseAdvances.length} عهدة/سلفة من Firebase`);
+        
+        const firebasePurchaseReturns = await firebaseGetActivityData(currentActivityId, 'purchaseReturns') || [];
+        console.log(`🔙 تم تحميل ${firebasePurchaseReturns.length} مرتجعات مشتريات من Firebase`);
+        
+        console.log('🛡️ تطبيق نظام الحماية على البيانات...');
+        
+        // تطبيق الحماية على كل نوع بيانات
+        items = protectDataFromDeletion(firebaseItems, 'الأصناف', currentDataBackup.items);
+        customers = protectDataFromDeletion(firebaseCustomers, 'العملاء', currentDataBackup.customers);
+        suppliers = protectDataFromDeletion(firebaseSuppliers, 'الموردين', currentDataBackup.suppliers);
+        purchases = protectDataFromDeletion(firebasePurchases, 'المشتريات', currentDataBackup.purchases);
+        sales = protectDataFromDeletion(firebaseSales, 'المبيعات', currentDataBackup.sales);
+        expenses = protectDataFromDeletion(firebaseExpenses, 'المصروفات', currentDataBackup.expenses);
+        revenues = protectDataFromDeletion(firebaseRevenues, 'الإيرادات', currentDataBackup.revenues);
+        salaries = protectDataFromDeletion(firebaseSalaries, 'الرواتب', currentDataBackup.salaries);
+        assets = protectDataFromDeletion(firebaseAssets, 'الأصول', currentDataBackup.assets);
+        salesReturns = protectDataFromDeletion(firebaseSalesReturns, 'مرتجعات المبيعات', currentDataBackup.salesReturns);
+        advances = protectDataFromDeletion(firebaseAdvances, 'العهد والسلف', currentDataBackup.advances);
+        purchaseReturns = protectDataFromDeletion(firebasePurchaseReturns, 'مرتجعات المشتريات', currentDataBackup.purchaseReturns);
+        
+        debugLog('✅ تم تحميل البيانات من Firebase مع الحماية');
     } else {
         debugLog('📦 تحميل البيانات من LocalStorage...');
         
@@ -6019,6 +6433,114 @@ async function initializeApp() {
         console.log('🎨 تم تحميل تخصيصات التصميم');
     }
     
+    // تحميل حالة حماية البيانات
+    if (typeof loadDataProtectionState === 'function') {
+        loadDataProtectionState();
+        console.log('🛡️ تم تحميل إعدادات حماية البيانات');
+    }
+    
+    // 📊 تهيئة نظام مراقبة البيانات
+    DATA_MONITOR.loadSnapshots();
+    DATA_MONITOR.saveSnapshot('app_start');
+    
+    // مراقبة دورية للبيانات
+    setInterval(() => {
+        if (DATA_MONITOR.enabled) {
+            // فحص فقدان البيانات أولاً
+            const dataLossDetected = DATA_MONITOR.detectDataLoss();
+            
+            // إذا لم يتم اكتشاف فقدان، حفظ نسخة احتياطية دورية
+            if (!dataLossDetected) {
+                const now = Date.now();
+                if (now - DATA_MONITOR.lastBackup > DATA_MONITOR.backupInterval) {
+                    DATA_MONITOR.saveSnapshot('auto');
+                    DATA_MONITOR.lastBackup = now;
+                }
+            }
+            
+            // تسجيل حالة البيانات للتشخيص
+            const totalItems = (items?.length || 0) + (customers?.length || 0) + 
+                             (suppliers?.length || 0) + (purchases?.length || 0) + 
+                             (sales?.length || 0) + (users?.length || 0);
+            
+            if (totalItems === 0 && window.currentUser) {
+                console.warn('🚨 تحذير: جميع البيانات فارغة رغم تسجيل الدخول!');
+                // محاولة إعادة التحميل من Firebase
+                if (USE_FIREBASE && typeof initializeApp === 'function') {
+                    console.log('🔄 محاولة إعادة تحميل البيانات من Firebase...');
+                    setTimeout(() => initializeApp(), 1000);
+                }
+            }
+        }
+    }, 30000); // فحص كل 30 ثانية
+    
+    console.log('📊 تم تفعيل نظام مراقبة البيانات المتقدم');
+    
+    // 🔍 فحص شامل لقاعدة بيانات Firebase
+    setTimeout(async () => {
+        if (USE_FIREBASE && currentActivityId) {
+            console.log('🔍 فحص قاعدة بيانات Firebase للنشاط:', currentActivityId);
+            try {
+                const { ref, get } = window.firebaseModules;
+                const db = window.firebaseDatabase;
+                
+                // فحص بنية البيانات في Firebase
+                const activityRef = ref(db, `activities/${currentActivityId}`);
+                const snapshot = await get(activityRef);
+                
+                if (snapshot.exists()) {
+                    const activityData = snapshot.val();
+                    console.log('📊 بنية البيانات في Firebase:', Object.keys(activityData));
+                    console.log('🔍 البيانات الكاملة من Firebase:', activityData);
+                    
+                    // إحصائيات مفصلة
+                    Object.keys(activityData).forEach(dataType => {
+                        const data = activityData[dataType];
+                        console.log(`🔍 فحص ${dataType}:`, data);
+                        if (data && typeof data === 'object') {
+                            const count = Array.isArray(data) ? data.length : Object.keys(data).length;
+                            console.log(`📊 Firebase ${dataType}: ${count} عنصر`);
+                        }
+                    });
+                } else {
+                    console.warn('⚠️ لا توجد بيانات للنشاط في Firebase:', currentActivityId);
+                }
+            } catch (error) {
+                console.error('❌ خطأ في فحص Firebase:', error);
+            }
+        }
+    }, 1000);
+    
+    // تشخيص شامل للبيانات بعد التحميل
+    setTimeout(() => {
+        const dataStatus = {
+            items: items?.length || 0,
+            customers: customers?.length || 0,
+            suppliers: suppliers?.length || 0,
+            purchases: purchases?.length || 0,
+            sales: sales?.length || 0,
+            expenses: expenses?.length || 0,
+            revenues: revenues?.length || 0,
+            salaries: salaries?.length || 0,
+            users: users?.length || 0,
+            activities: activities?.length || 0,
+            currentUser: !!window.currentUser,
+            currentActivityId: currentActivityId || 'غير محدد'
+        };
+        
+        console.log('📊 تشخيص شامل للبيانات:', dataStatus);
+        
+        const totalData = Object.values(dataStatus).reduce((sum, val) => 
+            typeof val === 'number' ? sum + val : sum, 0);
+        
+        if (totalData === 0 && window.currentUser) {
+            console.error('🚨 مشكلة خطيرة: المستخدم مسجل دخول لكن لا توجد بيانات!');
+            showNotification('🚨 تحذير', 'تم اكتشاف مشكلة في البيانات - يرجى فتح مراقب البيانات', 'warning');
+        } else if (totalData > 0) {
+            console.log(`✅ البيانات محملة بشكل صحيح (${totalData} عنصر)`);
+        }
+    }, 2000);
+    
     // تحقق نهائي من حالة تسجيل الدخول بعد الاستعادة
     if (window.currentUser) {
         console.log('✅ المستخدم مسجل دخول:', window.currentUser.name);
@@ -6041,7 +6563,56 @@ if (typeof window !== 'undefined') {
 }
 
 // ========================================
-// 📧 دوال إعدادات البريد الإلكتروني (EmailJS)
+// �️ دوال حماية البيانات
+// ========================================
+
+function toggleDataProtection() {
+    const currentState = localStorage.getItem('dataProtectionEnabled') !== 'false';
+    const newState = !currentState;
+    
+    localStorage.setItem('dataProtectionEnabled', newState.toString());
+    
+    // تحديث المتغير العام
+    window.DATA_PROTECTION_ENABLED = newState;
+    
+    // تحديث النص في الزر
+    const statusText = document.getElementById('dataProtectionStatus');
+    const btn = document.getElementById('dataProtectionToggleBtn');
+    
+    if (newState) {
+        statusText.textContent = 'حماية البيانات مُفعّلة';
+        btn.style.background = '#f59e0b'; // أصفر (مُفعّل)
+        showNotification('🛡️ تم التفعيل', 'حماية البيانات من المسح غير المرغوب مُفعّلة', 'success');
+    } else {
+        statusText.textContent = 'حماية البيانات معطّلة';
+        btn.style.background = '#dc2626'; // أحمر (معطّل)
+        showNotification('⚠️ تم الإلغاء', 'حماية البيانات معطّلة - كن حذراً!', 'warning');
+    }
+}
+
+// تحميل حالة الحماية عند بدء التطبيق
+function loadDataProtectionState() {
+    const isEnabled = localStorage.getItem('dataProtectionEnabled') !== 'false'; // افتراضياً مُفعّلة
+    window.DATA_PROTECTION_ENABLED = isEnabled;
+    
+    setTimeout(() => {
+        const statusText = document.getElementById('dataProtectionStatus');
+        const btn = document.getElementById('dataProtectionToggleBtn');
+        
+        if (statusText && btn) {
+            if (isEnabled) {
+                statusText.textContent = 'حماية البيانات مُفعّلة';
+                btn.style.background = '#f59e0b';
+            } else {
+                statusText.textContent = 'حماية البيانات معطّلة';
+                btn.style.background = '#dc2626';
+            }
+        }
+    }, 1000);
+}
+
+// ========================================
+// �📧 دوال إعدادات البريد الإلكتروني (EmailJS)
 // ========================================
 function toggleEmailSettings() {
     console.log('📧 فتح إعدادات البريد الإلكتروني...');
@@ -8239,7 +8810,7 @@ loadSavedEmailSettings();
             if (!USE_FIREBASE) return null;
             
             try {
-                const { ref, get } = window.firebaseModules;
+                const { ref, get, set } = window.firebaseModules;
                 const database = window.firebaseDatabase;
                 
                 if (!database) {
@@ -8247,8 +8818,51 @@ loadSavedEmailSettings();
                     return null;
                 }
                 
-                const activitiesRef = ref(database, 'activities'); // تغيير المسار من 'system/activities' إلى 'activities'
-                const snapshot = await get(activitiesRef);
+                // محاولة تحميل من المكان الجديد أولاً، ثم من المكان القديم
+                let activitiesRef = ref(database, 'activitiesList');
+                let snapshot = await get(activitiesRef);
+                
+                // إذا لم توجد في المكان الجديد، جرب المكان القديم
+                if (!snapshot.exists()) {
+                    console.log('🔍 لم توجد أنشطة في activitiesList، جاري البحث في activities...');
+                    activitiesRef = ref(database, 'activities');
+                    snapshot = await get(activitiesRef);
+                    
+                    if (snapshot.exists()) {
+                        // إذا وُجدت في المكان القديم، انقلها للمكان الجديد
+                        const firebaseActivities = snapshot.val();
+                        const activitiesArray = [];
+                        
+                        // استخراج قائمة الأنشطة من البيانات المختلطة
+                        Object.keys(firebaseActivities).forEach(key => {
+                            const value = firebaseActivities[key];
+                            if (value && typeof value === 'object' && value.id && value.name) {
+                                activitiesArray.push(value);
+                            }
+                        });
+                        
+                        if (activitiesArray.length > 0) {
+                            console.log(`🔄 نقل ${activitiesArray.length} نشاط إلى activitiesList`);
+                            const newActivitiesRef = ref(database, 'activitiesList');
+                            const activitiesObject = {};
+                            activitiesArray.forEach(activity => {
+                                if (activity.id) {
+                                    activitiesObject[activity.id] = {
+                                        id: activity.id,
+                                        name: activity.name,
+                                        createdAt: activity.createdAt || new Date().toISOString(),
+                                        createdBy: activity.createdBy || 'غير محدد',
+                                        initialCapital: activity.initialCapital || 0
+                                    };
+                                }
+                            });
+                            await set(newActivitiesRef, activitiesObject);
+                        }
+                        
+                        console.log('🔥✅ تم تحميل الأنشطة من Firebase (من المكان القديم):', activitiesArray.length);
+                        return activitiesArray;
+                    }
+                }
                 
                 if (snapshot.exists()) {
                     const firebaseActivities = snapshot.val();
@@ -8283,8 +8897,11 @@ loadSavedEmailSettings();
         if (USE_FIREBASE) {
             const firebaseUsers = await firebaseLoadUsersDirectly();
             if (firebaseUsers && firebaseUsers.length > 0) {
-                users = firebaseUsers;
-                console.log(`🔥✅ تم تحميل ${users.length} مستخدم من Firebase`);
+                // 🛡️ حماية البيانات من المسح غير المرغوب
+                const currentUsers = users || [];
+                const protectedUsers = protectDataFromDeletion(firebaseUsers, 'المستخدمين', currentUsers);
+                users = protectedUsers;
+                console.log(`🔥✅ تم تحميل ${users.length} مستخدم من Firebase مع الحماية`);
                 return;
             }
         }
@@ -9930,8 +10547,9 @@ function formatDate(dateString) {
 
                 console.log('🔥 حفظ الأنشطة في Firebase...');
                 
-                // حفظ الأنشطة في Firebase Database
-                const activitiesRef = ref(database, 'activities');
+                // حفظ الأنشطة في Firebase Database بدون مسح بيانات الأنشطة
+                // نستخدم activitiesList بدلاً من activities لتجنب مسح بيانات النشاط
+                const activitiesListRef = ref(database, 'activitiesList');
                 
                 // تحويل Array إلى Object مفهرس بالـ id مع تنظيف البيانات
                 const activitiesObject = {};
@@ -9948,9 +10566,11 @@ function formatDate(dateString) {
                     }
                 });
                 
-                await set(activitiesRef, activitiesObject);
+                // حفظ قائمة الأنشطة في مكان منفصل لتجنب مسح بيانات الأنشطة
+                await set(activitiesListRef, activitiesObject);
                 
-                console.log('🔥✅ تم حفظ جميع الأنشطة في Firebase Database');
+                console.log('🔥✅ تم حفظ جميع الأنشطة في Firebase Database (activitiesList)');
+                console.log('🛡️ بيانات الأنشطة الفردية محمية ولن تُمسح');
                 return true;
                 
             } catch (error) {
@@ -15494,22 +16114,43 @@ if (data.length > 0) {
             if (!USE_FIREBASE) return null;
 
             try {
+                console.log(`🔍 Firebase: جلب ${dataType} للنشاط ${activityId}`);
+                
                 const { ref, get } = window.firebaseModules;
                 const db = window.firebaseDatabase;
                 
                 const dataRef = ref(db, `activities/${activityId}/${dataType}`);
+                console.log(`📍 Firebase Path: activities/${activityId}/${dataType}`);
+                
                 const snapshot = await get(dataRef);
                 
+                console.log(`🔍 snapshot.exists() = ${snapshot.exists()}`);
                 if (snapshot.exists()) {
-                    // تحويل الكائن إلى مصفوفة
                     const dataObject = snapshot.val();
-                    return Object.values(dataObject);
+                    console.log(`🔍 البيانات الخام من Firebase لـ ${dataType}:`, dataObject);
+                    console.log(`🔍 نوع البيانات: ${typeof dataObject}`);
+                    console.log(`🔍 هل هو مصفوفة؟ ${Array.isArray(dataObject)}`);
+                    
+                    // تحويل الكائن إلى مصفوفة
+                    let dataArray;
+                    if (Array.isArray(dataObject)) {
+                        dataArray = dataObject;
+                    } else if (typeof dataObject === 'object' && dataObject !== null) {
+                        dataArray = Object.values(dataObject);
+                    } else {
+                        dataArray = [];
+                    }
+                    
+                    console.log(`🔍 المصفوفة النهائية لـ ${dataType}:`, dataArray);
+                    console.log(`✅ Firebase: وُجد ${dataArray.length} عنصر من ${dataType}`);
+                    return dataArray;
                 } else {
+                    console.warn(`⚠️ Firebase: لا توجد بيانات ${dataType} للنشاط ${activityId}`);
                     debugLog(`⚠️ لا توجد بيانات ${dataType} في Firebase`);
                     return [];
                 }
             } catch (error) {
-                console.error(`❌ خطأ في جلب ${dataType}:`, error);
+                console.error(`❌ Firebase خطأ في جلب ${dataType} للنشاط ${activityId}:`, error);
                 return null;
             }
         }
@@ -15575,7 +16216,10 @@ if (data.length > 0) {
             if (firebaseResult && !firebaseResult.error && firebaseResult.userData) {
                 debugLog('✅ تم تسجيل الدخول بنجاح عبر Firebase');
                 user = firebaseResult.userData;
-                user.firebaseUid = firebaseResult.firebaseUser.uid;
+            user.firebaseUid = firebaseResult.firebaseUser.uid;
+            window.currentUser = user; // <--- 🔥 أضف هذا السطر هنا
+
+            // تحميل المستخدمين من Firebase فوراً بعد تسجيل الدخول
                 
                 // تحميل المستخدمين من Firebase فوراً بعد تسجيل الدخول
                 try {
@@ -15680,10 +16324,10 @@ if (data.length > 0) {
             debugLog('📦 محاولة تسجيل الدخول عبر LocalStorage...');
             const savedUsers = loadFromLocalStorage('diwan_users') || [];
             users = savedUsers;
-            
-            user = users.find(u => u.email === email && u.password === pass);
-            
-            if (!user) {
+          user = users.find(u => u.email === email && u.password === pass);
+        window.currentUser = user; // <--- 🔥 وأضف هذا السطر هنا
+
+        if (!user) {
                 hideLoading();
                 errorMsg.textContent = 'البريد الإلكتروني أو كلمة المرور غير صحيحة.';
                 errorMsg.style.display = 'block';
@@ -15871,7 +16515,7 @@ if (data.length > 0) {
         /**
          * فحص الإعداد الأولي عند تحميل الصفحة
          */
-        async function checkFirstSetup() {
+      async function checkFirstSetup() {
             console.log('🔍 checkFirstSetup: بدء الفحص');
             
             if (!USE_FIREBASE) {
@@ -15890,10 +16534,34 @@ if (data.length > 0) {
                     document.getElementById('login-overlay').style.display = 'none';
                     document.getElementById('first-setup-overlay').style.display = 'flex';
                 } else {
-                    console.log('✅ النظام معد بالفعل - إظهار شاشة تسجيل الدخول العادية');
+                    console.log('✅ النظام معد بالفعل');
+                    
+                    // التحقق من حالة "تذكرني" قبل إظهار شاشة تسجيل الدخول
+                    const rememberedUser = localStorage.getItem('rememberedUser');
+                    const manualLogout = sessionStorage.getItem('manualLogout');
+                    
+                    if (!manualLogout && rememberedUser) {
+                        try {
+                            const userData = JSON.parse(rememberedUser);
+                            const now = new Date().getTime();
+                            const dayInMs = 30 * 24 * 60 * 60 * 1000; // 30 يوم
+                            
+                            if (userData.timestamp && (now - userData.timestamp) < dayInMs) {
+                                console.log('🔄 يوجد بيانات "تذكرني" صالحة - لا حاجة لإظهار شاشة تسجيل الدخول');
+                                return; // لا تظهر شاشة تسجيل الدخول
+                            }
+                        } catch (e) {
+                            console.warn('خطأ في قراءة بيانات تذكرني:', e);
+                        }
+                    }
+                    
+                    console.log('📝 إظهار شاشة تسجيل الدخول العادية');
+                    document.getElementById('login-overlay').style.display = 'flex';
                 }
             } catch (error) {
                 console.error('❌ خطأ في فحص الإعداد الأولي:', error);
+                // في حالة الخطأ، أظهر شاشة تسجيل الدخول العادية
+                document.getElementById('login-overlay').style.display = 'flex';
             }
         }
 
@@ -15972,7 +16640,7 @@ if (data.length > 0) {
             renderUsersInSettings();
         }
         
-       async function logout() {
+      async function logout() {
             const confirmed = await showConfirmDialog({
                 title: 'تسجيل الخروج',
                 message: 'هل أنت متأكد من رغبتك في تسجيل الخروج؟',
@@ -15991,10 +16659,15 @@ if (data.length > 0) {
                 
                 // حذف بيانات "تذكرني" عند تسجيل الخروج اليدوي
                 localStorage.removeItem('rememberedUser');
+                console.log('🗑️ تم حذف بيانات "تذكرني" عند تسجيل الخروج');
+                
+                // وضع علامة أن المستخدم سجل خروج يدوياً لمنع التسجيل التلقائي
+                sessionStorage.setItem('manualLogout', 'true');
                 
                 location.reload();
             }
         }
+
         function renderUsersInSettings() {
             // تم إزالة loadUsers() لأنه يسبب إعادة تحميل البيانات القديمة
             // البيانات يجب أن تكون محملة بالفعل في متغير users العام
@@ -16425,6 +17098,8 @@ if (data.length > 0) {
                 });
             }
         });
+
+
         // ===== نهاية دوال نافذة تعديل النشاط =====
 
         function openSelfEditUserModal() {
@@ -17719,15 +18394,27 @@ function emailSaleInvoice(saleId) {
             
             return isLoggedIn && loggedInUser;
         }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            // تنظيف بيانات تسجيل الدخول القديمة من localStorage (إجراء أمني)
-            localStorage.removeItem('loggedInUser');
-            localStorage.removeItem('isLoggedIn');
-            localStorage.removeItem('justLoggedOut');
+document.addEventListener('DOMContentLoaded', function() {
+            // تحقق من حالة التسجيل التلقائي
+            if (window.AUTO_LOGIN_IN_PROGRESS) {
+                console.log('🔒 تم تجاهل DOMContentLoaded لأن التسجيل التلقائي قيد التشغيل');
+                return;
+            }
+            
+            // التحقق من وجود تسجيل خروج يدوي في هذه الجلسة
+            const manualLogout = sessionStorage.getItem('manualLogout');
+            if (manualLogout) {
+                console.log('🚫 تم منع التسجيل التلقائي بسبب تسجيل خروج يدوي سابق');
+                sessionStorage.removeItem('manualLogout');
+                // إظهار شاشة تسجيل الدخول
+                document.getElementById('login-overlay').style.display = 'flex';
+                return;
+            }
             
             // التحقق من وجود بيانات "تذكرني" للدخول التلقائي
             const rememberedUser = localStorage.getItem('rememberedUser');
+            let autoLoginAttempted = false;
+            
             if (rememberedUser) {
                 try {
                     const userData = JSON.parse(rememberedUser);
@@ -17736,6 +18423,8 @@ function emailSaleInvoice(saleId) {
                     
                     // التحقق من صلاحية البيانات (30 يوم)
                     if (userData.timestamp && (now - userData.timestamp) < dayInMs) {
+                        autoLoginAttempted = true;
+                        
                         // إخفاء شاشة تسجيل الدخول فوراً
                         document.getElementById('login-overlay').style.display = 'none';
                         
@@ -17744,18 +18433,30 @@ function emailSaleInvoice(saleId) {
                         document.getElementById('loginPassword').value = userData.password;
                         document.getElementById('rememberMe').checked = true;
                         
+                        console.log('🔄 تسجيل دخول تلقائي من بيانات "تذكرني"...');
+                        
                         // تسجيل الدخول التلقائي
                         setTimeout(() => {
                             handleLogin();
                         }, 100);
-                        return;
+                        
                     } else {
                         // البيانات منتهية الصلاحية
+                        console.log('⚠️ بيانات "تذكرني" منتهية الصلاحية، سيتم حذفها');
                         localStorage.removeItem('rememberedUser');
                     }
                 } catch (e) {
+                    console.error('❌ خطأ في قراءة بيانات "تذكرني":', e);
                     localStorage.removeItem('rememberedUser');
                 }
+            }
+            
+            // تنظيف بيانات تسجيل الدخول القديمة فقط إذا لم يتم محاولة تسجيل دخول تلقائي
+            if (!autoLoginAttempted) {
+                localStorage.removeItem('loggedInUser');
+                localStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('justLoggedOut');
+                console.log('🧹 تنظيف بيانات الجلسة القديمة');
             }
             
             // تحميل الشعار المحفوظ
@@ -17898,6 +18599,13 @@ function emailSaleInvoice(saleId) {
         
         // دالة استعادة حالة تسجيل الدخول
         function restoreLoginState() {
+
+            
+    if (window.AUTO_LOGIN_IN_PROGRESS) {
+        console.log('🔄 تم تخطي restoreLoginState لأن التسجيل التلقائي قيد التشغيل');
+        return;
+    }
+    console.log('استعادة حالة تسجيل الدخول...');
             console.log('استعادة حالة تسجيل الدخول...');
             
             // إنشاء المستخدم الافتراضي إذا لم يكن موجوداً
@@ -19938,6 +20646,186 @@ document.addEventListener('DOMContentLoaded', function() {
 
 }
 // نهاية الكود JavaScript
+    </script>
+
+    <!-- نافذة مراقب البيانات المتقدم -->
+    <div id="data-monitor-modal">
+        <div class="modal-content">
+            <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #ddd; padding-bottom: 15px;">
+                <h3 style="margin: 0; color: #333;">📊 مراقب البيانات المتقدم</h3>
+                <span class="close" onclick="closeDataMonitorModal()" style="cursor: pointer; font-size: 24px; color: #999; font-weight: bold;">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid grid-4" style="margin-bottom: 20px;">
+                    <button class="btn-success" onclick="DATA_MONITOR.saveSnapshot('manual'); showNotification('✅ تم الحفظ', 'تم حفظ لقطة يدوية', 'success');" style="background: #16a34a; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;">
+                        💾 حفظ لقطة يدوية
+                    </button>
+                    <button class="btn-info" onclick="DATA_MONITOR.detectDataLoss()" style="background: #3b82f6; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;">
+                        🔍 فحص فقدان البيانات
+                    </button>
+                    <button class="btn-warning" onclick="DATA_MONITOR.enabled = !DATA_MONITOR.enabled; updateDataMonitorDisplay(); showNotification('📊', DATA_MONITOR.enabled ? 'تم تفعيل المراقبة' : 'تم إيقاف المراقبة', 'info');" style="background: #f59e0b; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;">
+                        <span id="dataMonitorToggle">⏸️ إيقاف المراقبة</span>
+                    </button>
+                    <button class="btn-danger" onclick="checkFirebaseData()" style="background: #dc2626; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;">
+                        🔥 فحص Firebase
+                    </button>
+                </div>
+                
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                    <h4>📈 إحصائيات البيانات الحالية</h4>
+                    <div id="currentDataStats" class="form-grid grid-4" style="font-size: 0.9em;">
+                        <!-- سيتم ملؤها بالجافا سكريبت -->
+                    </div>
+                </div>
+                
+                <div style="background: #e8f5e9; padding: 15px; border-radius: 8px;">
+                    <h4>🗂️ اللقطات المحفوظة</h4>
+                    <div id="savedSnapshots" style="max-height: 300px; overflow-y: auto;">
+                        <!-- سيتم ملؤها بالجافا سكريبت -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // دوال مراقب البيانات
+        function showDataMonitorModal() {
+            const modal = document.getElementById('data-monitor-modal');
+            modal.classList.add('show');
+            updateDataMonitorDisplay();
+        }
+        
+        function closeDataMonitorModal() {
+            const modal = document.getElementById('data-monitor-modal');
+            modal.classList.remove('show');
+        }
+        
+        // فحص مباشر لـ Firebase
+        async function checkFirebaseData() {
+            if (!USE_FIREBASE || !currentActivityId) {
+                showNotification('⚠️ خطأ', 'Firebase غير مُفعّل أو لا يوجد نشاط محدد', 'warning');
+                return;
+            }
+            
+            try {
+                console.log('🔥 بدء فحص Firebase المباشر...');
+                const { ref, get } = window.firebaseModules;
+                const db = window.firebaseDatabase;
+                
+                // فحص بيانات النشاط الكامل
+                const activityRef = ref(db, `activities/${currentActivityId}`);
+                const snapshot = await get(activityRef);
+                
+                if (snapshot.exists()) {
+                    const activityData = snapshot.val();
+                    console.log('🔥 بيانات Firebase الكاملة:', activityData);
+                    
+                    let message = `📊 تقرير Firebase للنشاط ${currentActivityId}:\n\n`;
+                    let hasData = false;
+                    
+                    const dataTypes = ['items', 'customers', 'suppliers', 'purchases', 'sales', 'expenses', 'revenues', 'salaries', 'assets', 'salesReturns', 'advances', 'purchaseReturns'];
+                    
+                    dataTypes.forEach(type => {
+                        if (activityData[type]) {
+                            const count = Object.keys(activityData[type]).length;
+                            message += `${type}: ${count} عنصر\n`;
+                            hasData = true;
+                        } else {
+                            message += `${type}: فارغ\n`;
+                        }
+                    });
+                    
+                    if (hasData) {
+                        message += '\n✅ توجد بيانات في Firebase';
+                        showNotification('🔥 Firebase متصل', message, 'success');
+                    } else {
+                        message += '\n❌ لا توجد بيانات في Firebase!';
+                        showNotification('🔥 مشكلة في Firebase', message, 'error');
+                    }
+                } else {
+                    const message = `❌ لا توجد بيانات للنشاط ${currentActivityId} في Firebase!`;
+                    console.error(message);
+                    showNotification('🔥 مشكلة خطيرة', message, 'error');
+                }
+            } catch (error) {
+                console.error('❌ خطأ في فحص Firebase:', error);
+                showNotification('🔥 خطأ في الاتصال', error.message, 'error');
+            }
+        }
+        
+        function updateDataMonitorDisplay() {
+            // تحديث الإحصائيات الحالية
+            const statsDiv = document.getElementById('currentDataStats');
+            if (statsDiv) {
+                statsDiv.innerHTML = `
+                    <div><strong>الأصناف:</strong> ${items?.length || 0}</div>
+                    <div><strong>العملاء:</strong> ${customers?.length || 0}</div>
+                    <div><strong>الموردين:</strong> ${suppliers?.length || 0}</div>
+                    <div><strong>المشتريات:</strong> ${purchases?.length || 0}</div>
+                    <div><strong>المبيعات:</strong> ${sales?.length || 0}</div>
+                    <div><strong>المصروفات:</strong> ${expenses?.length || 0}</div>
+                    <div><strong>الإيرادات:</strong> ${revenues?.length || 0}</div>
+                    <div><strong>الرواتب:</strong> ${salaries?.length || 0}</div>
+                    <div><strong>الأصول:</strong> ${assets?.length || 0}</div>
+                    <div><strong>مرتجعات المبيعات:</strong> ${salesReturns?.length || 0}</div>
+                    <div><strong>العهد والسلف:</strong> ${advances?.length || 0}</div>
+                    <div><strong>مرتجعات المشتريات:</strong> ${purchaseReturns?.length || 0}</div>
+                    <div><strong>المستخدمين:</strong> ${users?.length || 0}</div>
+                    <div><strong>الأنشطة:</strong> ${activities?.length || 0}</div>
+                `;
+            }
+            
+            // تحديث قائمة اللقطات
+            const snapshotsDiv = document.getElementById('savedSnapshots');
+            if (snapshotsDiv && DATA_MONITOR.dataSnapshots) {
+                const snapshots = Object.entries(DATA_MONITOR.dataSnapshots)
+                    .sort(([,a], [,b]) => b.timestamp - a.timestamp);
+                
+                snapshotsDiv.innerHTML = snapshots.map(([key, snapshot]) => `
+                    <div style="background: white; padding: 10px; margin: 5px 0; border-radius: 5px; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong>${snapshot.label}</strong><br>
+                            <small>${new Date(snapshot.timestamp).toLocaleString('ar')}</small><br>
+                            <small>إجمالي العناصر: ${Object.values(snapshot.counts).reduce((a,b) => a+b, 0)}</small>
+                        </div>
+                        <button class="btn-primary btn-sm" onclick="DATA_MONITOR.restoreFromSnapshot(DATA_MONITOR.dataSnapshots['${key}']); closeDataMonitorModal();" style="background: #059669; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
+                            استعادة
+                        </button>
+                    </div>
+                `).join('');
+            }
+            
+            // تحديث حالة المراقبة
+            const toggleBtn = document.getElementById('dataMonitorToggle');
+            if (toggleBtn) {
+                toggleBtn.textContent = DATA_MONITOR.enabled ? '⏸️ إيقاف المراقبة' : '▶️ تفعيل المراقبة';
+            }
+        }
+        
+        // إغلاق النافذة عند النقر خارجها
+        document.addEventListener('click', function(e) {
+            const modal = document.getElementById('data-monitor-modal');
+            if (e.target === modal) {
+                closeDataMonitorModal();
+            }
+        });
+        
+        // التأكد من إخفاء النافذة عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById('data-monitor-modal');
+            if (modal) {
+                modal.classList.remove('show');
+            }
+        });
+        
+        // التأكد من إخفاء النافذة فوراً
+        setTimeout(() => {
+            const modal = document.getElementById('data-monitor-modal');
+            if (modal) {
+                modal.classList.remove('show');
+            }
+        }, 100);
     </script>
 
 </body>
