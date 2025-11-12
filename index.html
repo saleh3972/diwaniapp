@@ -881,6 +881,11 @@
         aspect-ratio: auto;
         padding: 18px 15px;
     }
+    
+    /* 🆕 الرسوم البيانية - عمود واحد في الموبايل */
+    .charts-section > div[style*="grid"] {
+        grid-template-columns: 1fr !important;
+    }
 
     .advanced-stats .stat-number {
         font-size: 2em;
@@ -4189,7 +4194,65 @@ textarea.editing-mode {
         </div>
     </div>
 
-    <!-- سيتم إضافة رسوم بيانية جديدة هنا لاحقاً -->
+    <!-- 🆕 مؤشرات الأداء الرئيسية (KPIs) -->
+    <div class="kpi-section" style="margin-top: 40px;">
+        <h3 style="margin-bottom: 20px; color: var(--primary-color); font-size: 20px;">💎 مؤشرات الأداء الرئيسية</h3>
+        <div class="stats-grid advanced-stats">
+            <div class="stat-card kpi-card" style="background: white; border: 3px solid #667eea; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);">
+                <div class="stat-number" id="kpiNetProfit" style="color: #667eea;">0</div>
+                <div class="stat-label" style="color: #555;">صافي الربح (الشهر)</div>
+                <div class="stat-trend" id="kpiNetProfitTrend" style="color: #667eea;">📈 +0%</div>
+            </div>
+            <div class="stat-card kpi-card" style="background: white; border: 3px solid #f5576c; box-shadow: 0 4px 15px rgba(245, 87, 108, 0.2);">
+                <div class="stat-number" id="kpiCustomersDebt" style="color: #f5576c;">0</div>
+                <div class="stat-label" style="color: #555;">مستحقات العملاء</div>
+                <div class="stat-trend" id="kpiCustomersCount" style="color: #f5576c;">👥 0 عميل</div>
+            </div>
+            <div class="stat-card kpi-card" style="background: white; border: 3px solid #4facfe; box-shadow: 0 4px 15px rgba(79, 172, 254, 0.2);">
+                <div class="stat-number" id="kpiSuppliersDebt" style="color: #4facfe;">0</div>
+                <div class="stat-label" style="color: #555;">ديون الموردين</div>
+                <div class="stat-trend" id="kpiSuppliersCount" style="color: #4facfe;">🏢 0 مورد</div>
+            </div>
+            <div class="stat-card kpi-card" style="background: white; border: 3px solid #43e97b; box-shadow: 0 4px 15px rgba(67, 233, 123, 0.2);">
+                <div class="stat-number" id="kpiCashFlow" style="color: #43e97b;">0</div>
+                <div class="stat-label" style="color: #555;">النقد المتاح</div>
+                <div class="stat-trend" id="kpiCashFlowTrend" style="color: #43e97b;">💰 اليوم</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🆕 الرسوم البيانية -->
+    <div class="charts-section" style="margin-top: 40px;">
+        <h3 style="margin-bottom: 20px; color: var(--primary-color); font-size: 20px;">📊 التحليل البياني</h3>
+        
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-bottom: 20px;">
+            <!-- رسم المبيعات vs المشتريات -->
+            <div class="chart-card">
+                <h3>📈 المبيعات vs المشتريات (آخر 6 أشهر)</h3>
+                <canvas id="salesVsPurchasesChart"></canvas>
+            </div>
+            
+            <!-- رسم توزيع المصروفات -->
+            <div class="chart-card">
+                <h3>🎯 توزيع المصروفات حسب الفئة</h3>
+                <canvas id="expensesDistributionChart"></canvas>
+            </div>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+            <!-- رسم أعلى الأصناف مبيعاً -->
+            <div class="chart-card">
+                <h3>🏆 أعلى 5 أصناف مبيعاً</h3>
+                <canvas id="topItemsChart"></canvas>
+            </div>
+            
+            <!-- رسم التدفق النقدي -->
+            <div class="chart-card">
+                <h3>💰 التدفق النقدي الأسبوعي</h3>
+                <canvas id="cashFlowChart"></canvas>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div id="items" class="section">
@@ -4366,7 +4429,10 @@ textarea.editing-mode {
         <select id="purchaseSupplier" onchange="updateSupplierFields()">
             <option value="">اختر المورد</option>
         </select>
-        <input type="text" id="purchaseNotes" placeholder="ملاحظات">
+        <select id="purchaseBranch">
+            <option value="general_admin">🏢 الإدارة العامة</option>
+            <option value="">🏪 الفرع الرئيسي</option>
+        </select>
     </div>
     
     <div class="form-grid grid-4">
@@ -4374,6 +4440,10 @@ textarea.editing-mode {
         <input type="text" id="purchaseSupplierCode" placeholder="كود المورد" readonly>
         <input type="text" id="purchaseSupplierPhone" placeholder="رقم جوال المورد" readonly>
         <input type="text" id="purchaseSupplierAddress" placeholder="عنوان المورد">
+    </div>
+    
+    <div class="form-grid grid-4">
+        <input type="text" id="purchaseNotes" placeholder="ملاحظات">
     </div>
     
     <div class="form-grid grid-4">
@@ -4499,13 +4569,19 @@ textarea.editing-mode {
         <select id="saleCustomer" onchange="updateCustomerFields()">
             <option value="">اختر العميل</option>
         </select>
-        <input type="text" id="saleCustomerCode" placeholder="كود العميل" readonly>
+        <select id="saleBranch">
+            <option value="">🏪 الفرع الرئيسي</option>
+        </select>
     </div>
     
     <div class="form-grid grid-4">
+        <input type="text" id="saleCustomerCode" placeholder="كود العميل" readonly>
         <input type="text" id="saleCustomerName" placeholder="اسم العميل" readonly>
         <input type="text" id="saleCustomerPhone" placeholder="رقم جوال العميل" readonly>
         <input type="text" id="saleCustomerAddress" placeholder="عنوان العميل">
+    </div>
+    
+    <div class="form-grid grid-4">
         <input type="text" id="saleNotes" placeholder="ملاحظات">
     </div>
     
@@ -4764,22 +4840,27 @@ textarea.editing-mode {
         <input type="date" id="expenseDate" value="">
         <input type="text" id="expenseCategory" placeholder="تصنيف المصروف *" required>
         <input type="number" id="expenseAmount" placeholder="المبلغ *" required min="0">
-        <input type="text" id="expenseDescription" placeholder="وصف المصروف">
+        <select id="expenseBranchId">
+            <option value="general_admin">🏢 الإدارة العامة</option>
+            <option value="">🏪 الفرع الرئيسي</option>
+        </select>
     </div>
     
     <div class="form-grid grid-3">
-    <select id="expensePaymentMethod">
-        <option value="cash">نقدي</option>
-        <option value="bank">تحويل بنكي</option>
-        <option value="check">شيك</option>
-        <option value="card">بطاقة ائتمان</option>
-    </select>
-    <input type="text" id="expenseReference" placeholder="رقم المرجع (اختيار)">
+        <input type="text" id="expenseDescription" placeholder="وصف المصروف">
+        <select id="expensePaymentMethod">
+            <option value="cash">نقدي</option>
+            <option value="bank">تحويل بنكي</option>
+            <option value="check">شيك</option>
+            <option value="card">بطاقة ائتمان</option>
+        </select>
+        <input type="text" id="expenseReference" placeholder="رقم المرجع (اختياري)">
+    </div>
     
-    <input type="file" id="expenseAttachment" accept="image/*,application/pdf" style="padding: 10px; border: 2px dashed var(--primary-color); background: #f8f9fa;">
-    
-    <button class="btn-primary btn-add" onclick="addExpense()">➕ إضافة مصروف</button>
-</div>
+    <div class="form-grid grid-2">
+        <input type="file" id="expenseAttachment" accept="image/*,application/pdf" style="padding: 10px; border: 2px dashed var(--primary-color); background: #f8f9fa;">
+        <button class="btn-primary btn-add" onclick="addExpense()">➕ إضافة مصروف</button>
+    </div>
     <div class="search-container">
         <input type="text" id="searchExpenses" class="search-input" placeholder="🔍 بحث في المصروفات...">
     </div>
@@ -4822,10 +4903,13 @@ textarea.editing-mode {
         <input type="date" id="revenueDate" value="">
         <input type="text" id="revenueCategory" placeholder="تصنيف الإيراد *" required>
         <input type="number" id="revenueAmount" placeholder="المبلغ *" required min="0">
-        <input type="text" id="revenueDescription" placeholder="وصف الإيراد">
+        <select id="revenueBranchId">
+            <option value="">الفرع الرئيسي</option>
+        </select>
     </div>
     
     <div class="form-grid grid-3">
+        <input type="text" id="revenueDescription" placeholder="وصف الإيراد">
         <select id="revenueSource">
             <option value="sales">مبيعات</option>
             <option value="services">خدمات</option>
@@ -4833,7 +4917,10 @@ textarea.editing-mode {
             <option value="other">أخرى</option>
         </select>
         <input type="text" id="revenueReference" placeholder="رقم المرجع (اختياري)">
-    <button class="btn-primary btn-add" onclick="addRevenue()">➕ إضافة إيراد</button>
+    </div>
+    
+    <div class="form-grid grid-1">
+        <button class="btn-primary btn-add" onclick="addRevenue()">➕ إضافة إيراد</button>
     </div>
 
     <div class="search-container">
@@ -4943,6 +5030,10 @@ textarea.editing-mode {
             <input type="month" id="salaryMonth" value="">
             <input type="text" id="salaryEmployeeName" placeholder="اسم الموظف *" required>
             <input type="text" id="salaryNationalId" placeholder="رقم الهوية / الإقامة *" required>
+            <select id="salaryBranchId">
+                <option value="general_admin">🏢 الإدارة العامة</option>
+                <option value="">🏪 الفرع الرئيسي</option>
+            </select>
             <select id="salaryNationality" required>
                 <option value="">🏳️ الجنسية</option>
                 <option value="saudi">🇸🇦 سعودي</option>
@@ -5269,6 +5360,13 @@ textarea.editing-mode {
             <select id="reportCustomerFilter" style="display: none;">
                 <option value="all">كل العملاء</option>
             </select>
+            
+            <!-- 🏪 فلتر الفروع في التقارير -->
+            <div class="form-grid grid-1" style="margin-bottom: 20px;">
+                <select id="reportBranchFilter" style="width: 100%; padding: 12px; font-size: 14px;">
+                    <option value="all">🏪 كل الفروع</option>
+                </select>
+            </div>
         </div>
         
         <div class="export-options">
@@ -5327,6 +5425,10 @@ textarea.editing-mode {
                 <option value="all">جميع العمليات</option>
                 <option value="withTax">فقط العمليات التي فيها ضريبة</option>
                 <option value="withoutTax">فقط العمليات بدون ضريبة</option>
+            </select>
+            <!-- 🏪 فلتر الفروع - جديد -->
+            <select id="statementBranchFilter" style="width: 100%; padding: 12px; font-size: 14px; margin-bottom: 15px;" onchange="autoRefreshStatement()">
+                <option value="all">🏪 كل الفروع</option>
             </select>
         </div>
         
@@ -5542,6 +5644,39 @@ textarea.editing-mode {
                         <button class="btn-danger" id="deleteSelectedActivityBtn" onclick="handleDeleteSelectedActivity()" disabled>🗑️ حذف</button>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- 🏢 قسم إدارة الفروع - جديد -->
+        <div id="branchManagementSection" class="branches-management settings-card" style="display: none;">
+            <h3>🏪 إدارة الفروع</h3>
+            <p style="color: #666; font-size: 0.9em; margin-bottom: 15px;">
+                يمكنك إضافة فروع متعددة للنشاط الواحد وتتبع العمليات لكل فرع على حدة
+            </p>
+            
+            <div class="form-grid grid-2" style="margin-bottom: 20px;">
+                <input type="text" id="newBranchName" placeholder="اسم الفرع الجديد (مثال: الرياض - حي النخيل)">
+                <button class="btn-primary btn-add" onclick="addBranch()">➕ إضافة فرع</button>
+            </div>
+            
+            <div id="branchesTableContainer">
+                <table id="branchesTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>اسم الفرع</th>
+                            <th>تاريخ الإنشاء</th>
+                            <th style="text-align: left;">الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="branchesTableBody">
+                        <tr>
+                            <td colspan="4" style="text-align: center; color: #999; padding: 30px;">
+                                لا توجد فروع حالياً - أضف فرعك الأول
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 
@@ -5975,6 +6110,7 @@ if (typeof window !== 'undefined') {
 let activities = [];
 let currentActivityId = null;
 let items = [], customers = [], suppliers = [], purchases = [], sales = [], expenses = [], revenues = [], salaries = [], assets = [];
+let branches = []; // 🏢 الفروع - جديد
 let advances = [];
 let salesReturns = [], purchaseReturns = [];
 let currentPurchaseItems = [], currentSaleItems = [];
@@ -6047,6 +6183,9 @@ async function initializeApp() {
         const firebasePurchaseReturns = await firebaseGetActivityData(currentActivityId, 'purchaseReturns') || [];
         console.log(`🔙 تم تحميل ${firebasePurchaseReturns.length} مرتجعات مشتريات من Firebase`);
         
+        const firebaseBranches = await firebaseGetActivityData(currentActivityId, 'branches') || [];
+        console.log(`🏪 تم تحميل ${firebaseBranches.length} فرع من Firebase`);
+        
         // تعيين البيانات مباشرة
         items = firebaseItems;
         customers = firebaseCustomers;
@@ -6059,6 +6198,7 @@ async function initializeApp() {
         assets = firebaseAssets;
         salesReturns = firebaseSalesReturns;
         advances = firebaseAdvances;
+        branches = firebaseBranches;
         purchaseReturns = firebasePurchaseReturns;
         
         debugLog('✅ تم تحميل البيانات من Firebase');
@@ -6077,6 +6217,7 @@ async function initializeApp() {
         salesReturns = (loadFromLocalStorage('salesReturns')) || [];
         advances = (loadFromLocalStorage('advances')) || [];
         purchaseReturns = (loadFromLocalStorage('purchaseReturns')) || [];
+        branches = (loadFromLocalStorage('branches')) || []; // 🏪 تحميل الفروع
     }
 
     currentPurchaseNumber = purchases.length > 0 ? Math.max(0, ...purchases.map(p => p.number)) + 1 : 1;
@@ -9521,6 +9662,13 @@ function formatDate(dateString) {
                 updateAdvancedDashboardCards();
             }
             
+            // 🆕 تحديث مؤشرات الأداء والرسوم البيانية
+            setTimeout(() => {
+                if (typeof updateAllCharts === 'function') {
+                    updateAllCharts();
+                }
+            }, 300); // تأخير بسيط للتأكد من تحميل العناصر
+            
             if (typeof initAdvancedDashboard === 'function') {
                 initAdvancedDashboard();
             } else {
@@ -9535,6 +9683,7 @@ function formatDate(dateString) {
         const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
         const userManagementSection = document.getElementById('userManagementSection');
         const activityManagementSection = document.getElementById('activityManagementSection');
+        const branchManagementSection = document.getElementById('branchManagementSection');
 
         if (userManagementSection) {
             if (loggedInUser && (loggedInUser.role === 'admin' || loggedInUser.role === 'manager')) {
@@ -9551,6 +9700,16 @@ function formatDate(dateString) {
             } else {
                 // مدير النشاط لا يستطيع إدارة الأنشطة
                 activityManagementSection.style.display = 'none';
+            }
+        }
+
+        // 🏪 إظهار إدارة الفروع لمدير النظام ومدير النشاط
+        if (branchManagementSection) {
+            if (loggedInUser && (loggedInUser.role === 'admin' || loggedInUser.role === 'manager')) {
+                branchManagementSection.style.display = 'block';
+                renderBranches(); // تحميل الفروع
+            } else {
+                branchManagementSection.style.display = 'none';
             }
         }
 
@@ -9892,7 +10051,7 @@ function formatDate(dateString) {
                 createdAt: new Date().toISOString()
             };
             activities.push(newActivity);
-            saveActivitiesSafe();
+            await saveActivities();
             document.getElementById(inputId).value = '';
 
             if (fromSettings) {
@@ -10107,9 +10266,192 @@ function formatDate(dateString) {
                     removeFromLocalStorage(key);
                 }
                 activities = activities.filter(a => a.id !== id);
-                saveActivitiesSafe();
+                await saveActivities();
                 renderActivitiesInSettings();
             }
+        }
+
+        // ===== 🏪 Branch Management Functions - دوال إدارة الفروع =====
+        
+        // إضافة فرع جديد
+        async function addBranch() {
+            const branchName = document.getElementById('newBranchName').value.trim();
+            
+            if (!branchName) {
+                showNotification('⚠️ تنبيه', 'الرجاء إدخال اسم الفرع', 'warning');
+                return;
+            }
+            
+            if (!currentActivityId) {
+                showNotification('⚠️ تنبيه', 'الرجاء اختيار نشاط أولاً', 'warning');
+                return;
+            }
+            
+            // التحقق من عدم تكرار الاسم
+            const exists = branches.find(b => b.name === branchName && b.activityId === currentActivityId);
+            if (exists) {
+                showNotification('⚠️ تنبيه', 'يوجد فرع بنفس الاسم بالفعل', 'warning');
+                return;
+            }
+            
+            const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
+            
+            const newBranch = {
+                id: Date.now(),
+                activityId: currentActivityId,
+                name: branchName,
+                createdAt: new Date().toISOString(),
+                createdBy: loggedInUser ? loggedInUser.email : 'unknown'
+            };
+            
+            branches.push(newBranch);
+            await saveBranches();
+            
+            document.getElementById('newBranchName').value = '';
+            renderBranches();
+            
+            showNotification('✅ نجاح', `تم إضافة الفرع "${branchName}" بنجاح`, 'success');
+        }
+        
+        // عرض الفروع في الجدول
+        function renderBranches() {
+            const tbody = document.getElementById('branchesTableBody');
+            
+            if (!currentActivityId) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #999;">اختر نشاطاً لعرض فروعه</td></tr>';
+                return;
+            }
+            
+            const activityBranches = branches.filter(b => b.activityId === currentActivityId);
+            
+            if (activityBranches.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #999;">لا توجد فروع حالياً - أضف فرعك الأول</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = activityBranches.map((branch, index) => `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${branch.name}</td>
+                    <td>${new Date(branch.createdAt).toLocaleDateString('ar-SA')}</td>
+                    <td style="text-align: left;">
+                        <button class="btn-warning btn-sm" onclick="editBranch(${branch.id})" title="تعديل" style="margin-left: 5px;">✏️ تعديل</button>
+                        <button class="btn-danger btn-sm" onclick="deleteBranch(${branch.id})" title="حذف">🗑️ حذف</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        // تعديل فرع
+        async function editBranch(branchId) {
+            const branch = branches.find(b => b.id === branchId);
+            if (!branch) return;
+            
+            const newName = prompt('تعديل اسم الفرع:', branch.name);
+            if (!newName || newName.trim() === '') return;
+            
+            const trimmedName = newName.trim();
+            
+            // التحقق من عدم تكرار الاسم
+            const exists = branches.find(b => b.name === trimmedName && b.activityId === currentActivityId && b.id !== branchId);
+            if (exists) {
+                showNotification('⚠️ تنبيه', 'يوجد فرع بنفس الاسم بالفعل', 'warning');
+                return;
+            }
+            
+            branch.name = trimmedName;
+            branch.updatedAt = new Date().toISOString();
+            
+            await saveBranches();
+            renderBranches();
+            
+            showNotification('✅ نجاح', 'تم تحديث الفرع بنجاح', 'success');
+        }
+        
+        // حذف فرع
+        async function deleteBranch(branchId) {
+            const branch = branches.find(b => b.id === branchId);
+            if (!branch) return;
+            
+            // التحقق من وجود عمليات مرتبطة بالفرع
+            const hasTransactions = 
+                sales.some(s => s.branchId === branchId) ||
+                purchases.some(p => p.branchId === branchId) ||
+                expenses.some(e => e.branchId === branchId) ||
+                revenues.some(r => r.branchId === branchId);
+            
+            let message = `هل أنت متأكد من حذف الفرع "${branch.name}"؟`;
+            if (hasTransactions) {
+                message += '\n\n⚠️ تحذير: يوجد عمليات مسجلة لهذا الفرع. سيتم تحويلها للفرع الرئيسي.';
+            }
+            
+            const confirmed = confirm(message);
+            if (!confirmed) return;
+            
+            // حذف الفرع
+            branches = branches.filter(b => b.id !== branchId);
+            
+            // تحويل العمليات للفرع الرئيسي (null = الفرع الرئيسي)
+            if (hasTransactions) {
+                sales.forEach(s => { if (s.branchId === branchId) s.branchId = null; });
+                purchases.forEach(p => { if (p.branchId === branchId) p.branchId = null; });
+                expenses.forEach(e => { if (e.branchId === branchId) e.branchId = null; });
+                revenues.forEach(r => { if (r.branchId === branchId) r.branchId = null; });
+                
+                // حفظ التغييرات
+                await saveData('sales', sales);
+                await saveData('purchases', purchases);
+                await saveData('expenses', expenses);
+                await saveData('revenues', revenues);
+            }
+            
+            await saveBranches();
+            renderBranches();
+            
+            showNotification('✅ نجاح', 'تم حذف الفرع بنجاح', 'success');
+        }
+        
+        // حفظ الفروع في Firebase و localStorage
+        async function saveBranches() {
+            if (!currentActivityId) return;
+            
+            // حفظ في localStorage
+            saveToLocalStorage('branches', branches);
+            
+            // حفظ في Firebase
+            if (typeof firebaseSaveActivityData === 'function') {
+                await firebaseSaveActivityData(currentActivityId, 'branches', branches);
+            }
+        }
+        
+        // تحميل الفروع عند تهيئة التطبيق
+        async function loadBranches() {
+            if (!currentActivityId) return;
+            
+            // محاولة التحميل من Firebase أولاً
+            if (typeof firebaseGetActivityData === 'function') {
+                const firebaseBranches = await firebaseGetActivityData(currentActivityId, 'branches');
+                if (firebaseBranches && firebaseBranches.length > 0) {
+                    branches = firebaseBranches;
+                    saveToLocalStorage('branches', branches);
+                    return;
+                }
+            }
+            
+            // التحميل من localStorage كبديل
+            const localBranches = loadFromLocalStorage('branches');
+            if (localBranches && Array.isArray(localBranches)) {
+                branches = localBranches.filter(b => b.activityId === currentActivityId);
+            } else {
+                branches = [];
+            }
+        }
+        
+        // دالة مساعدة للحصول على اسم الفرع
+        function getBranchName(branchId) {
+            if (!branchId) return 'الفرع الرئيسي';
+            const branch = branches.find(b => b.id === branchId);
+            return branch ? branch.name : 'فرع محذوف';
         }
 
         // ===== Search Functions =====
@@ -11314,6 +11656,9 @@ function loadCustomersToSelect() {
                 itemSelect.appendChild(option);
             });
             
+            // 🏪 تحديث قوائم الفروع
+            updateBranchDropdowns();
+            
             renderPurchasesList();
         }
         
@@ -11407,6 +11752,7 @@ function loadCustomersToSelect() {
        async function savePurchase() {
     const date = document.getElementById('purchaseDate').value;
     const supplierId = parseInt(document.getElementById('purchaseSupplier').value);
+    const branchId = document.getElementById('purchaseBranch').value ? parseInt(document.getElementById('purchaseBranch').value) : null;
     const notes = document.getElementById('purchaseNotes').value;
     const paidAmount = parseFloat(document.getElementById('purchasePaidAmount').value) || 0;
 
@@ -11445,6 +11791,7 @@ function loadCustomersToSelect() {
                 ...originalPurchase,
                 date,
                 supplierId,
+                branchId,
                 notes,
                 paidAmount,
                 items: [...currentPurchaseItems],
@@ -11465,6 +11812,7 @@ function loadCustomersToSelect() {
              number: currentPurchaseNumber, 
              date, 
              supplierId, 
+             branchId,
              notes, 
              paidAmount, 
              items: [...currentPurchaseItems], 
@@ -11787,6 +12135,9 @@ function loadCustomersToSelect() {
                 itemSelect.appendChild(option);
             });
             
+            // 🏪 تحديث قوائم الفروع
+            updateBranchDropdowns();
+            
             renderSalesList();
         }
         
@@ -11807,6 +12158,60 @@ function loadCustomersToSelect() {
                 document.getElementById('saleCustomerPhone').value = '';
                 document.getElementById('saleCustomerAddress').value = '';
             }
+        }
+        
+        // 🏪 تحديث قوائم الفروع في جميع النماذج
+        function updateBranchDropdowns() {
+            const activityBranches = branches.filter(b => b.activityId === currentActivityId);
+            
+            // قوائم المصروفات والرواتب والمشتريات (تحتوي على خيار الإدارة العامة)
+            const adminSelects = ['expenseBranchId', 'salaryBranchId', 'purchaseBranch'];
+            
+            // قوائم العمليات التجارية الأخرى (بدون خيار الإدارة العامة)
+            const regularSelects = ['saleBranch', 'revenueBranchId'];
+            
+            // تحديث قوائم المصروفات والرواتب (مع خيار الإدارة العامة)
+            adminSelects.forEach(selectId => {
+                const select = document.getElementById(selectId);
+                if (!select) return;
+                
+                const currentValue = select.value;
+                select.innerHTML = '<option value="general_admin">🏢 الإدارة العامة</option>';
+                select.innerHTML += '<option value="">🏪 الفرع الرئيسي</option>';
+                
+                activityBranches.forEach(branch => {
+                    const option = document.createElement('option');
+                    option.value = branch.id;
+                    option.textContent = branch.name;
+                    select.appendChild(option);
+                });
+                
+                // استعادة القيمة المحددة إذا كانت موجودة
+                if (currentValue === 'general_admin' || currentValue === '' || activityBranches.find(b => b.id == currentValue)) {
+                    select.value = currentValue;
+                }
+            });
+            
+            // تحديث القوائم العادية (بدون خيار الإدارة العامة)
+            regularSelects.forEach(selectId => {
+                const select = document.getElementById(selectId);
+                if (!select) return;
+                
+                const currentValue = select.value;
+                select.innerHTML = '<option value="">🏪 الفرع الرئيسي</option>';
+                
+                activityBranches.forEach(branch => {
+                    const option = document.createElement('option');
+                    option.value = branch.id;
+                    option.textContent = branch.name;
+                    select.appendChild(option);
+                });
+                
+                // استعادة القيمة المحددة إذا كانت موجودة
+                if (currentValue && activityBranches.find(b => b.id == currentValue)) {
+                    select.value = currentValue;
+                }
+            });
         }
         
         // تحديث بيانات المورد عند الاختيار
@@ -11945,6 +12350,7 @@ function loadCustomersToSelect() {
         async function saveSale() {
             const date = document.getElementById('saleDate').value;
             const customerId = parseInt(document.getElementById('saleCustomer').value);
+            const branchId = document.getElementById('saleBranch').value ? parseInt(document.getElementById('saleBranch').value) : null;
             const notes = document.getElementById('saleNotes').value;
             const customerAddress = document.getElementById('saleCustomerAddress').value;
             const paidAmount = parseFloat(document.getElementById('salePaidAmount').value) || 0;
@@ -11977,6 +12383,7 @@ function loadCustomersToSelect() {
                         ...originalSale,
                         date,
                         customerId,
+                        branchId,
                         notes,
                         customerAddress,
                         paidAmount,
@@ -11996,7 +12403,7 @@ function loadCustomersToSelect() {
                     showNotification('✅ تم التحديث', `تم تحديث الفاتورة رقم SAL${originalSale.number.toString().padStart(3, '0')} بنجاح!`, 'success');
                 }
             } else {
-                const newSaleData = { id: Date.now(), number: currentSaleNumber, date, customerId, notes, customerAddress, paidAmount, paymentMethod, items: [...currentSaleItems], subtotal, discount, afterDiscount, tax, total, remainingAmount, taxApplied };
+                const newSaleData = { id: Date.now(), number: currentSaleNumber, date, customerId, branchId, notes, customerAddress, paidAmount, paymentMethod, items: [...currentSaleItems], subtotal, discount, afterDiscount, tax, total, remainingAmount, taxApplied };
                 sales.push(newSaleData);
                 currentSaleNumber++;
                 showNotification('✅ تم الحفظ', `تم حفظ الفاتورة رقم SAL${newSaleData.number.toString().padStart(3, '0')} بنجاح!`, 'success');
@@ -12467,6 +12874,7 @@ function loadCustomersToSelect() {
                 originalInvoiceId: activeSaleReturn.id,
                 originalInvoiceNumber: activeSaleReturn.number,
                 customerId: activeSaleReturn.customerId,
+                branchId: activeSaleReturn.branchId || null,
                 items: returnedItems,
                 total: totalReturnValue
             };
@@ -12658,6 +13066,7 @@ function loadCustomersToSelect() {
                 originalInvoiceId: activePurchaseReturn.id,
                 originalInvoiceNumber: activePurchaseReturn.number,
                 supplierId: activePurchaseReturn.supplierId,
+                branchId: activePurchaseReturn.branchId || null,
                 items: returnedItems,
                 total: totalReturnValue
             };
@@ -12768,6 +13177,7 @@ function renderPurchaseReturns() {
         description: document.getElementById('expenseDescription').value, 
         paymentMethod: document.getElementById('expensePaymentMethod').value, 
         reference: document.getElementById('expenseReference').value,
+        branchId: document.getElementById('expenseBranchId').value || null,
         attachmentUrl: attachmentUrl 
     };
     
@@ -12908,7 +13318,16 @@ function renderPurchaseReturns() {
         async function addRevenue() {
             const date = document.getElementById('revenueDate').value, category = document.getElementById('revenueCategory').value, amount = parseFloat(document.getElementById('revenueAmount').value);
             if (!date || !category || isNaN(amount)) { showNotification('⚠️ بيانات ناقصة', 'يرجى ملء الحقول المطلوبة', 'warning'); return; }
-            const revenue = { id: Date.now(), date, category, amount, source: document.getElementById('revenueSource').value, description: document.getElementById('revenueDescription').value, reference: document.getElementById('revenueReference').value };
+            const revenue = { 
+                id: Date.now(), 
+                date, 
+                category, 
+                amount, 
+                source: document.getElementById('revenueSource').value, 
+                description: document.getElementById('revenueDescription').value, 
+                reference: document.getElementById('revenueReference').value,
+                branchId: document.getElementById('revenueBranchId').value || null
+            };
             revenues.push(revenue);
             const success = saveToLocalStorage('revenues', revenues);
             if (success) {
@@ -13044,6 +13463,7 @@ function renderPurchaseReturns() {
                 nationality: getValue('salaryNationality'),
                 employeeId: getValue('salaryEmployeeId').trim(),
                 jobTitle: getValue('salaryJobTitle').trim(),
+                branchId: getValue('salaryBranchId') || null,
                 basic: getValue('salaryBasic') || '0',
                 housing: getValue('salaryHousing') || '0',
                 transport: getValue('salaryTransport') || '0',
@@ -13103,6 +13523,7 @@ function renderPurchaseReturns() {
                 nationality: formData.nationality,
                 employeeId: formData.employeeId,
                 jobTitle: formData.jobTitle,
+                branchId: formData.branchId,
                 notes: formData.notes,
                 basic: breakdown.basic,
                 housing: breakdown.housing,
@@ -13149,6 +13570,7 @@ function renderPurchaseReturns() {
                 nationality: formData.nationality,
                 employeeId: formData.employeeId,
                 jobTitle: formData.jobTitle,
+                branchId: formData.branchId,
                 notes: formData.notes,
                 basic: breakdown.basic,
                 housing: breakdown.housing,
@@ -13396,6 +13818,9 @@ function renderPurchaseReturns() {
             document.getElementById('specificEmployeeFilter').style.display = 'none';
             document.getElementById('taxFilterType').style.display = 'none';
             
+            // 🏪 تحديث فلتر الفروع
+            populateBranchFilter();
+            
             // إظهار الفلتر المناسب
             switch(statementType) {
                 case 'suppliers':
@@ -13441,6 +13866,37 @@ function renderPurchaseReturns() {
             employees.forEach(employee => {
                 select.innerHTML += `<option value="${employee}">${employee}</option>`;
             });
+        }
+        
+        // 🏪 دالة تعبئة فلتر الفروع
+        function populateBranchFilter() {
+            const select = document.getElementById('statementBranchFilter');
+            if (!select) return;
+            
+            const activityBranches = branches.filter(b => b.activityId === currentActivityId);
+            
+            select.innerHTML = '<option value="all">🏪 كل الفروع</option>';
+            select.innerHTML += '<option value="general_admin">🏢 الإدارة العامة</option>';
+            select.innerHTML += '<option value="">الفرع الرئيسي فقط</option>';
+            
+            activityBranches.forEach(branch => {
+                select.innerHTML += `<option value="${branch.id}">${branch.name}</option>`;
+            });
+        }
+        
+        // 🏪 دالة مساعدة لفلترة المعاملات حسب الفرع
+        function filterByBranch(transactions) {
+            const branchFilter = document.getElementById('statementBranchFilter').value;
+            
+            if (branchFilter === 'all') {
+                return transactions; // كل الفروع
+            } else if (branchFilter === 'general_admin') {
+                return transactions.filter(t => t.branchId === 'general_admin'); // الإدارة العامة فقط
+            } else if (branchFilter === '') {
+                return transactions.filter(t => !t.branchId || t.branchId === ''); // الفرع الرئيسي فقط
+            } else {
+                return transactions.filter(t => t.branchId == branchFilter); // فرع محدد
+            }
         }
         
         // دالة لتحديث الكشف تلقائياً عند تغيير الفلتر
@@ -13497,6 +13953,9 @@ function renderPurchaseReturns() {
             if (specificSupplierId !== 'all') {
                 filteredPurchases = filteredPurchases.filter(p => p.supplierId == specificSupplierId);
             }
+            
+            // 🏪 فلترة حسب الفرع
+            filteredPurchases = filterByBranch(filteredPurchases);
             
             let totalPurchases = 0;
             let totalPaid = 0;
@@ -13596,6 +14055,9 @@ function renderPurchaseReturns() {
                 filteredSales = filteredSales.filter(s => s.customerId == specificCustomerId);
             }
             
+            // 🏪 فلترة حسب الفرع
+            filteredSales = filterByBranch(filteredSales);
+            
             let totalSales = 0;
             let totalPaid = 0;
             let totalRemaining = 0;
@@ -13693,6 +14155,9 @@ function renderPurchaseReturns() {
             if (specificEmployee !== 'all') {
                 filteredSalaries = filteredSalaries.filter(s => s.employeeName === specificEmployee);
             }
+            
+            // 🏪 فلترة حسب الفرع
+            filteredSalaries = filterByBranch(filteredSalaries);
             
             let totalBasic = 0;
             let totalAllowances = 0;
@@ -14378,6 +14843,25 @@ function renderPurchaseReturns() {
                     customerFilter.innerHTML += `<option value="${customer.id}">${customer.name}</option>`;
                 });
             }
+            
+            // 🏪 تحديث قائمة الفروع
+            updateReportBranchFilter();
+        }
+        
+        // 🏪 دالة تحديث قائمة الفروع في التقارير
+        function updateReportBranchFilter() {
+            const branchFilter = document.getElementById('reportBranchFilter');
+            if (!branchFilter) return;
+            
+            const activityBranches = branches.filter(b => b.activityId === currentActivityId);
+            
+            branchFilter.innerHTML = '<option value="all">🏪 كل الفروع</option>';
+            branchFilter.innerHTML += '<option value="general_admin">🏢 الإدارة العامة</option>';
+            branchFilter.innerHTML += '<option value="">الفرع الرئيسي فقط</option>';
+            
+            activityBranches.forEach(branch => {
+                branchFilter.innerHTML += `<option value="${branch.id}">${branch.name}</option>`;
+            });
         }
 
         // 🔧 دالة حساب تكلفة البضاعة المباعة (COGS)
@@ -14417,6 +14901,7 @@ function generateReport() {
     
     const selectedSupplierId = document.getElementById('reportSupplierFilter').value;
     const selectedCustomerId = document.getElementById('reportCustomerFilter').value;
+    const selectedBranchId = document.getElementById('reportBranchFilter').value; // 🏪 فلتر الفرع
 
     let data = [];
     let reportTitle = '';
@@ -14446,6 +14931,15 @@ function generateReport() {
             if (selectedCustomerId !== 'all') {
                 data = data.filter(s => s.customerId == selectedCustomerId);
             }
+            
+            // 🏪 فلترة حسب الفرع
+            if (selectedBranchId === 'all') {
+                // كل الفروع - لا تفعل شيء
+            } else if (selectedBranchId === '') {
+                data = data.filter(s => !s.branchId); // الفرع الرئيسي فقط
+            } else {
+                data = data.filter(s => s.branchId == selectedBranchId); // فرع محدد
+            }
             break;
         }
         case 'purchases': {
@@ -14456,6 +14950,17 @@ function generateReport() {
 
             if (selectedSupplierId !== 'all') {
                 data = data.filter(p => p.supplierId == selectedSupplierId);
+            }
+            
+            // 🏪 فلترة حسب الفرع
+            if (selectedBranchId === 'all') {
+                // كل الفروع
+            } else if (selectedBranchId === 'general_admin') {
+                data = data.filter(p => p.branchId === 'general_admin'); // الإدارة العامة فقط
+            } else if (selectedBranchId === '') {
+                data = data.filter(p => !p.branchId || p.branchId === ''); // الفرع الرئيسي فقط
+            } else {
+                data = data.filter(p => p.branchId == selectedBranchId); // فرع محدد
             }
             break;
         }
@@ -14468,6 +14973,15 @@ function generateReport() {
             if (selectedCustomerId !== 'all') {
                 data = data.filter(r => r.customerId == selectedCustomerId);
             }
+            
+            // 🏪 فلترة حسب الفرع
+            if (selectedBranchId === 'all') {
+                // كل الفروع
+            } else if (selectedBranchId === '') {
+                data = data.filter(r => !r.branchId); // الفرع الرئيسي فقط
+            } else {
+                data = data.filter(r => r.branchId == selectedBranchId); // فرع محدد
+            }
             break;
         }
         case 'purchase_returns': {
@@ -14479,6 +14993,15 @@ function generateReport() {
             if (selectedSupplierId !== 'all') {
                 data = data.filter(r => r.supplierId == selectedSupplierId);
             }
+            
+            // 🏪 فلترة حسب الفرع
+            if (selectedBranchId === 'all') {
+                // كل الفروع
+            } else if (selectedBranchId === '') {
+                data = data.filter(r => !r.branchId); // الفرع الرئيسي فقط
+            } else {
+                data = data.filter(r => r.branchId == selectedBranchId); // فرع محدد
+            }
             break;
         }
         case 'expenses': {
@@ -14486,6 +15009,17 @@ function generateReport() {
             tableHeaders = `<th>التاريخ</th><th>التصنيف</th><th>الوصف</th><th>المبلغ</th>`;
             const src = Array.isArray(expenses) ? expenses : [];
             data = src.filter(e => (!fromDate || e.date >= fromDate) && (!toDate || e.date <= toDate));
+            
+            // 🏪 فلترة حسب الفرع
+            if (selectedBranchId === 'all') {
+                // كل الفروع
+            } else if (selectedBranchId === 'general_admin') {
+                data = data.filter(e => e.branchId === 'general_admin'); // الإدارة العامة فقط
+            } else if (selectedBranchId === '') {
+                data = data.filter(e => !e.branchId || e.branchId === ''); // الفرع الرئيسي فقط
+            } else {
+                data = data.filter(e => e.branchId == selectedBranchId); // فرع محدد
+            }
             break;
         }
         case 'revenues': {
@@ -14493,6 +15027,15 @@ function generateReport() {
             tableHeaders = `<th>التاريخ</th><th>التصنيف</th><th>المصدر</th><th>المبلغ</th>`;
             const src = Array.isArray(revenues) ? revenues : [];
             data = src.filter(r => (!fromDate || r.date >= fromDate) && (!toDate || r.date <= toDate));
+            
+            // 🏪 فلترة حسب الفرع
+            if (selectedBranchId === 'all') {
+                // كل الفروع
+            } else if (selectedBranchId === '') {
+                data = data.filter(r => !r.branchId); // الفرع الرئيسي فقط
+            } else {
+                data = data.filter(r => r.branchId == selectedBranchId); // فرع محدد
+            }
             break;
         }
         case 'salaries': {
@@ -14506,6 +15049,17 @@ function generateReport() {
                 const beforeTo = !toDate || (monthValue && monthValue <= toDate);
                 return afterFrom && beforeTo;
             });
+            
+            // 🏪 فلترة حسب الفرع
+            if (selectedBranchId === 'all') {
+                // كل الفروع
+            } else if (selectedBranchId === 'general_admin') {
+                data = data.filter(s => s.branchId === 'general_admin'); // الإدارة العامة فقط
+            } else if (selectedBranchId === '') {
+                data = data.filter(s => !s.branchId || s.branchId === ''); // الفرع الرئيسي فقط
+            } else {
+                data = data.filter(s => s.branchId == selectedBranchId); // فرع محدد
+            }
             break;
         }
         case 'profit_loss': {
@@ -15476,7 +16030,7 @@ if (data.length > 0) {
     console.log('  - إجمالي الأصناف:', items.length);
     console.log('  - إجمالي العملاء:', customers.length);
     console.log('  - إجمالي الموردين:', suppliers.length);
-    console.log('  - قيمة المخزون:', stockValue.toFixed(2));
+    console.log('  - قيمة المخزون:', items.reduce((s, i) => s + ((Number(i.stock) || 0) * (Number(i.cost) || 0)), 0).toFixed(2));
     console.log('  - إجمالي المبيعات:', sales.reduce((s, i) => s + (Number(i.total) || 0), 0).toFixed(2));
     console.log('  - إجمالي المشتريات:', purchases.reduce((s, i) => s + (Number(i.total) || 0), 0).toFixed(2));
     
@@ -15610,6 +16164,329 @@ function updateAdvancedDashboardCards() {
 function initAdvancedDashboard() {
     // دالة فارغة لتجنب الأخطاء - البطاقات تُحدث بواسطة updateAdvancedDashboardCards()
     console.log('📊 initAdvancedDashboard: تم الاستدعاء (دالة فارغة)');
+}
+
+// 🆕 ===== دوال تحديث مؤشرات الأداء والرسوم البيانية =====
+
+// متغيرات عامة للرسوم البيانية
+let salesVsPurchasesChart = null;
+let expensesDistributionChart = null;
+let topItemsChart = null;
+let cashFlowChart = null;
+
+// تحديث مؤشرات الأداء (KPIs)
+function updateKPIs() {
+    const currentMonth = new Date().toISOString().slice(0, 7);
+    
+    // حساب صافي الربح الشهري
+    const monthlySalesData = sales.filter(s => s.date && s.date.startsWith(currentMonth));
+    const monthlyPurchasesData = purchases.filter(p => p.date && p.date.startsWith(currentMonth));
+    const monthlyExpensesData = expenses.filter(e => e.date && e.date.startsWith(currentMonth));
+    const monthlyRevenuesData = revenues.filter(r => r.date && r.date.startsWith(currentMonth));
+    
+    const totalSales = monthlySalesData.reduce((sum, s) => sum + (Number(s.total) || 0), 0);
+    const totalPurchases = monthlyPurchasesData.reduce((sum, p) => sum + (Number(p.total) || 0), 0);
+    const totalExpenses = monthlyExpensesData.reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
+    const totalRevenues = monthlyRevenuesData.reduce((sum, r) => sum + (Number(r.amount) || 0), 0);
+    
+    const netProfit = (totalSales + totalRevenues) - (totalPurchases + totalExpenses);
+    document.getElementById('kpiNetProfit').textContent = netProfit.toFixed(2);
+    
+    // حساب مستحقات العملاء
+    const customersDebt = sales.reduce((sum, s) => sum + (Number(s.remainingAmount) || 0), 0);
+    const customersWithDebt = sales.filter(s => (Number(s.remainingAmount) || 0) > 0).length;
+    document.getElementById('kpiCustomersDebt').textContent = customersDebt.toFixed(2);
+    document.getElementById('kpiCustomersCount').textContent = `👥 ${customersWithDebt} عميل`;
+    
+    // حساب ديون الموردين
+    const suppliersDebt = purchases.reduce((sum, p) => sum + (Number(p.remainingAmount) || 0), 0);
+    const suppliersWithDebt = purchases.filter(p => (Number(p.remainingAmount) || 0) > 0).length;
+    document.getElementById('kpiSuppliersDebt').textContent = suppliersDebt.toFixed(2);
+    document.getElementById('kpiSuppliersCount').textContent = `🏢 ${suppliersWithDebt} مورد`;
+    
+    // حساب النقد المتاح (تقدير بسيط)
+    const cashFlow = customersDebt - suppliersDebt;
+    document.getElementById('kpiCashFlow').textContent = cashFlow.toFixed(2);
+    
+    // تحديث الاتجاهات
+    const profitTrend = netProfit >= 0 ? '📈 ربح' : '📉 خسارة';
+    document.getElementById('kpiNetProfitTrend').textContent = profitTrend;
+}
+
+// تحديث رسم المبيعات vs المشتريات
+function updateSalesVsPurchasesChart() {
+    const ctx = document.getElementById('salesVsPurchasesChart');
+    if (!ctx) return;
+    
+    // إعداد البيانات لآخر 6 أشهر
+    const months = [];
+    const salesData = [];
+    const purchasesData = [];
+    
+    for (let i = 5; i >= 0; i--) {
+        const date = new Date();
+        date.setMonth(date.getMonth() - i);
+        const monthStr = date.toISOString().slice(0, 7);
+        
+        // اسم الشهر بالعربي
+        const monthNames = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 
+                           'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+        months.push(monthNames[date.getMonth()]);
+        
+        // حساب المبيعات
+        const monthSales = sales
+            .filter(s => s.date && s.date.startsWith(monthStr))
+            .reduce((sum, s) => sum + (Number(s.total) || 0), 0);
+        salesData.push(monthSales);
+        
+        // حساب المشتريات
+        const monthPurchases = purchases
+            .filter(p => p.date && p.date.startsWith(monthStr))
+            .reduce((sum, p) => sum + (Number(p.total) || 0), 0);
+        purchasesData.push(monthPurchases);
+    }
+    
+    // إنشاء/تحديث الرسم
+    if (salesVsPurchasesChart) {
+        salesVsPurchasesChart.destroy();
+    }
+    
+    salesVsPurchasesChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: months,
+            datasets: [{
+                label: 'المبيعات',
+                data: salesData,
+                borderColor: '#27ae60',
+                backgroundColor: 'rgba(39, 174, 96, 0.1)',
+                tension: 0.4,
+                fill: true
+            }, {
+                label: 'المشتريات',
+                data: purchasesData,
+                borderColor: '#e74c3c',
+                backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+// تحديث رسم توزيع المصروفات
+function updateExpensesDistributionChart() {
+    const ctx = document.getElementById('expensesDistributionChart');
+    if (!ctx) return;
+    
+    // تجميع المصروفات حسب الفئة
+    const categories = {};
+    expenses.forEach(e => {
+        const category = e.category || 'أخرى';
+        categories[category] = (categories[category] || 0) + (Number(e.amount) || 0);
+    });
+    
+    const labels = Object.keys(categories);
+    const data = Object.values(categories);
+    
+    // ألوان متنوعة
+    const colors = [
+        '#667eea', '#764ba2', '#f093fb', '#f5576c', 
+        '#4facfe', '#00f2fe', '#43e97b', '#38f9d7',
+        '#fa709a', '#fee140'
+    ];
+    
+    // إنشاء/تحديث الرسم
+    if (expensesDistributionChart) {
+        expensesDistributionChart.destroy();
+    }
+    
+    expensesDistributionChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: data,
+                backgroundColor: colors.slice(0, labels.length),
+                borderWidth: 2,
+                borderColor: '#fff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'right'
+                }
+            }
+        }
+    });
+}
+
+// تحديث رسم أعلى الأصناف مبيعاً
+function updateTopItemsChart() {
+    const ctx = document.getElementById('topItemsChart');
+    if (!ctx) return;
+    
+    // تجميع المبيعات حسب الصنف
+    const itemSales = {};
+    sales.forEach(sale => {
+        if (sale.items && Array.isArray(sale.items)) {
+            sale.items.forEach(item => {
+                const itemName = item.name || 'غير محدد';
+                const itemTotal = (Number(item.price) || 0) * (Number(item.quantity) || 0);
+                itemSales[itemName] = (itemSales[itemName] || 0) + itemTotal;
+            });
+        }
+    });
+    
+    // ترتيب وأخذ أعلى 5
+    const sorted = Object.entries(itemSales)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5);
+    
+    const labels = sorted.map(([name]) => name);
+    const data = sorted.map(([, value]) => value);
+    
+    // إنشاء/تحديث الرسم
+    if (topItemsChart) {
+        topItemsChart.destroy();
+    }
+    
+    topItemsChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'قيمة المبيعات',
+                data: data,
+                backgroundColor: [
+                    '#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe'
+                ],
+                borderRadius: 5
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+// تحديث رسم التدفق النقدي الأسبوعي
+function updateCashFlowChart() {
+    const ctx = document.getElementById('cashFlowChart');
+    if (!ctx) return;
+    
+    // إعداد بيانات آخر 7 أيام
+    const days = [];
+    const cashInData = [];
+    const cashOutData = [];
+    
+    for (let i = 6; i >= 0; i--) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        const dateStr = date.toISOString().split('T')[0];
+        
+        // اسم اليوم
+        const dayNames = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+        days.push(dayNames[date.getDay()]);
+        
+        // حساب التدفقات الداخلة (مبيعات + إيرادات)
+        const daySales = sales
+            .filter(s => s.date && s.date.split('T')[0] === dateStr)
+            .reduce((sum, s) => sum + (Number(s.paidAmount) || 0), 0);
+        const dayRevenues = revenues
+            .filter(r => r.date && r.date.split('T')[0] === dateStr)
+            .reduce((sum, r) => sum + (Number(r.amount) || 0), 0);
+        cashInData.push(daySales + dayRevenues);
+        
+        // حساب التدفقات الخارجة (مشتريات + مصروفات)
+        const dayPurchases = purchases
+            .filter(p => p.date && p.date.split('T')[0] === dateStr)
+            .reduce((sum, p) => sum + (Number(p.paidAmount) || 0), 0);
+        const dayExpenses = expenses
+            .filter(e => e.date && e.date.split('T')[0] === dateStr)
+            .reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
+        cashOutData.push(dayPurchases + dayExpenses);
+    }
+    
+    // إنشاء/تحديث الرسم
+    if (cashFlowChart) {
+        cashFlowChart.destroy();
+    }
+    
+    cashFlowChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: days,
+            datasets: [{
+                label: 'تدفقات داخلة',
+                data: cashInData,
+                backgroundColor: '#43e97b',
+                borderRadius: 5
+            }, {
+                label: 'تدفقات خارجة',
+                data: cashOutData,
+                backgroundColor: '#f5576c',
+                borderRadius: 5
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+// دالة شاملة لتحديث كل الرسوم البيانية
+function updateAllCharts() {
+    console.log('📊 تحديث جميع الرسوم البيانية...');
+    updateKPIs();
+    updateSalesVsPurchasesChart();
+    updateExpensesDistributionChart();
+    updateTopItemsChart();
+    updateCashFlowChart();
+    console.log('✅ تم تحديث جميع الرسوم البيانية');
 }
         
         // ========================================
@@ -16828,8 +17705,8 @@ function initAdvancedDashboard() {
                 activities[activityIndex].name = newName;
                 activities[activityIndex].updatedAt = new Date().toLocaleString('ar-SA');
                 
-                // حفظ في التخزين المحلي بطريقة آمنة
-                saveActivitiesSafe();
+                // حفظ في التخزين المحلي وFirebase
+                await saveActivities();
                 
                 // تحديث الواجهة
                 renderActivitiesInSettings();
