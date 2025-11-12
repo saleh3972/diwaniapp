@@ -4,7 +4,7 @@
     ========================================
     🎯 الديوان - النظام المحاسبي v23.0
     ========================================
-    
+    /آخر إصلاح في هذه النسخة إضافة دالة فارغة لتجنب تحذير عدم وجود دالة
     📋 أحدث التحسينات والميزات المضافة:
     
     🆕 الميزات الجديدة - الإصدار 23.0 (Firebase Integration):
@@ -4133,8 +4133,8 @@ textarea.editing-mode {
     <div class="stat-number" id="totalAssetsHome">0.00</div>
 </div>
 <div class="stat-card">
-    <div class="stat-label">صافي رأس المال العامل</div>
-    <div class="stat-number" id="netWorkingCapital">0.00</div>
+    <div class="stat-label">💰 الرصيد النقدي المتاح</div>
+    <div class="stat-number" id="availableCash">0.00</div>
 </div>
 </div>
 </div> 
@@ -4189,11 +4189,7 @@ textarea.editing-mode {
         </div>
     </div>
 
-    <!-- الأصناف الأكثر مبيعاً -->
-    <div class="chart-card">
-        <h3>🏆 الأصناف الأكثر مبيعاً</h3>
-        <canvas id="topItemsChart"></canvas>
-    </div>
+    <!-- سيتم إضافة رسوم بيانية جديدة هنا لاحقاً -->
 </div>
 
 <div id="items" class="section">
@@ -5304,6 +5300,7 @@ textarea.editing-mode {
                         <option value="employees">👷 كشف حساب الموظفين</option>
                         <option value="bank">🏦 كشف حساب البنك</option>
                         <option value="cash">💰 كشف حساب النقدية</option>
+                        <option value="tax">📊 كشف حساب الضريبة</option>
                     </select>
                 </div>
                 <div>
@@ -5317,14 +5314,19 @@ textarea.editing-mode {
             </div>
             
             <!-- الفلاتر المخفية -->
-            <select id="specificSupplierFilter" style="display: none;">
+            <select id="specificSupplierFilter" style="display: none;" onchange="autoRefreshStatement()">
                 <option value="all">كل الموردين</option>
             </select>
-            <select id="specificCustomerFilter" style="display: none;">
+            <select id="specificCustomerFilter" style="display: none;" onchange="autoRefreshStatement()">
                 <option value="all">كل العملاء</option>
             </select>
-            <select id="specificEmployeeFilter" style="display: none;">
+            <select id="specificEmployeeFilter" style="display: none;" onchange="autoRefreshStatement()">
                 <option value="all">كل الموظفين</option>
+            </select>
+            <select id="taxFilterType" style="display: none; width: 100%; padding: 12px; font-size: 14px; margin-bottom: 15px;" onchange="autoRefreshStatement()">
+                <option value="all">جميع العمليات</option>
+                <option value="withTax">فقط العمليات التي فيها ضريبة</option>
+                <option value="withoutTax">فقط العمليات بدون ضريبة</option>
             </select>
         </div>
         
@@ -10708,11 +10710,10 @@ function loadCustomersToSelect() {
                         clearItemForm();
                         renderItems();
                         
-                        // تحديث الرسوم البيانية إذا كانت لوحة التحكم المتقدمة مفتوحة
+                        // تحديث الإحصائيات إذا كانت لوحة التحكم المتقدمة مفتوحة
                         if (document.getElementById('advanced-dashboard') && 
                             document.getElementById('advanced-dashboard').classList.contains('active')) {
-                            debugLog('🔄 تحديث الرسوم البيانية...');
-                            renderCharts();
+                            debugLog('🔄 تحديث الإحصائيات...');
                             updateLiveStats();
                         }
                         
@@ -11684,13 +11685,11 @@ function loadCustomersToSelect() {
             // المجاميع
             document.getElementById('printPurchaseSubtotal').textContent = (purchase.subtotal || 0).toFixed(2);
             
+            // إظهار الضريبة دائماً
+            const taxAmount = purchase.tax || 0;
+            document.getElementById('printPurchaseTax').textContent = taxAmount.toFixed(2);
             const taxRow = document.getElementById('printPurchaseTaxRow');
-            if (purchase.includeTax) {
-                document.getElementById('printPurchaseTax').textContent = (purchase.tax || 0).toFixed(2);
-                if (taxRow) taxRow.style.display = 'grid';
-            } else {
-                if (taxRow) taxRow.style.display = 'none';
-            }
+            if (taxRow) taxRow.style.display = 'grid'; // إظهار دائماً
             
             document.getElementById('printPurchaseTotal').textContent = (purchase.total || 0).toFixed(2);
             document.getElementById('printPurchasePaid').textContent = (purchase.paidAmount || 0).toFixed(2);
@@ -12249,13 +12248,11 @@ function loadCustomersToSelect() {
                 if (discountRow) discountRow.style.display = 'none';
             }
             
+            // إظهار الضريبة دائماً (قيمة فعلية أو 0.00)
+            const taxAmount = sale.includeTax ? (sale.tax || 0) : 0;
+            document.getElementById('printSaleTax').textContent = taxAmount.toFixed(2);
             const taxRow = document.getElementById('printSaleTaxRow');
-            if (sale.includeTax) {
-                document.getElementById('printSaleTax').textContent = (sale.tax || 0).toFixed(2);
-                if (taxRow) taxRow.style.display = 'grid';
-            } else {
-                if (taxRow) taxRow.style.display = 'none';
-            }
+            if (taxRow) taxRow.style.display = 'grid'; // إظهار دائماً
             
             document.getElementById('printSaleTotal').textContent = (sale.total || 0).toFixed(2);
             document.getElementById('printSalePaid').textContent = (sale.paidAmount || 0).toFixed(2);
@@ -13397,6 +13394,7 @@ function renderPurchaseReturns() {
             document.getElementById('specificSupplierFilter').style.display = 'none';
             document.getElementById('specificCustomerFilter').style.display = 'none';
             document.getElementById('specificEmployeeFilter').style.display = 'none';
+            document.getElementById('taxFilterType').style.display = 'none';
             
             // إظهار الفلتر المناسب
             switch(statementType) {
@@ -13411,6 +13409,9 @@ function renderPurchaseReturns() {
                 case 'employees':
                     document.getElementById('specificEmployeeFilter').style.display = 'inline-block';
                     populateSpecificEmployeeFilter();
+                    break;
+                case 'tax':
+                    document.getElementById('taxFilterType').style.display = 'inline-block';
                     break;
             }
         }
@@ -13442,6 +13443,16 @@ function renderPurchaseReturns() {
             });
         }
         
+        // دالة لتحديث الكشف تلقائياً عند تغيير الفلتر
+        function autoRefreshStatement() {
+            const statementResults = document.getElementById('statementResults').innerHTML;
+            
+            // إذا كان هناك كشف معروض، نعيد توليده تلقائياً
+            if (statementResults && statementResults.trim() !== '') {
+                generateAccountStatement();
+            }
+        }
+        
         // دالة إنشاء كشف الحساب
         function generateAccountStatement() {
             const statementType = document.getElementById('statementType').value;
@@ -13468,6 +13479,9 @@ function renderPurchaseReturns() {
                     break;
                 case 'cash':
                     generateCashStatement(fromDate, toDate);
+                    break;
+                case 'tax':
+                    generateTaxStatement(fromDate, toDate);
                     break;
             }
         }
@@ -14031,6 +14045,169 @@ function renderPurchaseReturns() {
             document.getElementById('statementResults').innerHTML = tableHTML;
         }
         
+        // دالة كشف حساب الضريبة
+        function generateTaxStatement(fromDate, toDate) {
+            const taxFilter = document.getElementById('taxFilterType').value;
+            const TAX_RATE = 0.15; // نسبة الضريبة 15%
+            
+            let taxTransactions = [];
+            
+            // إضافة المبيعات
+            sales.filter(s => s.date >= fromDate && s.date <= toDate).forEach(sale => {
+                const customer = customers.find(c => c.id === sale.customerId);
+                const hasTax = sale.includeTax || false;
+                const baseAmount = hasTax ? sale.total / 1.15 : sale.total;
+                const taxAmount = hasTax ? baseAmount * TAX_RATE : 0;
+                
+                // تطبيق الفلتر
+                if (taxFilter === 'withTax' && !hasTax) return;
+                if (taxFilter === 'withoutTax' && hasTax) return;
+                
+                taxTransactions.push({
+                    date: sale.date,
+                    type: 'مبيعات',
+                    customer: customer ? customer.name : 'غير معروف',
+                    reference: `SAL${sale.number.toString().padStart(3, '0')}`,
+                    baseAmount: baseAmount,
+                    taxAmount: taxAmount,
+                    total: sale.total,
+                    hasTax: hasTax,
+                    category: 'sale'
+                });
+            });
+            
+            // إضافة المشتريات
+            purchases.filter(p => p.date >= fromDate && p.date <= toDate).forEach(purchase => {
+                const supplier = suppliers.find(s => s.id === purchase.supplierId);
+                const hasTax = purchase.includeTax || false;
+                const baseAmount = hasTax ? purchase.total / 1.15 : purchase.total;
+                const taxAmount = hasTax ? baseAmount * TAX_RATE : 0;
+                
+                // تطبيق الفلتر
+                if (taxFilter === 'withTax' && !hasTax) return;
+                if (taxFilter === 'withoutTax' && hasTax) return;
+                
+                taxTransactions.push({
+                    date: purchase.date,
+                    type: 'مشتريات',
+                    customer: supplier ? supplier.name : 'غير معروف',
+                    reference: `PUR${purchase.number.toString().padStart(3, '0')}`,
+                    baseAmount: baseAmount,
+                    taxAmount: taxAmount,
+                    total: purchase.total,
+                    hasTax: hasTax,
+                    category: 'purchase'
+                });
+            });
+            
+            // ترتيب المعاملات حسب التاريخ
+            taxTransactions.sort((a, b) => new Date(a.date) - new Date(b.date));
+            
+            // حساب الإجماليات
+            let totalSalesTax = 0;
+            let totalPurchasesTax = 0;
+            let cumulativeTaxBalance = 0;
+            
+            let tableHTML = `
+                <h3>📊 كشف حساب الضريبة (15%)</h3>
+                <table class="account-statement-table">
+                    <thead>
+                        <tr>
+                            <th>التاريخ</th>
+                            <th>نوع العملية</th>
+                            <th>الاسم</th>
+                            <th>رقم الفاتورة</th>
+                            <th>المبلغ قبل الضريبة</th>
+                            <th>قيمة الضريبة</th>
+                            <th>الإجمالي</th>
+                            <th>الرصيد التراكمي</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            taxTransactions.forEach(transaction => {
+                // الضريبة المستحقة من المبيعات موجبة
+                // الضريبة المدفوعة في المشتريات سالبة
+                const taxImpact = transaction.category === 'sale' ? transaction.taxAmount : -transaction.taxAmount;
+                cumulativeTaxBalance += taxImpact;
+                
+                if (transaction.category === 'sale') {
+                    totalSalesTax += transaction.taxAmount;
+                } else {
+                    totalPurchasesTax += transaction.taxAmount;
+                }
+                
+                tableHTML += `
+                    <tr>
+                        <td>${transaction.date}</td>
+                        <td>${transaction.type}</td>
+                        <td>${transaction.customer}</td>
+                        <td>${transaction.reference}</td>
+                        <td>${transaction.baseAmount.toFixed(2)}</td>
+                        <td class="${transaction.taxAmount > 0 ? 'remaining-unpaid' : ''}">${transaction.taxAmount.toFixed(2)}</td>
+                        <td>${transaction.total.toFixed(2)}</td>
+                        <td class="${cumulativeTaxBalance >= 0 ? 'remaining-unpaid' : 'remaining-paid'}">${cumulativeTaxBalance.toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+            
+            const netTaxDue = totalSalesTax - totalPurchasesTax;
+            
+            tableHTML += `
+                    </tbody>
+                    <tfoot>
+                        <tr style="font-weight: bold; background: #f5f7fa;">
+                            <td colspan="5" style="text-align: left;">الإجماليات:</td>
+                            <td>ضريبة مبيعات: ${totalSalesTax.toFixed(2)}</td>
+                            <td>ضريبة مشتريات: ${totalPurchasesTax.toFixed(2)}</td>
+                            <td class="${netTaxDue >= 0 ? 'remaining-unpaid' : 'remaining-paid'}">صافي الضريبة: ${netTaxDue.toFixed(2)}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            `;
+            
+            const summaryHTML = `
+                <div class="dashboard-cards">
+                    <div class="dashboard-card sales-today">
+                        <div class="card-value">${totalSalesTax.toFixed(2)}</div>
+                        <div class="card-title">ضريبة المبيعات (مستحقة)</div>
+                        <div class="card-growth">
+                            <span>📤 للحكومة</span>
+                            <span class="growth-icon">⬆️</span>
+                        </div>
+                    </div>
+                    <div class="dashboard-card profit">
+                        <div class="card-value">${totalPurchasesTax.toFixed(2)}</div>
+                        <div class="card-title">ضريبة المشتريات (مدفوعة)</div>
+                        <div class="card-growth">
+                            <span>📥 من الموردين</span>
+                            <span class="growth-icon">⬇️</span>
+                        </div>
+                    </div>
+                    <div class="dashboard-card ${netTaxDue >= 0 ? 'revenue' : 'customers'}">
+                        <div class="card-value">${netTaxDue.toFixed(2)}</div>
+                        <div class="card-title">صافي الضريبة ${netTaxDue >= 0 ? '(مستحقة للحكومة)' : '(مسترجعة)'}</div>
+                        <div class="card-growth">
+                            <span>${netTaxDue >= 0 ? '💸 يجب السداد' : '💰 رصيد لصالحك'}</span>
+                            <span class="growth-icon">${netTaxDue >= 0 ? '⚠️' : '✅'}</span>
+                        </div>
+                    </div>
+                    <div class="dashboard-card customers">
+                        <div class="card-value">${taxTransactions.length}</div>
+                        <div class="card-title">عدد العمليات</div>
+                        <div class="card-growth">
+                            <span>📋 إجمالي</span>
+                            <span class="growth-icon">📊</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('statementSummary').innerHTML = summaryHTML;
+            document.getElementById('statementResults').innerHTML = tableHTML;
+        }
+        
         // دوال التصدير والطباعة للكشوف
         function exportStatementToExcel() {
             const statementType = document.getElementById('statementType').value;
@@ -14044,8 +14221,57 @@ function renderPurchaseReturns() {
                 return;
             }
             
-            // تحويل الجدول إلى Excel (سيتم تطويرها لاحقاً)
-            showNotification('✅ تم التصدير', 'تم تصدير الكشف بنجاح!', 'success');
+            // تحويل الجدول إلى CSV
+            let csv = '\uFEFF'; // BOM for UTF-8 Excel compatibility
+            const rows = table.querySelectorAll('tr');
+            
+            rows.forEach(row => {
+                const cols = row.querySelectorAll('th, td');
+                const rowData = [];
+                
+                cols.forEach(col => {
+                    // تنظيف النص وإزالة الفواصل
+                    let text = col.textContent.trim();
+                    // إضافة علامات اقتباس للحقول التي تحتوي على فواصل
+                    if (text.includes(',') || text.includes('"') || text.includes('\n')) {
+                        text = '"' + text.replace(/"/g, '""') + '"';
+                    }
+                    rowData.push(text);
+                });
+                
+                csv += rowData.join(',') + '\n';
+            });
+            
+            // إنشاء اسم الملف
+            const statementNames = {
+                'suppliers': 'كشف_حساب_الموردين',
+                'customers': 'كشف_حساب_العملاء',
+                'employees': 'كشف_حساب_الموظفين',
+                'bank': 'كشف_حساب_البنك',
+                'cash': 'كشف_حساب_النقدية',
+                'tax': 'كشف_حساب_الضريبة'
+            };
+            
+            const fileName = `${statementNames[statementType] || 'كشف_حساب'}_${fromDate}_${toDate}.csv`;
+            
+            // تنزيل الملف
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            
+            if (link.download !== undefined) {
+                const url = URL.createObjectURL(blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', fileName);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+                
+                showNotification('✅ تم التصدير', `تم تصدير الكشف بنجاح: ${fileName}`, 'success');
+            } else {
+                showNotification('⚠️ خطأ', 'متصفحك لا يدعم التنزيل التلقائي', 'error');
+            }
         }
         
         function printAccountStatement() {
@@ -15229,21 +15455,21 @@ if (data.length > 0) {
     }
     setText('totalAssetsHome', totalAssetsValue.toFixed(2));
     
-    // حساب صافي رأس المال العامل
-    // الأصول المتداولة = قيمة المخزون + النقدية + الذمم المدينة
-    const stockValue = items.reduce((s, i) => s + ((Number(i.stock) || 0) * (Number(i.cost) || 0)), 0);
-    const salesReceivables = sales.reduce((s, sale) => s + ((Number(sale.total) || 0) - (Number(sale.paidAmount) || 0)), 0);
-    const cashAndRevenues = revenues.reduce((s, r) => s + (Number(r.amount) || 0), 0);
+    // حساب الرصيد النقدي المتاح
+    // النقد الداخل = المبيعات النقدية + تحصيلات العملاء + الإيرادات
+    const cashSales = sales.reduce((sum, sale) => sum + (Number(sale.paidAmount) || 0), 0);
+    const cashRevenues = revenues.reduce((sum, rev) => sum + (Number(rev.amount) || 0), 0);
+    const totalCashIn = cashSales + cashRevenues;
     
-    // الخصوم المتداولة = المبالغ المستحقة للموردين + المصروفات غير المدفوعة
-    const purchasesPayables = purchases.reduce((s, purchase) => s + ((Number(purchase.total) || 0) - (Number(purchase.paidAmount) || 0)), 0);
-    const unpaidExpenses = expenses.reduce((s, e) => s + (Number(e.amount) || 0), 0);
+    // النقد الخارج = المشتريات النقدية + المصروفات + سداد الموردين
+    const cashPurchases = purchases.reduce((sum, purchase) => sum + (Number(purchase.paidAmount) || 0), 0);
+    const cashExpenses = expenses.reduce((sum, exp) => sum + (Number(exp.amount) || 0), 0);
+    const totalCashOut = cashPurchases + cashExpenses;
     
-    const currentAssets = stockValue + salesReceivables + cashAndRevenues;
-    const currentLiabilities = purchasesPayables + unpaidExpenses;
-    const netWorkingCapital = currentAssets - currentLiabilities;
+    // الرصيد النقدي = الداخل - الخارج
+    const availableCash = totalCashIn - totalCashOut;
     
-    setText('netWorkingCapital', netWorkingCapital.toFixed(2));
+    setText('availableCash', availableCash.toFixed(2));
     
     console.log('✅ updateDashboard - اكتمل تحديث جميع البطاقات!');
     console.log('📊 القيم المحدثة:');
@@ -15284,9 +15510,6 @@ if (data.length > 0) {
         } else {
             // تحديث يدوي للبطاقات إذا لم تكن الدالة موجودة
             updateAdvancedDashboardCards();
-        }
-        if (typeof renderCharts === 'function') {
-            renderCharts();
         }
     }
 }
@@ -15381,6 +15604,12 @@ function updateAdvancedDashboardCards() {
     console.log('  - مشتريات اليوم:', todayPurchasesTotal.toFixed(2), `(${todayPurchases.length} فاتورة)`);
     console.log('  - المبيعات الشهرية:', monthlySalesTotal.toFixed(2), `(${monthlySales.length} فاتورة)`);
     console.log('  - المشتريات الشهرية:', monthlyPurchasesTotal.toFixed(2), `(${monthlyPurchases.length} فاتورة)`);
+}
+
+// ===== دالة لوحة التحكم المتقدمة (Placeholder) =====
+function initAdvancedDashboard() {
+    // دالة فارغة لتجنب الأخطاء - البطاقات تُحدث بواسطة updateAdvancedDashboardCards()
+    console.log('📊 initAdvancedDashboard: تم الاستدعاء (دالة فارغة)');
 }
         
         // ========================================
@@ -19320,13 +19549,11 @@ function initAdvancedDashboard() {
     });
     
     updateLiveStats();
-    renderCharts();
     updatePerformanceIndicators();
     
     // تحديث تلقائي كل 5 ثوانٍ
     window.dashboardRefreshInterval = setInterval(() => {
         updateLiveStats();
-        renderCharts();
     }, 5000);
 }
 
@@ -19515,10 +19742,8 @@ function updateLiveStats() {
     }).catch(error => {
         console.error('❌ خطأ في إعادة تحميل البيانات:', error);
     });
-}// 📊 رسم الأصناف الأكثر مبيعاً فقط
-function renderCharts() {
-    renderTopItemsChart();
 }
+// 📊 رسوم بيانية - سيتم إضافتها لاحقاً
 
 function renderSalesChart() {
     const ctx = document.getElementById('salesChart');
@@ -19652,92 +19877,6 @@ function renderRevenueChart() {
                             const total = context.dataset.data.reduce((a, b) => a + b, 0);
                             const percentage = Math.round((value / total) * 100);
                             return `${label}: ${value.toFixed(2)} ر.س (${percentage}%)`;
-                        }
-                    }
-                }
-            }
-        }
-    });
-}
-
-function renderTopItemsChart() {
-    const ctx = document.getElementById('topItemsChart');
-    if (!ctx) return;
-    
-    console.log('🔄 رسم الأصناف الأكثر مبيعاً - البيانات الحالية:');
-    console.log('  sales:', sales);
-    
-    // حساب الأصناف الأكثر مبيعاً
-    const itemSales = {};
-    if (sales && Array.isArray(sales) && sales.length > 0) {
-        sales.forEach((sale, idx) => {
-            console.log(`  مبيعة #${idx}:`, sale);
-            if (sale.items && Array.isArray(sale.items)) {
-                sale.items.forEach(item => {
-                    console.log(`    صنف: ${item.name}, كمية: ${item.quantity}`);
-                    if (!itemSales[item.name]) {
-                        itemSales[item.name] = 0;
-                    }
-                    itemSales[item.name] += item.quantity;
-                });
-            }
-        });
-    }
-
-    const topItems = Object.entries(itemSales)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 5);
-    
-    console.log('✅ أعلى الأصناف:', topItems);
-
-    // تدمير الرسم البياني القديم إذا موجود
-    if (window.topItemsChartInstance) {
-        window.topItemsChartInstance.destroy();
-    }
-
-    window.topItemsChartInstance = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: topItems.map(item => item[0]),
-            datasets: [{
-                label: 'الكمية المباعة',
-                data: topItems.map(item => item[1]),
-                backgroundColor: '#2c5aa0',
-                borderColor: '#1a3d7a',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            indexAxis: 'y',
-            plugins: {
-                legend: {
-                    display: false
-                },
-                title: {
-                    display: true,
-                    text: 'الأصناف الأكثر مبيعاً',
-                    font: {
-                        family: 'Tajawal',
-                        size: 16
-                    }
-                }
-            },
-            scales: {
-                x: {
-                    ticks: {
-                        font: {
-                            family: 'Tajawal',
-                            size: 12
-                        }
-                    }
-                },
-                y: {
-                    ticks: {
-                        font: {
-                            family: 'Tajawal',
-                            size: 12
                         }
                     }
                 }
