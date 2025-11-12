@@ -3888,17 +3888,6 @@ textarea.editing-mode {
                                 <div id="activityCreatedBy" style="color: var(--text-color); margin-top: 4px;"></div>
                             </div>
                         </div>
-                        
-                        <!-- قسم رأس المال -->
-                        <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #d1e7fd;">
-                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-                                <span style="color: #666; font-weight: 600;">💰 رأس المال الأولي:</span>
-                                <button onclick="editInitialCapital()" style="background: var(--primary-color); color: white; border: none; padding: 5px 10px; border-radius: 5px; font-size: 0.8em; cursor: pointer;">
-                                    ✏️ تعديل
-                                </button>
-                            </div>
-                            <div id="initialCapitalDisplay" style="color: var(--primary-color); font-weight: bold; font-size: 1.1em;">0.00 ريال</div>
-                        </div>
                     </div>
                 </form>
             </div>
@@ -4136,15 +4125,6 @@ textarea.editing-mode {
         <div class="stat-number" id="totalRevenuesHome">0</div>
     </div>
     <div class="stat-card">
-        <div class="stat-label">💰 رأس المال الأولي</div>
-        <div class="stat-number" id="initialCapitalHome">0.00</div>
-        <div style="margin-top: 5px;">
-            <button onclick="editInitialCapital()" style="background: var(--primary-color); color: white; border: none; padding: 3px 8px; border-radius: 4px; font-size: 0.75em; cursor: pointer; opacity: 0.8;">
-                ✏️ تعديل
-            </button>
-        </div>
-    </div>
-    <div class="stat-card">
     <div class="stat-label">إجمالي العهد والسلف</div>
     <div class="stat-number" id="totalAdvancesHome">0</div>
 </div>
@@ -4164,72 +4144,48 @@ textarea.editing-mode {
     <!-- مؤشرات سريعة -->
     <div class="stats-grid advanced-stats">
         <div class="stat-card">
-            <div class="stat-number" id="liveSales">0</div>
-            <div class="stat-label">المبيعات اليوم</div>
+            <div class="stat-number" id="todaySales">0</div>
+            <div class="stat-label">مبيعات اليوم</div>
             <div class="stat-trend" id="salesTrend">↗️ +12%</div>
         </div>
         <div class="stat-card">
-            <div class="stat-number" id="liveRevenue">0</div>
+            <div class="stat-number" id="todayPurchases">0</div>
+            <div class="stat-label">مشتريات اليوم</div>
+            <div class="stat-trend" id="purchasesTrend">↗️ +8%</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="todayExpenses">0</div>
+            <div class="stat-label">مصروفات اليوم</div>
+            <div class="stat-trend" id="expensesTrend">↗️ +15%</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="todayRevenues">0</div>
+            <div class="stat-label">إيرادات اليوم</div>
+            <div class="stat-trend" id="revenuesTrend">↗️ +5%</div>
+        </div>
+    </div>
+
+    <!-- البطاقات الشهرية -->
+    <div class="stats-grid advanced-stats" style="margin-top: 30px;">
+        <div class="stat-card">
+            <div class="stat-number" id="monthlySales">0</div>
+            <div class="stat-label">المبيعات الشهرية</div>
+            <div class="stat-trend" id="monthlySalesTrend">📊</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="monthlyPurchases">0</div>
+            <div class="stat-label">المشتريات الشهرية</div>
+            <div class="stat-trend" id="monthlyPurchasesTrend">📊</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="monthlyExpensesCard">0</div>
+            <div class="stat-label">المصروفات الشهرية</div>
+            <div class="stat-trend" id="monthlyExpensesTrend">📊</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="monthlyRevenues">0</div>
             <div class="stat-label">الإيرادات الشهرية</div>
-            <div class="stat-trend" id="revenueTrend">↗️ +8%</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number" id="liveProfit">0</div>
-            <div class="stat-label">صافي الربح</div>
-            <div class="stat-trend" id="profitTrend">↗️ +15%</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number" id="liveCustomers">0</div>
-            <div class="stat-label">عملاء جدد</div>
-            <div class="stat-trend" id="customersTrend">↗️ +5%</div>
-        </div>
-    </div>
-
-    <!-- الرسوم البيانية -->
-    <div class="charts-container">
-        <div class="chart-card">
-            <h3>📈 أداء المبيعات آخر 7 أيام</h3>
-            <canvas id="salesChart"></canvas>
-        </div>
-        <div class="chart-card">
-            <h3>💰 توزيع الإيرادات</h3>
-            <canvas id="revenueChart"></canvas>
-        </div>
-        <div class="chart-card">
-            <h3>💸 تطور المصروفات الشهرية</h3>
-            <canvas id="expensesChart"></canvas>
-        </div>
-        <div class="chart-card">
-            <h3>📊 مقارنة المشتريات والمبيعات</h3>
-            <canvas id="purchasesSalesChart"></canvas>
-        </div>
-    </div>
-
-    <!-- الشبكة التحليلية -->
-    <div class="analytics-grid">
-        <div class="analytics-card">
-            <h3>📋 الملخص الشهري</h3>
-            <div id="monthlySummary">
-                <!-- سيتم تعبئته بالبيانات -->
-            </div>
-        </div>
-        <div class="analytics-card">
-            <h3>🎯 الأداء المالي</h3>
-            <div id="financialPerformance">
-                <!-- سيتم تعبئته بالبيانات -->
-            </div>
-        </div>
-        <div class="analytics-card">
-            <h3>💸 المصروفات الشهرية</h3>
-            <div id="monthlyExpenses">
-                <!-- سيتم تعبئته بالبيانات -->
-            </div>
-        </div>
-        <div class="analytics-card">
-            <h3>💰 الأرباح المتراكمة</h3>
-            <div id="cumulativeProfits">
-                <!-- سيتم تعبئته بالبيانات -->
-            </div>
+            <div class="stat-trend" id="monthlyRevenuesTrend">📊</div>
         </div>
     </div>
 
@@ -4411,10 +4367,17 @@ textarea.editing-mode {
     <div class="form-grid grid-4">
         <input type="text" id="purchaseCode" placeholder="كود الفاتورة" readonly>
         <input type="date" id="purchaseDate">
-        <select id="purchaseSupplier">
+        <select id="purchaseSupplier" onchange="updateSupplierFields()">
             <option value="">اختر المورد</option>
         </select>
         <input type="text" id="purchaseNotes" placeholder="ملاحظات">
+    </div>
+    
+    <div class="form-grid grid-4">
+        <input type="text" id="purchaseSupplierName" placeholder="اسم المورد" readonly>
+        <input type="text" id="purchaseSupplierCode" placeholder="كود المورد" readonly>
+        <input type="text" id="purchaseSupplierPhone" placeholder="رقم جوال المورد" readonly>
+        <input type="text" id="purchaseSupplierAddress" placeholder="عنوان المورد">
     </div>
     
     <div class="form-grid grid-4">
@@ -4537,7 +4500,7 @@ textarea.editing-mode {
     <div class="form-grid grid-4">
         <input type="text" id="saleCode" placeholder="كود الفاتورة" readonly>
         <input type="date" id="saleDate">
-        <select id="saleCustomer">
+        <select id="saleCustomer" onchange="updateCustomerFields()">
             <option value="">اختر العميل</option>
         </select>
         <input type="text" id="saleCustomerCode" placeholder="كود العميل" readonly>
@@ -5262,8 +5225,7 @@ textarea.editing-mode {
         <div class="report-controls">
             <div class="form-grid grid-3" style="margin-bottom: 20px;">
                 <div>
-                    <label>نوع التقرير</label>
-                    <select id="reportType" onchange="changeReportType()" style="width: 100%; padding: 12px; font-size: 14px;">
+                    <select id="reportType" onchange="changeReportType()" style="width: 100%; padding: 12px; font-size: 14px;" placeholder="نوع التقرير">
                         <option value="">اختر نوع التقرير</option>
                         <option value="sales">تقارير المبيعات</option>
                         <option value="purchases">تقارير المشتريات</option>
@@ -5276,18 +5238,15 @@ textarea.editing-mode {
                     </select>
                 </div>
                 <div>
-                    <label>من تاريخ</label>
-                    <input type="date" id="reportFrom" style="width: 100%; padding: 12px; font-size: 14px;">
+                    <input type="date" id="reportFrom" placeholder="من تاريخ" style="width: 100%; padding: 12px; font-size: 14px;">
                 </div>
                 <div>
-                    <label>إلى تاريخ</label>
-                    <input type="date" id="reportTo" style="width: 100%; padding: 12px; font-size: 14px;">
+                    <input type="date" id="reportTo" placeholder="إلى تاريخ" style="width: 100%; padding: 12px; font-size: 14px;">
                 </div>
             </div>
             
             <div class="form-grid grid-3" style="margin-bottom: 20px;">
                 <div>
-                    <label>حالة الدفع</label>
                     <select id="paymentStatusFilter" style="width: 100%; padding: 12px; font-size: 14px;">
                         <option value="all">كل الفواتير</option>
                         <option value="paid">المدفوعة</option>
@@ -5295,14 +5254,12 @@ textarea.editing-mode {
                     </select>
                 </div>
                 <div>
-                    <label>فلتر الأصناف</label>
                     <select id="reportItemFilter" onchange="updateReportItemFilter()" style="width: 100%; padding: 12px; font-size: 14px;">
                         <option value="all">جميع الأصناف</option>
                         <option value="specific">صنف محدد</option>
                     </select>
                 </div>
                 <div>
-                    <label>الصنف المحدد</label>
                     <select id="reportSpecificItem" style="display: none; width: 100%; padding: 12px; font-size: 14px;">
                         <option value="">اختر الصنف</option>
                     </select>
@@ -5676,9 +5633,6 @@ textarea.editing-mode {
                 <button id="toggleEmailSettingsBtn" class="btn-success" onclick="toggleEmailSettings()" style="background: #16a34a;">
                     📧 إعدادات البريد الإلكتروني
                 </button>
-                <button class="btn-info" onclick="showDataMonitorModal()" style="background: #3b82f6;">
-                    📊 مراقب البيانات المتقدم
-                </button>
             </div>
             
             <div style="background: rgba(255, 255, 255, 0.15); padding: 15px; border-radius: 8px; margin-top: 20px; backdrop-filter: blur(10px);">
@@ -5967,175 +5921,6 @@ async function uploadFile(file, path) {
 // ========================================
 const USE_FIREBASE = true; // true = Firebase, false = LocalStorage فقط
 
-// 📊 نظام مراقبة البيانات المتقدم
-const DATA_MONITOR = {
-    enabled: true,
-    backupInterval: 60000, // نسخة احتياطية كل دقيقة
-    lastBackup: 0,
-    dataSnapshots: {},
-    
-    // حفظ لقطة من البيانات الحالية
-    saveSnapshot(label = 'auto') {
-        if (!this.enabled) return;
-        
-        const snapshot = {
-            timestamp: Date.now(),
-            label: label,
-            data: {
-                items: [...(items || [])],
-                customers: [...(customers || [])],
-                suppliers: [...(suppliers || [])],
-                purchases: [...(purchases || [])],
-                sales: [...(sales || [])],
-                expenses: [...(expenses || [])],
-                revenues: [...(revenues || [])],
-                salaries: [...(salaries || [])],
-                assets: [...(assets || [])],
-                salesReturns: [...(salesReturns || [])],
-                advances: [...(advances || [])],
-                purchaseReturns: [...(purchaseReturns || [])],
-                users: [...(users || [])],
-                activities: [...(activities || [])]
-            },
-            counts: {
-                items: items?.length || 0,
-                customers: customers?.length || 0,
-                suppliers: suppliers?.length || 0,
-                purchases: purchases?.length || 0,
-                sales: sales?.length || 0,
-                expenses: expenses?.length || 0,
-                revenues: revenues?.length || 0,
-                salaries: salaries?.length || 0,
-                assets: assets?.length || 0,
-                salesReturns: salesReturns?.length || 0,
-                advances: advances?.length || 0,
-                purchaseReturns: purchaseReturns?.length || 0,
-                users: users?.length || 0,
-                activities: activities?.length || 0
-            }
-        };
-        
-        this.dataSnapshots[label] = snapshot;
-        localStorage.setItem('diwan_data_snapshots', JSON.stringify(this.dataSnapshots));
-        
-        console.log(`📊 تم حفظ لقطة البيانات: ${label}`, snapshot.counts);
-        return snapshot;
-    },
-    
-    // مقارنة البيانات الحالية مع آخر لقطة
-    detectDataLoss() {
-        if (!this.enabled || !this.dataSnapshots.auto) return false;
-        
-        const lastSnapshot = this.dataSnapshots.auto;
-        const currentCounts = {
-            items: items?.length || 0,
-            customers: customers?.length || 0,
-            suppliers: suppliers?.length || 0,
-            purchases: purchases?.length || 0,
-            sales: sales?.length || 0,
-            expenses: expenses?.length || 0,
-            revenues: revenues?.length || 0,
-            salaries: salaries?.length || 0,
-            assets: assets?.length || 0,
-            salesReturns: salesReturns?.length || 0,
-            advances: advances?.length || 0,
-            purchaseReturns: purchaseReturns?.length || 0,
-            users: users?.length || 0,
-            activities: activities?.length || 0
-        };
-        
-        let dataLossDetected = false;
-        const losses = [];
-        
-        for (const [key, currentCount] of Object.entries(currentCounts)) {
-            const previousCount = lastSnapshot.counts[key] || 0;
-            if (currentCount < previousCount) {
-                dataLossDetected = true;
-                losses.push(`${key}: ${previousCount} → ${currentCount}`);
-            }
-        }
-        
-        if (dataLossDetected) {
-            console.error('🚨 تم اكتشاف فقدان بيانات!', losses);
-            this.showDataLossAlert(losses, lastSnapshot);
-        }
-        
-        return dataLossDetected;
-    },
-    
-    // عرض تنبيه فقدان البيانات مع إمكانية الاستعادة
-    async showDataLossAlert(losses, lastSnapshot) {
-        const lossText = losses.join('\n');
-        console.error('🚨 تحذير: تم اكتشاف فقدان بيانات!', losses);
-        
-        const confirmed = await showConfirmDialog(
-            '🚨 تم اكتشاف فقدان بيانات!',
-            `تم اكتشاف انخفاض في البيانات:\n\n${lossText}\n\nهل تريد استعادة البيانات من آخر نسخة احتياطية؟\n\nأو إعادة تحميل من Firebase؟`,
-            'danger',
-            'استعادة من النسخة الاحتياطية',
-            'إعادة تحميل من Firebase'
-        );
-        
-        if (confirmed) {
-            this.restoreFromSnapshot(lastSnapshot);
-        } else {
-            // إعادة تحميل من Firebase
-            if (USE_FIREBASE && typeof initializeApp === 'function') {
-                console.log('🔄 إعادة تحميل البيانات من Firebase...');
-                showNotification('🔄 إعادة التحميل', 'جاري إعادة تحميل البيانات من Firebase...', 'info');
-                setTimeout(() => initializeApp(), 500);
-            }
-        }
-    },
-    
-    // استعادة البيانات من لقطة
-    restoreFromSnapshot(snapshot) {
-        if (!snapshot || !snapshot.data) {
-            showNotification('❌ خطأ', 'لا توجد بيانات للاستعادة', 'error');
-            return;
-        }
-        
-        const data = snapshot.data;
-        
-        items = [...data.items];
-        customers = [...data.customers];
-        suppliers = [...data.suppliers];
-        purchases = [...data.purchases];
-        sales = [...data.sales];
-        expenses = [...data.expenses];
-        revenues = [...data.revenues];
-        salaries = [...data.salaries];
-        assets = [...data.assets];
-        salesReturns = [...data.salesReturns];
-        advances = [...data.advances];
-        purchaseReturns = [...data.purchaseReturns];
-        users = [...data.users];
-        activities = [...data.activities];
-        
-        console.log('✅ تم استعادة البيانات من اللقطة:', snapshot.counts);
-        showNotification('✅ تم الاستعادة', 'تم استعادة البيانات بنجاح من آخر نسخة احتياطية', 'success');
-        
-        // تحديث الواجهة
-        if (typeof updateDashboard === 'function') updateDashboard();
-        if (typeof renderItems === 'function') renderItems();
-        if (typeof renderCustomers === 'function') renderCustomers();
-        if (typeof renderSuppliers === 'function') renderSuppliers();
-    },
-    
-    // تحميل اللقطات المحفوظة
-    loadSnapshots() {
-        try {
-            const saved = localStorage.getItem('diwan_data_snapshots');
-            if (saved) {
-                this.dataSnapshots = JSON.parse(saved);
-                console.log('📊 تم تحميل لقطات البيانات:', Object.keys(this.dataSnapshots));
-            }
-        } catch (error) {
-            console.error('خطأ في تحميل لقطات البيانات:', error);
-        }
-    }
-};
-
 let DEBUG_MODE = false; // تقليل رسائل Debug لتجنب الإزعاج
 
 function debugLog(...args) {
@@ -6331,6 +6116,17 @@ async function initializeApp() {
             try { window[funcName](); } catch (e) { console.warn(`تحذير في ${funcName}:`, e.message); }
         }
     });
+    
+    // 🔄 تحديث إضافي فوري للوحة التحكم بعد تحميل جميع البيانات
+    console.log('🔄 تحديث فوري للوحة التحكم بعد تحميل البيانات...');
+    if (typeof updateDashboard === 'function') {
+        try {
+            updateDashboard();
+            console.log('✅ تم تحديث لوحة التحكم بنجاح');
+        } catch (e) {
+            console.error('❌ خطأ في تحديث لوحة التحكم:', e);
+        }
+    }
 
     const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser') || 'null');
     if (typeof updateLoggedInUserDisplay === 'function' && loggedInUser) {
@@ -6373,41 +6169,6 @@ async function initializeApp() {
         loadDesignPreferences();
         console.log('🎨 تم تحميل تخصيصات التصميم');
     }
-    
-    // 📊 تهيئة نظام مراقبة البيانات
-    DATA_MONITOR.loadSnapshots();
-    DATA_MONITOR.saveSnapshot('app_start');
-    
-    // مراقبة دورية للبيانات
-    setInterval(() => {
-        if (DATA_MONITOR.enabled) {
-            // فحص فقدان البيانات أولاً
-            const dataLossDetected = DATA_MONITOR.detectDataLoss();
-            
-            // إذا لم يتم اكتشاف فقدان، حفظ نسخة احتياطية دورية
-            if (!dataLossDetected) {
-                const now = Date.now();
-                if (now - DATA_MONITOR.lastBackup > DATA_MONITOR.backupInterval) {
-                    DATA_MONITOR.saveSnapshot('auto');
-                    DATA_MONITOR.lastBackup = now;
-                }
-            }
-            
-            // تسجيل حالة البيانات للتشخيص
-            const totalItems = (items?.length || 0) + (customers?.length || 0) + 
-                             (suppliers?.length || 0) + (purchases?.length || 0) + 
-                             (sales?.length || 0) + (users?.length || 0);
-            
-            if (totalItems === 0 && window.currentUser) {
-                console.warn('🚨 تحذير: جميع البيانات فارغة رغم تسجيل الدخول!');
-                // محاولة إعادة التحميل من Firebase
-                if (USE_FIREBASE && typeof initializeApp === 'function') {
-                    console.log('🔄 محاولة إعادة تحميل البيانات من Firebase...');
-                    setTimeout(() => initializeApp(), 1000);
-                }
-            }
-        }
-    }, 30000); // فحص كل 30 ثانية
     
     console.log('📊 تم تفعيل نظام مراقبة البيانات المتقدم');
     
@@ -6473,6 +6234,12 @@ async function initializeApp() {
             showNotification('🚨 تحذير', 'تم اكتشاف مشكلة في البيانات - يرجى فتح مراقب البيانات', 'warning');
         } else if (totalData > 0) {
             console.log(`✅ البيانات محملة بشكل صحيح (${totalData} عنصر)`);
+        }
+        
+        // 🔄 تحديث لوحة التحكم مرة أخرى بعد التحقق من البيانات
+        console.log('🔄 تحديث لوحة التحكم النهائي بعد التحقق من البيانات...');
+        if (typeof updateDashboard === 'function') {
+            updateDashboard();
         }
     }, 2000);
     
@@ -8696,7 +8463,7 @@ loadSavedEmailSettings();
             if (!USE_FIREBASE) return null;
             
             try {
-                const { ref, get, set } = window.firebaseModules;
+                const { ref, get, set, remove } = window.firebaseModules;
                 const database = window.firebaseDatabase;
                 
                 if (!database) {
@@ -8704,19 +8471,18 @@ loadSavedEmailSettings();
                     return null;
                 }
                 
-                // محاولة تحميل من المكان الجديد أولاً، ثم من المكان القديم
-                let activitiesRef = ref(database, 'activitiesList');
+                // تحميل من المسار الجديد فقط
+                const activitiesRef = ref(database, 'activities');
                 let snapshot = await get(activitiesRef);
                 
-                // إذا لم توجد في المكان الجديد، جرب المكان القديم
+                // إذا لم توجد، تحقق من المسار القديم وانقل البيانات
                 if (!snapshot.exists()) {
-                    console.log('🔍 لم توجد أنشطة في activitiesList، جاري البحث في activities...');
-                    activitiesRef = ref(database, 'activities');
-                    snapshot = await get(activitiesRef);
+                    console.log('🔍 لم توجد أنشطة في activities، جاري البحث في activitiesList القديم...');
+                    const oldActivitiesRef = ref(database, 'activitiesList');
+                    const oldSnapshot = await get(oldActivitiesRef);
                     
-                    if (snapshot.exists()) {
-                        // إذا وُجدت في المكان القديم، انقلها للمكان الجديد
-                        const firebaseActivities = snapshot.val();
+                    if (oldSnapshot.exists()) {
+                        const firebaseActivities = oldSnapshot.val();
                         const activitiesArray = [];
                         
                         // استخراج قائمة الأنشطة من البيانات المختلطة
@@ -8728,8 +8494,7 @@ loadSavedEmailSettings();
                         });
                         
                         if (activitiesArray.length > 0) {
-                            console.log(`🔄 نقل ${activitiesArray.length} نشاط إلى activitiesList`);
-                            const newActivitiesRef = ref(database, 'activitiesList');
+                            console.log(`🔄 نقل ${activitiesArray.length} نشاط من activitiesList إلى activities`);
                             const activitiesObject = {};
                             activitiesArray.forEach(activity => {
                                 if (activity.id) {
@@ -8737,16 +8502,18 @@ loadSavedEmailSettings();
                                         id: activity.id,
                                         name: activity.name,
                                         createdAt: activity.createdAt || new Date().toISOString(),
-                                        createdBy: activity.createdBy || 'غير محدد',
-                                        initialCapital: activity.initialCapital || 0
+                                        createdBy: activity.createdBy || 'غير محدد'
                                     };
                                 }
                             });
-                            await set(newActivitiesRef, activitiesObject);
+                            await set(activitiesRef, activitiesObject);
+                            
+                            // حذف المسار القديم
+                            await remove(oldActivitiesRef);
+                            console.log('�️ تم حذف المسار القديم activities');
+                            
+                            return activitiesArray;
                         }
-                        
-                        console.log('🔥✅ تم تحميل الأنشطة من Firebase (من المكان القديم):', activitiesArray.length);
-                        return activitiesArray;
                     }
                 }
                 
@@ -9232,55 +8999,6 @@ loadSavedEmailSettings();
             sidebar.classList.toggle('open');
         }
 
-        // === تعديل رأس المال الأولي ===
-        function editInitialCapital() {
-            if (!currentActivityId) {
-                showNotification('⚠️ خطأ', 'لا يوجد نشاط محدد', 'warning');
-                return;
-            }
-            
-            const activity = activities.find(a => a.id == currentActivityId);
-            if (!activity) {
-                showNotification('⚠️ خطأ', 'لا يمكن العثور على بيانات النشاط', 'warning');
-                return;
-            }
-            
-            const currentCapital = activity.initialCapital || 0;
-            
-            // استخدام prompt لإدخال القيمة الجديدة
-            const newCapital = prompt(`💰 تعديل رأس المال الأولي\n\nالقيمة الحالية: ${currentCapital.toFixed(2)} ريال\n\nأدخل القيمة الجديدة:`, currentCapital);
-            
-            if (newCapital === null) return; // إلغاء
-            
-            const parsedCapital = parseFloat(newCapital);
-            if (isNaN(parsedCapital) || parsedCapital < 0) {
-                showNotification('⚠️ قيمة خاطئة', 'يرجى إدخال قيمة رقمية صحيحة', 'warning');
-                return;
-            }
-            
-            // تحديث بيانات النشاط
-            activity.initialCapital = parsedCapital;
-            
-            // حفظ التغييرات
-            saveActivities();
-            
-            // تحديث العرض
-            updateInitialCapitalDisplay();
-            updateDashboard();
-            
-            showNotification('✅ تم التحديث', `تم تحديث رأس المال إلى ${parsedCapital.toFixed(2)} ريال`, 'success');
-        }
-        
-        // === تحديث عرض رأس المال ===
-        function updateInitialCapitalDisplay() {
-            const activity = activities.find(a => a.id == currentActivityId);
-            const capitalEl = document.getElementById('initialCapitalDisplay');
-            if (capitalEl && activity) {
-                const capital = activity.initialCapital || 0;
-                capitalEl.textContent = `${capital.toFixed(2)} ريال`;
-            }
-        }
-
         function updateAccountInfoSection(user) {
             // تحديث بيانات المستخدم الحالي في صفحة الإعدادات
             const currentUserNameEl = document.getElementById('currentUserNameDisplay');
@@ -9514,399 +9232,6 @@ loadSavedEmailSettings();
             updateAccountInfoSection(user);
         }
 
-function initAdvancedDashboard() {
-    updateLiveStats();
-    renderCharts();
-    updatePerformanceIndicators();
-    
-}
-
-function updateLiveStats() {
-    const today = new Date().toISOString().split('T')[0];
-    const currentMonth = new Date().toISOString().substring(0, 7);
-    
-    // المبيعات اليومية
-    const todaySales = sales.filter(s => s.date === today)
-                           .reduce((sum, sale) => sum + sale.total, 0);
-    const liveSalesEl = document.getElementById('liveSales');
-    if (liveSalesEl) liveSalesEl.textContent = todaySales.toFixed(2);
-    
-    // الإيرادات الشهرية
-    const monthRevenue = sales.filter(s => s.date.substring(0, 7) === currentMonth)
-                             .reduce((sum, sale) => sum + sale.total, 0);
-    const liveRevenueEl = document.getElementById('liveRevenue');
-    if (liveRevenueEl) liveRevenueEl.textContent = monthRevenue.toFixed(2);
-    
-    // صافي الربح (رأس المال + مبيعات + إيرادات - مشتريات - مصروفات)
-    const activity = activities.find(a => a.id == currentActivityId);
-    const initialCapital = activity ? (activity.initialCapital || 0) : 0;
-    const monthPurchases = purchases.filter(p => p.date.substring(0, 7) === currentMonth)
-                                   .reduce((sum, purchase) => sum + purchase.total, 0);
-    const monthExpenses = expenses.filter(e => e.date.substring(0, 7) === currentMonth)
-                                 .reduce((sum, expense) => sum + expense.amount, 0);
-    const monthRevenues = revenues.filter(r => r.date.substring(0, 7) === currentMonth)
-                                 .reduce((sum, revenue) => sum + revenue.amount, 0);
-    const netProfit = initialCapital + monthRevenue + monthRevenues - monthPurchases - monthExpenses;
-    const liveProfitEl = document.getElementById('liveProfit');
-    if (liveProfitEl) liveProfitEl.textContent = netProfit.toFixed(2);
-    
-    // العملاء الجدد (سنضيف createdAt لاحقاً)
-    const newCustomers = customers.length; // مؤقتاً
-    const liveCustomersEl = document.getElementById('liveCustomers');
-    if (liveCustomersEl) liveCustomersEl.textContent = newCustomers;
-    
-    // المصروفات الشهرية
-    const monthlyExpensesEl = document.getElementById('monthlyExpenses');
-    if (monthlyExpensesEl) {
-        monthlyExpensesEl.innerHTML = `<p>المصروفات هذا الشهر: ${monthExpenses.toFixed(2)} ريال</p>`;
-    }
-
-    // الأرباح المتراكمة (من بداية السنة) مع رأس المال
-    const yearStart = new Date().getFullYear() + '-01-01';
-    const cumulativeRevenue = sales.filter(s => s.date >= yearStart).reduce((sum, sale) => sum + sale.total, 0);
-    const cumulativeRevenuesExtra = revenues.filter(r => r.date >= yearStart).reduce((sum, revenue) => sum + revenue.amount, 0);
-    const cumulativePurchases = purchases.filter(p => p.date >= yearStart).reduce((sum, purchase) => sum + purchase.total, 0);
-    const cumulativeExpenses = expenses.filter(e => e.date >= yearStart).reduce((sum, expense) => sum + expense.amount, 0);
-    const cumulativeProfits = initialCapital + cumulativeRevenue + cumulativeRevenuesExtra - cumulativePurchases - cumulativeExpenses;
-    const cumulativeProfitsEl = document.getElementById('cumulativeProfits');
-    if (cumulativeProfitsEl) {
-        cumulativeProfitsEl.innerHTML = `<p>الأرباح المتراكمة: ${cumulativeProfits.toFixed(2)} ريال</p>`;
-    }
-}
-
-function renderCharts() {
-    renderSalesChart();
-    renderRevenueChart();
-    renderTopItemsChart();
-    renderExpensesChart();
-    renderPurchasesSalesChart();
-}
-
-function renderSalesChart() {
-    const ctx = document.getElementById('salesChart');
-    if (!ctx) return;
-    
-    // بيانات آخر 7 أيام
-    const last7Days = getLast7Days();
-    const salesData = last7Days.map(day => 
-        sales.filter(s => s.date === day)
-             .reduce((sum, sale) => sum + sale.total, 0)
-    );
-
-    // تدمير الرسم البياني القديم إذا موجود
-    if (window.salesChartInstance) {
-        window.salesChartInstance.destroy();
-    }
-
-    window.salesChartInstance = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: last7Days.map(day => formatDate(day)),
-            datasets: [{
-                label: 'المبيعات',
-                data: salesData,
-                borderColor: '#2c5aa0',
-                backgroundColor: 'rgba(44, 90, 160, 0.1)',
-                tension: 0.4,
-                fill: true,
-                borderWidth: 3
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    rtl: true,
-                    labels: {
-                        font: {
-                            family: 'Tajawal',
-                            size: 14
-                        }
-                    }
-                },
-                title: {
-                    display: true,
-                    text: 'أداء المبيعات آخر 7 أيام',
-                    font: {
-                        family: 'Tajawal',
-                        size: 16
-                    }
-                }
-            },
-            scales: {
-                x: {
-                    ticks: {
-                        font: {
-                            family: 'Tajawal',
-                            size: 12
-                        }
-                    }
-                },
-                y: {
-                    ticks: {
-                        font: {
-                            family: 'Tajawal',
-                            size: 12
-                        },
-                        callback: function(value) {
-                            return value + ' ر.س';
-                        }
-                    }
-                }
-            }
-        }
-    });
-}
-
-function renderRevenueChart() {
-    const ctx = document.getElementById('revenueChart');
-    if (!ctx) return;
-    
-    const revenueBySource = {
-        'مبيعات': revenues.filter(r => r.source === 'sales').reduce((sum, r) => sum + r.amount, 0),
-        'خدمات': revenues.filter(r => r.source === 'services').reduce((sum, r) => sum + r.amount, 0),
-        'استثمار': revenues.filter(r => r.source === 'investment').reduce((sum, r) => sum + r.amount, 0),
-        'أخرى': revenues.filter(r => r.source === 'other').reduce((sum, r) => sum + r.amount, 0)
-    };
-
-    // تدمير الرسم البياني القديم إذا موجود
-    if (window.revenueChartInstance) {
-        window.revenueChartInstance.destroy();
-    }
-
-    window.revenueChartInstance = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: Object.keys(revenueBySource),
-            datasets: [{
-                data: Object.values(revenueBySource),
-                backgroundColor: [
-                    '#2c5aa0',
-                    '#27ae60',
-                    '#e74c3c',
-                    '#f39c12'
-                ],
-                borderWidth: 2,
-                borderColor: '#fff'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                    rtl: true,
-                    labels: {
-                        font: {
-                            family: 'Tajawal',
-                            size: 12
-                        },
-                        padding: 20
-                    }
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            const label = context.label || '';
-                            const value = context.raw || 0;
-                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                            const percentage = Math.round((value / total) * 100);
-                            return `${label}: ${value.toFixed(2)} ر.س (${percentage}%)`;
-                        }
-                    }
-                }
-            }
-        }
-    });
-}
-
-function renderTopItemsChart() {
-    const ctx = document.getElementById('topItemsChart');
-    if (!ctx) return;
-    
-    // حساب الأصناف الأكثر مبيعاً
-    const itemSales = {};
-    sales.forEach(sale => {
-        sale.items.forEach(item => {
-            if (!itemSales[item.name]) {
-                itemSales[item.name] = 0;
-            }
-            itemSales[item.name] += item.quantity;
-        });
-    });
-
-    const topItems = Object.entries(itemSales)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 5);
-
-    // تدمير الرسم البياني القديم إذا موجود
-    if (window.topItemsChartInstance) {
-        window.topItemsChartInstance.destroy();
-    }
-
-    window.topItemsChartInstance = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: topItems.map(item => item[0]),
-            datasets: [{
-                label: 'الكمية المباعة',
-                data: topItems.map(item => item[1]),
-                backgroundColor: '#2c5aa0',
-                borderColor: '#1a3d7a',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            indexAxis: 'y',
-            plugins: {
-                legend: {
-                    display: false
-                },
-                title: {
-                    display: true,
-                    text: 'الأصناف الأكثر مبيعاً',
-                    font: {
-                        family: 'Tajawal',
-                        size: 16
-                    }
-                }
-            },
-            scales: {
-                x: {
-                    ticks: {
-                        font: {
-                            family: 'Tajawal',
-                            size: 12
-                        }
-                    }
-                },
-                y: {
-                    ticks: {
-                        font: {
-                            family: 'Tajawal',
-                            size: 12
-                        }
-                    }
-                }
-            }
-        }
-    });
-}
-
-function renderExpensesChart() {
-    const ctx = document.getElementById('expensesChart');
-    if (!ctx) return;
-    
-    // بيانات المصروفات الشهرية لآخر 6 أشهر
-    const months = [];
-    const expensesData = [];
-    for (let i = 5; i >= 0; i--) {
-        const date = new Date();
-        date.setMonth(date.getMonth() - i);
-        const monthStr = date.toISOString().substring(0, 7);
-        months.push(monthStr);
-        const monthExpenses = expenses.filter(e => e.date.substring(0, 7) === monthStr)
-                                     .reduce((sum, expense) => sum + expense.amount, 0);
-        expensesData.push(monthExpenses);
-    }
-    
-    if (window.expensesChartInstance) {
-        window.expensesChartInstance.destroy();
-    }
-    
-    window.expensesChartInstance = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: months,
-            datasets: [{
-                label: 'المصروفات',
-                data: expensesData,
-                borderColor: '#e74c3c',
-                backgroundColor: 'rgba(231, 76, 60, 0.1)',
-                tension: 0.4
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-}
-
-function renderPurchasesSalesChart() {
-    const ctx = document.getElementById('purchasesSalesChart');
-    if (!ctx) return;
-    
-    // بيانات المشتريات والمبيعات لآخر 6 أشهر
-    const months = [];
-    const purchasesData = [];
-    const salesData = [];
-    for (let i = 5; i >= 0; i--) {
-        const date = new Date();
-        date.setMonth(date.getMonth() - i);
-        const monthStr = date.toISOString().substring(0, 7);
-        months.push(monthStr);
-        const monthPurchases = purchases.filter(p => p.date.substring(0, 7) === monthStr)
-                                       .reduce((sum, purchase) => sum + purchase.total, 0);
-        const monthSales = sales.filter(s => s.date.substring(0, 7) === monthStr)
-                               .reduce((sum, sale) => sum + sale.total, 0);
-        purchasesData.push(monthPurchases);
-        salesData.push(monthSales);
-    }
-    
-    if (window.purchasesSalesChartInstance) {
-        window.purchasesSalesChartInstance.destroy();
-    }
-    
-    window.purchasesSalesChartInstance = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: months,
-            datasets: [{
-                label: 'المشتريات',
-                data: purchasesData,
-                backgroundColor: '#e74c3c',
-                borderColor: '#c0392b',
-                borderWidth: 1
-            }, {
-                label: 'المبيعات',
-                data: salesData,
-                backgroundColor: '#27ae60',
-                borderColor: '#219a52',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: true
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-}
-
 function updatePerformanceIndicators() {
     const monthlySummary = document.getElementById('monthlySummary');
     const financialPerformance = document.getElementById('financialPerformance');
@@ -10091,6 +9416,14 @@ function formatDate(dateString) {
         document.getElementById('sidebar').classList.remove('open');
     }
     
+    // 🏠 تحديث بطاقات الصفحة الرئيسية
+    if (sectionId === 'home') {
+        console.log('🏠 فتح الصفحة الرئيسية - تحديث البطاقات...');
+        if (typeof updateDashboard === 'function') {
+            updateDashboard();
+        }
+    }
+    
     // تحديث الإحصائيات المصغرة حسب القسم
     if (sectionId === 'items') {
         const miniStatItemsEl = document.getElementById('miniStatItems');
@@ -10154,6 +9487,38 @@ function formatDate(dateString) {
  
     } else if (sectionId === 'advanced-dashboard') {
         try {
+            console.log('📊 فتح لوحة التحكم المتقدمة - التأكد من تحميل البيانات');
+            
+            // إعادة تحميل البيانات من localStorage في حالة عدم توفرها
+            if (!sales || sales.length === 0) {
+                const stored = loadFromLocalStorage('sales');
+                if (stored) sales = stored;
+            }
+            if (!purchases || purchases.length === 0) {
+                const stored = loadFromLocalStorage('purchases');
+                if (stored) purchases = stored;
+            }
+            if (!expenses || expenses.length === 0) {
+                const stored = loadFromLocalStorage('expenses');
+                if (stored) expenses = stored;
+            }
+            if (!revenues || revenues.length === 0) {
+                const stored = loadFromLocalStorage('revenues');
+                if (stored) revenues = stored;
+            }
+            
+            console.log('📊 البيانات بعد التحميل:', {
+                sales: sales ? sales.length : 0,
+                purchases: purchases ? purchases.length : 0,
+                expenses: expenses ? expenses.length : 0,
+                revenues: revenues ? revenues.length : 0
+            });
+            
+            // تحديث البطاقات
+            if (typeof updateAdvancedDashboardCards === 'function') {
+                updateAdvancedDashboardCards();
+            }
+            
             if (typeof initAdvancedDashboard === 'function') {
                 initAdvancedDashboard();
             } else {
@@ -10431,8 +9796,8 @@ function formatDate(dateString) {
                 console.log('🔥 حفظ الأنشطة في Firebase...');
                 
                 // حفظ الأنشطة في Firebase Database بدون مسح بيانات الأنشطة
-                // نستخدم activitiesList بدلاً من activities لتجنب مسح بيانات النشاط
-                const activitiesListRef = ref(database, 'activitiesList');
+                // نستخدم activities بدلاً من activitiesList لتجنب مسح بيانات النشاط
+                const activitiesListRef = ref(database, 'activities');
                 
                 // تحويل Array إلى Object مفهرس بالـ id مع تنظيف البيانات
                 const activitiesObject = {};
@@ -10443,8 +9808,7 @@ function formatDate(dateString) {
                             id: activity.id,
                             name: activity.name || 'نشاط بدون اسم',
                             createdAt: activity.createdAt || new Date().toISOString(),
-                            createdBy: activity.createdBy || 'غير محدد',
-                            initialCapital: activity.initialCapital || 0
+                            createdBy: activity.createdBy || 'غير محدد'
                         };
                     }
                 });
@@ -10452,7 +9816,7 @@ function formatDate(dateString) {
                 // حفظ قائمة الأنشطة في مكان منفصل لتجنب مسح بيانات الأنشطة
                 await set(activitiesListRef, activitiesObject);
                 
-                console.log('🔥✅ تم حفظ جميع الأنشطة في Firebase Database (activitiesList)');
+                console.log('🔥✅ تم حفظ جميع الأنشطة في Firebase Database (activities)');
                 console.log('🛡️ بيانات الأنشطة الفردية محمية ولن تُمسح');
                 return true;
                 
@@ -10518,13 +9882,15 @@ function formatDate(dateString) {
                 return;
             }
 
+            const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
             const newActivity = {
                 id: Date.now(),
                 name: activityName,
-                initialCapital: 0  // رأس المال الأولي - يمكن تعديله لاحقاً من الإعدادات
+                createdBy: loggedInUser ? loggedInUser.name : 'غير محدد',
+                createdAt: new Date().toISOString()
             };
             activities.push(newActivity);
-            saveActivities();
+            saveActivitiesSafe();
             document.getElementById(inputId).value = '';
 
             if (fromSettings) {
@@ -10545,17 +9911,6 @@ function formatDate(dateString) {
                 
                 const activity = activities.find(a => a.id == id);
                 
-                // إضافة رأس المال للأنشطة القديمة (للتوافق مع النسخة القديمة)
-                if (activity && typeof activity.initialCapital === 'undefined') {
-                    activity.initialCapital = 0;
-                    saveActivities();
-                    console.log('🔄 تم إضافة حقل رأس المال للنشاط القديم');
-                    
-                    // إشعار للمستخدم عن إمكانية إدخال رأس المال
-                    setTimeout(() => {
-                        showNotification('💰 رأس المال', 'يمكنك الآن إدخال رأس المال الأولي من قسم الإعدادات > معلومات النشاط', 'info');
-                    }, 2000);
-                }
                 console.log('تفاصيل النشاط:', activity);
                 
                 // حفظ بيانات النشاط الحالي في sessionStorage للاستخدام في رفع الشعار
@@ -10622,6 +9977,23 @@ function formatDate(dateString) {
                     
                     tryInitialize();
                 }
+                
+                // 🏠 التأكد من عرض الصفحة الرئيسية بعد تحميل النشاط
+                console.log('🏠 التأكد من عرض الصفحة الرئيسية...');
+                setTimeout(() => {
+                    const homeSection = document.getElementById('home');
+                    if (homeSection && !homeSection.classList.contains('active')) {
+                        console.log('🔄 تفعيل الصفحة الرئيسية...');
+                        showSection('home');
+                    } else {
+                        console.log('✅ الصفحة الرئيسية نشطة بالفعل');
+                        // 🔄 حتى لو كانت نشطة، تأكد من تحديث البطاقات
+                        console.log('🔄 تحديث البطاقات في الصفحة الرئيسية...');
+                        if (typeof updateDashboard === 'function') {
+                            updateDashboard();
+                        }
+                    }
+                }, 500);
                 
                 hideLoading();
             } catch (error) {
@@ -10733,7 +10105,7 @@ function formatDate(dateString) {
                     removeFromLocalStorage(key);
                 }
                 activities = activities.filter(a => a.id !== id);
-                saveActivities();
+                saveActivitiesSafe();
                 renderActivitiesInSettings();
             }
         }
@@ -12131,6 +11503,10 @@ function loadCustomersToSelect() {
             editingPurchaseId = null;
             document.getElementById('purchaseDate').value = new Date().toISOString().split('T')[0];
             document.getElementById('purchaseSupplier').value = '';
+            document.getElementById('purchaseSupplierName').value = '';
+            document.getElementById('purchaseSupplierCode').value = '';
+            document.getElementById('purchaseSupplierPhone').value = '';
+            document.getElementById('purchaseSupplierAddress').value = '';
             document.getElementById('purchaseNotes').value = '';
             document.getElementById('purchasePaidAmount').value = '';
             generatePurchaseCode();
@@ -12425,10 +11801,31 @@ function loadCustomersToSelect() {
                 document.getElementById('saleCustomerName').value = customer.name || '';
                 document.getElementById('saleCustomerCode').value = customer.code || '';
                 document.getElementById('saleCustomerPhone').value = customer.phone || '';
+                document.getElementById('saleCustomerAddress').value = customer.address || '';
             } else {
                 document.getElementById('saleCustomerName').value = '';
                 document.getElementById('saleCustomerCode').value = '';
                 document.getElementById('saleCustomerPhone').value = '';
+                document.getElementById('saleCustomerAddress').value = '';
+            }
+        }
+        
+        // تحديث بيانات المورد عند الاختيار
+        function updateSupplierFields() {
+            const supplierSelect = document.getElementById('purchaseSupplier');
+            const supplierId = parseInt(supplierSelect.value);
+            const supplier = suppliers.find(s => s.id === supplierId);
+            
+            if (supplier) {
+                document.getElementById('purchaseSupplierName').value = supplier.name || '';
+                document.getElementById('purchaseSupplierCode').value = supplier.code || '';
+                document.getElementById('purchaseSupplierPhone').value = supplier.phone || '';
+                document.getElementById('purchaseSupplierAddress').value = supplier.address || '';
+            } else {
+                document.getElementById('purchaseSupplierName').value = '';
+                document.getElementById('purchaseSupplierCode').value = '';
+                document.getElementById('purchaseSupplierPhone').value = '';
+                document.getElementById('purchaseSupplierAddress').value = '';
             }
         }
         
@@ -14706,12 +14103,35 @@ function renderPurchaseReturns() {
             const reportType = document.getElementById('reportType').value;
             const isInvoiceReport = (reportType === 'sales' || reportType === 'purchases' || reportType === 'sales_returns' || reportType === 'purchase_returns');
             
-            // إظهار/إخفاء فلترة الأصناف
-            document.getElementById('reportItemFilter').style.display = isInvoiceReport ? 'inline-block' : 'none';
+            // 🔥 إخفاء التقرير السابق عند تغيير نوع التقرير
+            document.getElementById('reportResults').innerHTML = '';
+            document.getElementById('reportSummary').innerHTML = '';
+            
+            // إخفاء جميع الفلاتر أولاً
+            const itemFilterDiv = document.getElementById('reportItemFilter').parentElement;
+            const specificItemDiv = document.getElementById('reportSpecificItem').parentElement;
+            const paymentFilterDiv = document.getElementById('paymentStatusFilter').parentElement;
+            
+            // إخفاء جميع الفلاتر بالكامل
+            itemFilterDiv.style.display = 'none';
+            specificItemDiv.style.display = 'none'; 
+            paymentFilterDiv.style.display = 'none';
+            
+            // إظهار الفلاتر حسب نوع التقرير
+            if (isInvoiceReport) {
+                itemFilterDiv.style.display = 'block';
+                specificItemDiv.style.display = 'block';
+            }
+            
+            if (reportType === 'sales' || reportType === 'purchases') {
+                paymentFilterDiv.style.display = 'block';
+            }
+            
+            // إخفاء عنصر الصنف المحدد نفسه - سيظهر عند اختيار "صنف محدد"
             document.getElementById('reportSpecificItem').style.display = 'none';
             
-            // إظهار/إخفاء فلتر حالة الدفع (فقط للمبيعات والمشتريات وليس المرتجعات)
-            document.getElementById('paymentStatusFilter').style.display = (reportType === 'sales' || reportType === 'purchases') ? 'inline-block' : 'none';
+            // إعادة تعيين قيمة فلتر الأصناف
+            document.getElementById('reportItemFilter').value = 'all';
 
             const supplierFilter = document.getElementById('reportSupplierFilter');
             const customerFilter = document.getElementById('reportCustomerFilter');
@@ -14732,6 +14152,32 @@ function renderPurchaseReturns() {
                     customerFilter.innerHTML += `<option value="${customer.id}">${customer.name}</option>`;
                 });
             }
+        }
+
+        // 🔧 دالة حساب تكلفة البضاعة المباعة (COGS)
+        function calculateCOGS(filteredSales) {
+            let totalCost = 0;
+            
+            if (!Array.isArray(filteredSales)) {
+                return 0;
+            }
+            
+            filteredSales.forEach(sale => {
+                if (sale && Array.isArray(sale.items)) {
+                    sale.items.forEach(soldItem => {
+                        if (soldItem && soldItem.id) {
+                            const masterItem = items.find(item => item.id === soldItem.id);
+                            if (masterItem && soldItem.quantity) {
+                                const cost = Number(masterItem.cost) || 0;
+                                const quantity = Number(soldItem.quantity) || 0;
+                                totalCost += quantity * cost;
+                            }
+                        }
+                    });
+                }
+            });
+            
+            return totalCost;
         }
 
 
@@ -14846,37 +14292,34 @@ function generateReport() {
             const filteredRevenues = (Array.isArray(revenues) ? revenues : [])
                 .filter(r => (!fromDate || r.date >= fromDate) && (!toDate || r.date <= toDate));
 
-            // الحصول على رأس المال
-            const activity = activities.find(a => a.id == currentActivityId);
-            const initialCapital = activity ? (activity.initialCapital || 0) : 0;
-            
             const totalSalesRevenue = filteredSales.reduce((sum, sale) => sum + (Number(sale.total) || 0), 0);
             const totalOtherRevenues = filteredRevenues.reduce((sum, revenue) => sum + (Number(revenue.amount) || 0), 0);
             const totalCOGS = calculateCOGS(filteredSales);
             const grossProfit = totalSalesRevenue - totalCOGS;
             const totalExpenses = filteredExpenses.reduce((sum, expense) => sum + (Number(expense.amount) || 0), 0);
-            const netProfit = initialCapital + grossProfit + totalOtherRevenues - totalExpenses;
+            
+            // 🔥 التصحيح المحاسبي: صافي الربح من العمليات فقط (بدون رأس المال)
+            const netProfitFromOperations = grossProfit + totalOtherRevenues - totalExpenses;
 
             let summaryHtml = `<h3>ملخص ${reportTitle}</h3>
-                <p><strong>الفترة من:</strong> ${fromDate || '-'} <strong>إلى:</strong> ${toDate || '-'}</p>`;
+                <p><strong>الفترة من:</strong> ${fromDate || 'البداية'} <strong>إلى:</strong> ${toDate || 'النهاية'}</p>
+                <p><strong>عدد فواتير المبيعات:</strong> ${filteredSales.length}</p>
+                <p><strong>عدد المصروفات:</strong> ${filteredExpenses.length}</p>
+                <p><strong>عدد الإيرادات الأخرى:</strong> ${filteredRevenues.length}</p>`;
             document.getElementById('reportSummary').innerHTML = summaryHtml;
 
             let resultsHtml = `
-                <h3 style="margin-top:20px;">نتائج التقرير</h3>
-                <table style="text-align: right;">
-                    <tr style="border-bottom: 1px solid #ddd; background: #e8f5e8;">
-                        <td style="padding: 10px;"><strong>💰 رأس المال الأولي</strong></td>
-                        <td style="padding: 10px; color: var(--success-color); font-weight: bold;">${initialCapital.toFixed(2)}</td>
-                    </tr>
+                <h3 style="margin-top:20px;">📊 تقرير الربح والخسارة (العمليات التشغيلية)</h3>
+                <table style="text-align: right; margin-bottom: 30px;">
                     <tr style="border-bottom: 1px solid #ddd;">
-                        <td style="padding: 10px;"><strong>📊 إجمالي إيرادات المبيعات</strong></td>
+                        <td style="padding: 10px;"><strong>� إجمالي إيرادات المبيعات</strong></td>
                         <td style="padding: 10px; color: var(--success-color); font-weight: bold;">${totalSalesRevenue.toFixed(2)}</td>
                     </tr>
                     <tr style="border-bottom: 1px solid #ddd;">
                         <td style="padding: 10px;">(-) تكلفة البضاعة المباعة</td>
                         <td style="padding: 10px; color: var(--accent-color);">${totalCOGS.toFixed(2)}</td>
                     </tr>
-                    <tr style="border-bottom: 1px solid #ddd; font-size: 1.05em;">
+                    <tr style="border-bottom: 2px solid #333; font-size: 1.05em;">
                         <td style="padding: 10px;"><strong>(=) مجمل ربح المبيعات</strong></td>
                         <td style="padding: 10px; font-weight: bold;">${grossProfit.toFixed(2)}</td>
                     </tr>
@@ -14885,15 +14328,95 @@ function generateReport() {
                         <td style="padding: 10px; color: var(--success-color);">${totalOtherRevenues.toFixed(2)}</td>
                     </tr>
                     <tr style="border-bottom: 1px solid #ddd;">
-                        <td style="padding: 10px; padding-top: 20px;">(-) إجمالي المصروفات</td>
-                        <td style="padding: 10px; padding-top: 20px; color: var(--accent-color);">${totalExpenses.toFixed(2)}</td>
+                        <td style="padding: 10px;">(-) إجمالي المصروفات التشغيلية</td>
+                        <td style="padding: 10px; color: var(--accent-color);">${totalExpenses.toFixed(2)}</td>
                     </tr>
-                    <tr style="background: ${netProfit >= 0 ? 'var(--success-color)' : 'var(--accent-color)'}; color: white; font-size: 1.2em; border-radius: 8px;">
-                        <td style="padding: 15px;"><strong>(=) صافي الربح / الخسارة</strong></td>
-                        <td style="padding: 15px; font-weight: bold;">${netProfit.toFixed(2)}</td>
+                    <tr style="background: ${netProfitFromOperations >= 0 ? 'var(--success-color)' : 'var(--accent-color)'}; color: white; font-size: 1.2em; border-radius: 8px;">
+                        <td style="padding: 15px;"><strong>(=) صافي الربح/الخسارة النهائي</strong></td>
+                        <td style="padding: 15px; font-weight: bold;">${netProfitFromOperations.toFixed(2)}</td>
                     </tr>
                 </table>`;
             document.getElementById('reportResults').innerHTML = resultsHtml;
+            
+            // 🔥 الآن نكمل لعرض الكشف التفصيلي
+            // تجميع البيانات للكشف التفصيلي
+            let detailedData = [];
+            
+            // إضافة فواتير المبيعات
+            filteredSales.forEach(sale => {
+                detailedData.push({
+                    type: 'مبيعة',
+                    number: `SAL${sale.number.toString().padStart(3, '0')}`,
+                    date: sale.date,
+                    description: (Array.isArray(customers) ? customers : []).find(c => c.id === sale.customerId)?.name || 'غير معروف',
+                    debit: 0,
+                    credit: Number(sale.total) || 0
+                });
+            });
+            
+            // إضافة المصروفات
+            filteredExpenses.forEach(expense => {
+                detailedData.push({
+                    type: 'مصروف',
+                    number: `EXP${expense.number?.toString().padStart(3, '0') || '---'}`,
+                    date: expense.date,
+                    description: expense.description || 'مصروف',
+                    debit: Number(expense.amount) || 0,
+                    credit: 0
+                });
+            });
+            
+            // إضافة الإيرادات الأخرى
+            filteredRevenues.forEach(revenue => {
+                detailedData.push({
+                    type: 'إيراد',
+                    number: `REV${revenue.number?.toString().padStart(3, '0') || '---'}`,
+                    date: revenue.date,
+                    description: revenue.description || 'إيراد آخر',
+                    debit: 0,
+                    credit: Number(revenue.amount) || 0
+                });
+            });
+            
+            // ترتيب البيانات حسب التاريخ
+            detailedData.sort((a, b) => new Date(a.date) - new Date(b.date));
+            
+            // إنشاء جدول الكشف التفصيلي
+            if (detailedData.length > 0) {
+                let detailedTableBody = '';
+                detailedData.forEach(item => {
+                    detailedTableBody += `<tr>
+                        <td>${item.number}</td>
+                        <td>${item.date}</td>
+                        <td>${item.type}</td>
+                        <td>${item.description}</td>
+                        <td style="color: var(--accent-color); font-weight: bold;">${item.debit.toFixed(2)}</td>
+                        <td style="color: var(--success-color); font-weight: bold;">${item.credit.toFixed(2)}</td>
+                    </tr>`;
+                });
+
+                document.getElementById('reportTable').innerHTML = `
+                    <div style="margin-top: 30px;">
+                        <h3>📋 الكشف التفصيلي للعمليات</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>رقم العملية</th>
+                                    <th>التاريخ</th>
+                                    <th>النوع</th>
+                                    <th>الوصف</th>
+                                    <th style="color: var(--accent-color);">مدين</th>
+                                    <th style="color: var(--success-color);">دائن</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${detailedTableBody}
+                            </tbody>
+                        </table>
+                    </div>`;
+            } else {
+                document.getElementById('reportTable').innerHTML = '<p style="text-align: center; margin-top: 20px;">لا توجد عمليات في الفترة المحددة</p>';
+            }
             return;
         }
     }
@@ -15637,13 +15160,49 @@ if (data.length > 0) {
 
         // ===== Dashboard Update =====
  function updateDashboard() {
+    console.log('📊 🔄 updateDashboard - بدء تحديث لوحة التحكم...');
+    console.log('📊 currentActivityId:', currentActivityId);
+    console.log('📊 عدد الأصناف:', items?.length || 0);
+    console.log('📊 عدد العملاء:', customers?.length || 0);
+    console.log('📊 عدد الموردين:', suppliers?.length || 0);
+    console.log('📊 عدد المبيعات:', sales?.length || 0);
+    console.log('📊 عدد المشتريات:', purchases?.length || 0);
+    console.log('📊 عدد المصروفات:', expenses?.length || 0);
+    console.log('📊 عدد الإيرادات:', revenues?.length || 0);
+    console.log('📊 عدد العهد:', advances?.length || 0);
+    console.log('📊 عدد الأصول:', assets?.length || 0);
+    
+    // 🔍 فحص القسم النشط حالياً
+    const activeSection = document.querySelector('.section.active');
+    console.log('📍 القسم النشط حالياً:', activeSection ? activeSection.id : 'لا يوجد');
+    
     const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
     const allowEmpty = !currentActivityId && loggedInUser && loggedInUser.role === 'admin';
-    if (!currentActivityId && !allowEmpty) return;
+    
+    console.log('📊 allowEmpty:', allowEmpty, '| loggedInUser:', loggedInUser?.email);
+    
+    if (!currentActivityId && !allowEmpty) {
+        console.log('⚠️ تم إيقاف updateDashboard - لا يوجد نشاط محدد ولا يُسمح بالعرض الفارغ');
+        return;
+    }
 
     const setText = (id, value) => {
         const el = document.getElementById(id);
-        if (el) el.textContent = value;
+        if (el) {
+            const oldValue = el.textContent;
+            el.textContent = value;
+            console.log(`✅ تحديث #${id}: "${oldValue}" → "${value}"`);
+            
+            // 🔍 فحص بعد 100ms للتأكد من عدم تغيير القيمة
+            setTimeout(() => {
+                const currentValue = document.getElementById(id)?.textContent;
+                if (currentValue !== value.toString()) {
+                    console.error(`🚨 القيمة تغيرت! #${id}: "${value}" → "${currentValue}"`);
+                }
+            }, 100);
+        } else {
+            console.warn(`⚠️ العنصر #${id} غير موجود!`);
+        }
     };
    document.getElementById('totalAdvancesHome').textContent = advances.length;
     setText('totalItems', items.length);
@@ -15654,11 +15213,6 @@ if (data.length > 0) {
     setText('totalPurchases', purchases.reduce((s, i) => s + (Number(i.total) || 0), 0).toFixed(2));
     setText('totalExpensesHome', expenses.reduce((s, e) => s + (Number(e.amount) || 0), 0).toFixed(2));
     setText('totalRevenuesHome', revenues.reduce((s, r) => s + (Number(r.amount) || 0), 0).toFixed(2));
-    
-    // عرض رأس المال الأولي
-    const currentActivity = activities.find(a => a.id == currentActivityId);
-    const initialCapital = currentActivity ? (currentActivity.initialCapital || 0) : 0;
-    setText('initialCapitalHome', initialCapital.toFixed(2));
     
     setText('totalStockQuantity', calculateTotalStock());
     
@@ -15691,11 +15245,142 @@ if (data.length > 0) {
     
     setText('netWorkingCapital', netWorkingCapital.toFixed(2));
     
+    console.log('✅ updateDashboard - اكتمل تحديث جميع البطاقات!');
+    console.log('📊 القيم المحدثة:');
+    console.log('  - إجمالي الأصناف:', items.length);
+    console.log('  - إجمالي العملاء:', customers.length);
+    console.log('  - إجمالي الموردين:', suppliers.length);
+    console.log('  - قيمة المخزون:', stockValue.toFixed(2));
+    console.log('  - إجمالي المبيعات:', sales.reduce((s, i) => s + (Number(i.total) || 0), 0).toFixed(2));
+    console.log('  - إجمالي المشتريات:', purchases.reduce((s, i) => s + (Number(i.total) || 0), 0).toFixed(2));
+    
+    // 🔍 فحص القيم المعروضة في DOM فعلياً
+    setTimeout(() => {
+        console.log('🔍 فحص القيم المعروضة في DOM:');
+        console.log('  📊 #totalItems.textContent =', document.getElementById('totalItems')?.textContent);
+        console.log('  📊 #totalCustomers.textContent =', document.getElementById('totalCustomers')?.textContent);
+        console.log('  📊 #totalSuppliers.textContent =', document.getElementById('totalSuppliers')?.textContent);
+        console.log('  📊 #totalSales.textContent =', document.getElementById('totalSales')?.textContent);
+        console.log('  📊 #totalPurchases.textContent =', document.getElementById('totalPurchases')?.textContent);
+        
+        // فحص الـ CSS المطبق
+        const totalItemsEl = document.getElementById('totalItems');
+        if (totalItemsEl) {
+            const styles = window.getComputedStyle(totalItemsEl);
+            console.log('  🎨 CSS لـ #totalItems:');
+            console.log('    - display:', styles.display);
+            console.log('    - visibility:', styles.visibility);
+            console.log('    - opacity:', styles.opacity);
+            console.log('    - color:', styles.color);
+            console.log('    - font-size:', styles.fontSize);
+        }
+    }, 100);
+    
     // تحديث لوحة التحكم المتقدمة إذا كانت مفتوحة
-    if (document.getElementById('advanced-dashboard').classList.contains('active')) {
-        updateLiveStats();
-        renderCharts();
+    if (document.getElementById('advanced-dashboard')?.classList.contains('active')) {
+        console.log('📊 تحديث بطاقات لوحة التحكم المتقدمة...');
+        if (typeof updateLiveStats === 'function') {
+            updateLiveStats();
+        } else {
+            // تحديث يدوي للبطاقات إذا لم تكن الدالة موجودة
+            updateAdvancedDashboardCards();
+        }
+        if (typeof renderCharts === 'function') {
+            renderCharts();
+        }
     }
+}
+
+// ===== دالة تحديث بطاقات لوحة التحكم المتقدمة =====
+function updateAdvancedDashboardCards() {
+    console.log('📊 تحديث بطاقات لوحة التحكم المتقدمة يدوياً...');
+    
+    const today = new Date().toISOString().split('T')[0];
+    const currentMonth = new Date().toISOString().slice(0, 7);
+    
+    console.log('📅 تاريخ اليوم:', today);
+    console.log('📅 الشهر الحالي:', currentMonth);
+    
+    // طباعة تواريخ المبيعات للتشخيص
+    console.log('📊 تواريخ المبيعات:');
+    sales.forEach((s, i) => {
+        console.log(`  البيع ${i + 1}: تاريخ="${s.date}", إجمالي=${s.total}`);
+    });
+    
+    // مبيعات اليوم
+    const todaySales = sales.filter(s => {
+        const saleDate = s.date ? s.date.split('T')[0] : ''; // التعامل مع التواريخ بصيغة ISO
+        const isToday = saleDate === today;
+        console.log(`  🔍 فحص البيع: تاريخ="${s.date}" -> تاريخ منسق="${saleDate}", هل اليوم؟ ${isToday}`);
+        return isToday;
+    });
+    const todaySalesTotal = todaySales.reduce((sum, s) => sum + (Number(s.total) || 0), 0);
+    document.getElementById('todaySales').textContent = todaySalesTotal.toFixed(2);
+    
+    console.log(`✅ مبيعات اليوم: ${todaySales.length} فاتورة، الإجمالي: ${todaySalesTotal.toFixed(2)}`);
+    
+    // مشتريات اليوم
+    const todayPurchases = purchases.filter(p => {
+        const purchaseDate = p.date ? p.date.split('T')[0] : '';
+        return purchaseDate === today;
+    });
+    const todayPurchasesTotal = todayPurchases.reduce((sum, p) => sum + (Number(p.total) || 0), 0);
+    document.getElementById('todayPurchases').textContent = todayPurchasesTotal.toFixed(2);
+    
+    // مصروفات اليوم
+    const todayExpenses = expenses.filter(e => {
+        const expenseDate = e.date ? e.date.split('T')[0] : '';
+        return expenseDate === today;
+    });
+    const todayExpensesTotal = todayExpenses.reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
+    document.getElementById('todayExpenses').textContent = todayExpensesTotal.toFixed(2);
+    
+    // إيرادات اليوم
+    const todayRevenues = revenues.filter(r => {
+        const revenueDate = r.date ? r.date.split('T')[0] : '';
+        return revenueDate === today;
+    });
+    const todayRevenuesTotal = todayRevenues.reduce((sum, r) => sum + (Number(r.amount) || 0), 0);
+    document.getElementById('todayRevenues').textContent = todayRevenuesTotal.toFixed(2);
+    
+    // المبيعات الشهرية
+    const monthlySales = sales.filter(s => {
+        const saleDate = s.date ? s.date.split('T')[0] : '';
+        return saleDate.startsWith(currentMonth);
+    });
+    const monthlySalesTotal = monthlySales.reduce((sum, s) => sum + (Number(s.total) || 0), 0);
+    document.getElementById('monthlySales').textContent = monthlySalesTotal.toFixed(2);
+    
+    // المشتريات الشهرية
+    const monthlyPurchases = purchases.filter(p => {
+        const purchaseDate = p.date ? p.date.split('T')[0] : '';
+        return purchaseDate.startsWith(currentMonth);
+    });
+    const monthlyPurchasesTotal = monthlyPurchases.reduce((sum, p) => sum + (Number(p.total) || 0), 0);
+    document.getElementById('monthlyPurchases').textContent = monthlyPurchasesTotal.toFixed(2);
+    
+    // المصروفات الشهرية
+    const monthlyExpenses = expenses.filter(e => {
+        const expenseDate = e.date ? e.date.split('T')[0] : '';
+        return expenseDate.startsWith(currentMonth);
+    });
+    const monthlyExpensesTotal = monthlyExpenses.reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
+    const monthlyExpensesCard = document.getElementById('monthlyExpensesCard');
+    if (monthlyExpensesCard) monthlyExpensesCard.textContent = monthlyExpensesTotal.toFixed(2);
+    
+    // الإيرادات الشهرية
+    const monthlyRevenues = revenues.filter(r => {
+        const revenueDate = r.date ? r.date.split('T')[0] : '';
+        return revenueDate.startsWith(currentMonth);
+    });
+    const monthlyRevenuesTotal = monthlyRevenues.reduce((sum, r) => sum + (Number(r.amount) || 0), 0);
+    document.getElementById('monthlyRevenues').textContent = monthlyRevenuesTotal.toFixed(2);
+    
+    console.log('✅ تم تحديث بطاقات لوحة التحكم المتقدمة:');
+    console.log('  - مبيعات اليوم:', todaySalesTotal.toFixed(2), `(${todaySales.length} فاتورة)`);
+    console.log('  - مشتريات اليوم:', todayPurchasesTotal.toFixed(2), `(${todayPurchases.length} فاتورة)`);
+    console.log('  - المبيعات الشهرية:', monthlySalesTotal.toFixed(2), `(${monthlySales.length} فاتورة)`);
+    console.log('  - المشتريات الشهرية:', monthlyPurchasesTotal.toFixed(2), `(${monthlyPurchases.length} فاتورة)`);
 }
         
         // ========================================
@@ -16224,23 +15909,9 @@ if (data.length > 0) {
         // تحميل الأنشطة من Firebase أو LocalStorage
         if (USE_FIREBASE) {
             try {
-                const { ref, get } = window.firebaseModules;
-                const db = window.firebaseDatabase;
-                
-                const activitiesRef = ref(db, 'activities');
-                const activitiesSnapshot = await get(activitiesRef);
-                
-                if (activitiesSnapshot.exists()) {
-                    const activitiesData = activitiesSnapshot.val();
-                    activities = Object.values(activitiesData)
-                        .filter(activity => activity && activity.id && activity.name) // تجاهل البيانات الفارغة
-                        .map(activity => ({
-                            id: activity.id,
-                            name: activity.name,
-                            createdAt: activity.createdAt,
-                            createdBy: activity.createdBy
-                        }));
-                    
+                const firebaseActivities = await firebaseLoadActivitiesDirectly();
+                if (firebaseActivities && firebaseActivities.length > 0) {
+                    activities = firebaseActivities;
                     // حفظ في LocalStorage
                     localStorage.setItem('diwan_activities', JSON.stringify(activities));
                     debugLog(`✅ تم تحميل ${activities.length} نشاط من Firebase`);
@@ -16256,7 +15927,7 @@ if (data.length > 0) {
         }
 
         // التحقق من الصلاحيات
-        if ((user.role === 'manager' || user.role === 'user') && (!user.activityId || !activities.find(a => a.id == user.activityId))) {
+        if (user.role === 'user' && (!user.activityId || !activities.find(a => a.id == user.activityId))) {
             hideLoading();
             showNotification('⚠️ نشاط غير صالح', 'النشاط المرتبط بحسابك غير موجود. راجع المدير.', 'warning');
             errorMsg.textContent = 'النشاط المرتبط بحسابك غير صالح.';
@@ -16860,9 +16531,6 @@ if (data.length > 0) {
             document.getElementById('activityCreatedAt').textContent = activity.createdAt || 'غير محدد';
             document.getElementById('activityCreatedBy').textContent = activity.createdBy || 'غير محدد';
             
-            // تحديث عرض رأس المال
-            updateInitialCapitalDisplay();
-            
             // فتح النافذة مع تأثير
             const overlay = document.getElementById('edit-activity-overlay');
             overlay.style.display = 'flex';
@@ -16931,8 +16599,8 @@ if (data.length > 0) {
                 activities[activityIndex].name = newName;
                 activities[activityIndex].updatedAt = new Date().toLocaleString('ar-SA');
                 
-                // حفظ في التخزين المحلي
-                saveActivities();
+                // حفظ في التخزين المحلي بطريقة آمنة
+                saveActivitiesSafe();
                 
                 // تحديث الواجهة
                 renderActivitiesInSettings();
@@ -18436,9 +18104,6 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('searchSales')?.addEventListener('input', searchSales);
             document.getElementById('searchPurchases')?.addEventListener('input', searchPurchases);
             
-            // ربط تحديث بيانات العميل عند اختياره في فاتورة المبيعات
-            document.getElementById('saleCustomer')?.addEventListener('change', updateCustomerFields);
-            
             document.addEventListener('click', function(event) {
                 const cp = document.getElementById('controlPanel'), dt = document.querySelector('.design-toggle');
                 if (cp && cp.classList.contains('show') && !cp.contains(event.target) && !dt.contains(event.target)) {
@@ -19609,86 +19274,250 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
-        function calculateCOGS(filteredSales) {
-            let totalCost = 0;
-            filteredSales.forEach(sale => {
-                sale.items.forEach(soldItem => {
-                    const masterItem = items.find(item => item.id === soldItem.id);
-                    if (masterItem) {
-                        totalCost += soldItem.quantity * masterItem.cost;
-                    }
-                });
-            });
-            return totalCost;
+// دالة عامة لتحميل البيانات من localStorage
+function getStoredData(key) {
+    try {
+        // جرب المفاتيح المختلفة
+        const activityKey = currentActivityId ? `activity_${currentActivityId}_${key}` : key;
+        
+        console.log(`🔍 البحث عن البيانات:`, {
+            key,
+            currentActivityId,
+            activityKey,
+            keysInStorage: Object.keys(localStorage).filter(k => k.includes(key))
+        });
+        
+        const data = localStorage.getItem(activityKey);
+        if (data) {
+            const parsed = JSON.parse(data);
+            console.log(`✅ تم العثور على ${key}:`, parsed.length, 'عنصر');
+            return parsed;
         }
+        
+        // جرب المفتاح البسيط
+        const simpleData = localStorage.getItem(key);
+        if (simpleData) {
+            const parsed = JSON.parse(simpleData);
+            console.log(`✅ تم العثور على ${key} (مفتاح بسيط):`, parsed.length, 'عنصر');
+            return parsed;
+        }
+        
+        console.log(`❌ لم يتم العثور على ${key}`);
+        return null;
+    } catch (error) {
+        console.error(`خطأ في تحميل ${key}:`, error);
+        return null;
+    }
+}
 
-// دوال لوحة التحكم المتقدمة
+// دوال لوحة التحكم المتقدمة - الإصدار المحدث
 function initAdvancedDashboard() {
+    console.log('📊 بدء تهيئة لوحة التحكم المتقدمة');
+    console.log('📈 البيانات الحالية:', {
+        salesCount: sales.length,
+        purchasesCount: purchases.length,
+        expensesCount: expenses.length
+    });
+    
     updateLiveStats();
     renderCharts();
     updatePerformanceIndicators();
     
+    // تحديث تلقائي كل 5 ثوانٍ
+    window.dashboardRefreshInterval = setInterval(() => {
+        updateLiveStats();
+        renderCharts();
+    }, 5000);
 }
 
 function updateLiveStats() {
     const today = new Date().toISOString().split('T')[0];
     const currentMonth = new Date().toISOString().substring(0, 7);
     
-    // المبيعات اليومية
-    const todaySales = sales.filter(s => s.date === today)
-                           .reduce((sum, sale) => sum + sale.total, 0);
-    const liveSalesEl = document.getElementById('liveSales');
-    if (liveSalesEl) liveSalesEl.textContent = todaySales.toFixed(2);
+    console.log('🔄 تحديث إحصائيات لوحة التحكم:');
+    console.log(`📅 اليوم: ${today}, الشهر: ${currentMonth}`);
+    console.log(`🎯 النشاط الحالي: ${currentActivityId}`);
+    console.log(`📊 البيانات الحالية قبل التحميل:`, {
+        salesType: typeof sales,
+        salesLength: sales ? sales.length : 'null',
+        purchasesType: typeof purchases,
+        purchasesLength: purchases ? purchases.length : 'null'
+    });
     
-    // الإيرادات الشهرية
-    const monthRevenue = sales.filter(s => s.date.substring(0, 7) === currentMonth)
-                             .reduce((sum, sale) => sum + sale.total, 0);
-    const liveRevenueEl = document.getElementById('liveRevenue');
-    if (liveRevenueEl) liveRevenueEl.textContent = monthRevenue.toFixed(2);
+    // إعادة تحميل البيانات من Firebase أو localStorage إذا لم تكن محملة
+    async function reloadDataIfNeeded() {
+        if (USE_FIREBASE && currentActivityId) {
+            if (!sales || sales.length === 0) {
+                console.log('⚠️ لا توجد مبيعات محملة - إعادة تحميل من Firebase');
+                const firebaseSales = await firebaseGetActivityData(currentActivityId, 'sales') || [];
+                window.sales = sales = firebaseSales;
+                console.log(`✅ تم إعادة تحميل ${firebaseSales.length} مبيعة من Firebase`);
+            }
+            
+            if (!purchases || purchases.length === 0) {
+                console.log('⚠️ لا توجد مشتريات محملة - إعادة تحميل من Firebase');
+                const firebasePurchases = await firebaseGetActivityData(currentActivityId, 'purchases') || [];
+                window.purchases = purchases = firebasePurchases;
+                console.log(`✅ تم إعادة تحميل ${firebasePurchases.length} مشتريات من Firebase`);
+            }
+            
+            if (!expenses || expenses.length === 0) {
+                console.log('⚠️ لا توجد مصروفات محملة - إعادة تحميل من Firebase');
+                const firebaseExpenses = await firebaseGetActivityData(currentActivityId, 'expenses') || [];
+                window.expenses = expenses = firebaseExpenses;
+                console.log(`✅ تم إعادة تحميل ${firebaseExpenses.length} مصروفات من Firebase`);
+            }
+            
+            if (!revenues || revenues.length === 0) {
+                console.log('⚠️ لا توجد إيرادات محملة - إعادة تحميل من Firebase');
+                const firebaseRevenues = await firebaseGetActivityData(currentActivityId, 'revenues') || [];
+                window.revenues = revenues = firebaseRevenues;
+                console.log(`✅ تم إعادة تحميل ${firebaseRevenues.length} إيرادة من Firebase`);
+            }
+        } else {
+            // إعادة تحميل من localStorage كحل احتياطي
+            if (!sales || sales.length === 0) {
+                console.log('⚠️ لا توجد مبيعات محملة - محاولة التحميل من localStorage');
+                const storedSales = getStoredData('sales');
+                if (storedSales && storedSales.length > 0) {
+                    window.sales = sales = storedSales;
+                    console.log(`✅ تم تحميل ${storedSales.length} مبيعة من localStorage`);
+                }
+            }
+            
+            if (!purchases || purchases.length === 0) {
+                console.log('⚠️ لا توجد مشتريات محملة - محاولة التحميل من localStorage');
+                const storedPurchases = getStoredData('purchases');
+                if (storedPurchases && storedPurchases.length > 0) {
+                    window.purchases = purchases = storedPurchases;
+                    console.log(`✅ تم تحميل ${storedPurchases.length} مشتريات من localStorage`);
+                }
+            }
+            
+            if (!expenses || expenses.length === 0) {
+                console.log('⚠️ لا توجد مصروفات محملة - محاولة التحميل من localStorage');
+                const storedExpenses = getStoredData('expenses');
+                if (storedExpenses && storedExpenses.length > 0) {
+                    window.expenses = expenses = storedExpenses;
+                    console.log(`✅ تم تحميل ${storedExpenses.length} مصروفات من localStorage`);
+                }
+            }
+            
+            if (!revenues || revenues.length === 0) {
+                console.log('⚠️ لا توجد إيرادات محملة - محاولة التحميل من localStorage');
+                const storedRevenues = getStoredData('revenues');
+                if (storedRevenues && storedRevenues.length > 0) {
+                    window.revenues = revenues = storedRevenues;
+                    console.log(`✅ تم تحميل ${storedRevenues.length} إيرادة من localStorage`);
+                }
+            }
+        }
+    }
     
-    // صافي الربح (رأس المال + مبيعات + إيرادات - مشتريات - مصروفات)
+    // تنفيذ إعادة التحميل إذا لزم الأمر ثم تحديث الإحصائيات
+    reloadDataIfNeeded().then(() => {
+        console.log(`📊 البيانات بعد التحميل:`, { 
+            sales: sales ? sales.length : 'null', 
+            purchases: purchases ? purchases.length : 'null',
+            expenses: expenses ? expenses.length : 'null',
+            revenues: revenues ? revenues.length : 'null'
+        });
+        
+        // تحقق من صحة البيانات
+        if (!sales) {
+            console.error('❌ sales غير معرف!');
+            window.sales = sales = [];
+        }
+        if (!purchases) {
+            console.error('❌ purchases غير معرف!');
+            window.purchases = purchases = [];
+        }
+        if (!expenses) {
+            console.error('❌ expenses غير معرف!');
+            window.expenses = expenses = [];
+        }
+        if (!revenues) {
+            console.error('❌ revenues غير معرف!');
+            window.revenues = revenues = [];
+        }
+    
+    // 💰 مبيعات اليوم
+    const todaySalesAmount = (sales && sales.length > 0) ? sales.filter(s => s.date === today)
+                                  .reduce((sum, sale) => sum + (Number(sale.total) || 0), 0) : 0;
+    const todaySalesEl = document.getElementById('todaySales');
+    
+    // تشخيص: عرض جميع تواريخ المبيعات
+    if (sales && sales.length > 0) {
+        const salesDates = [...new Set(sales.map(s => s.date))];
+        console.log(`📅 تواريخ المبيعات المتاحة:`, salesDates);
+        console.log(`📅 تاريخ البحث (اليوم):`, today);
+        console.log(`✏️ مبيعات بتاريخ ${today}:`, sales.filter(s => s.date === today).length);
+    }
+    
+    console.log(`✏️ مبيعات اليوم: ${todaySalesAmount}, عنصر HTML: ${todaySalesEl ? 'موجود' : 'غير موجود'}`);
+    if (todaySalesEl) todaySalesEl.textContent = todaySalesAmount.toFixed(2);
+    
+    // 🛒 مشتريات اليوم
+    const todayPurchasesAmount = (purchases && purchases.length > 0) ? purchases.filter(p => p.date === today)
+                                         .reduce((sum, purchase) => sum + (Number(purchase.total) || 0), 0) : 0;
+    const todayPurchasesEl = document.getElementById('todayPurchases');
+    console.log(`✏️ مشتريات اليوم: ${todayPurchasesAmount}, عنصر HTML: ${todayPurchasesEl ? 'موجود' : 'غير موجود'}`);
+    if (todayPurchasesEl) todayPurchasesEl.textContent = todayPurchasesAmount.toFixed(2);
+    
+    // � مصروفات اليوم
+    const todayExpensesAmount = expenses.filter(e => e.date === today)
+                                       .reduce((sum, expense) => sum + (Number(expense.amount) || 0), 0);
+    const todayExpensesEl = document.getElementById('todayExpenses');
+    if (todayExpensesEl) todayExpensesEl.textContent = todayExpensesAmount.toFixed(2);
+    
+    // 💵 إيرادات اليوم (الإيرادات الأخرى)
+    const todayRevenuesAmount = revenues.filter(r => r.date === today)
+                                       .reduce((sum, revenue) => sum + (Number(revenue.amount) || 0), 0);
+    const todayRevenuesEl = document.getElementById('todayRevenues');
+    if (todayRevenuesEl) todayRevenuesEl.textContent = todayRevenuesAmount.toFixed(2);
+    
+    const monthlySalesAmount = (sales && sales.length > 0) ? sales.filter(s => s.date && s.date.substring(0, 7) === currentMonth)
+                                   .reduce((sum, sale) => sum + (Number(sale.total) || 0), 0) : 0;
+    const monthlySalesEl = document.getElementById('monthlySales');
+    if (monthlySalesEl) monthlySalesEl.textContent = monthlySalesAmount.toFixed(2);
+    
+    const monthlyPurchasesAmount = (purchases && purchases.length > 0) ? purchases.filter(p => p.date && p.date.substring(0, 7) === currentMonth)
+                                           .reduce((sum, purchase) => sum + (Number(purchase.total) || 0), 0) : 0;
+    const monthlyPurchasesEl = document.getElementById('monthlyPurchases');
+    if (monthlyPurchasesEl) monthlyPurchasesEl.textContent = monthlyPurchasesAmount.toFixed(2);
+    
+    // 💸 مصروفات الشهر
+    const monthlyExpensesAmount = expenses.filter(e => e.date.substring(0, 7) === currentMonth)
+                                         .reduce((sum, expense) => sum + (Number(expense.amount) || 0), 0);
+    const monthlyExpensesCardEl = document.getElementById('monthlyExpensesCard');
+    if (monthlyExpensesCardEl) monthlyExpensesCardEl.textContent = monthlyExpensesAmount.toFixed(2);
+    
+    // 💵 إيرادات الشهر (الإيرادات الأخرى)
+    const monthlyRevenuesAmount = revenues.filter(r => r.date.substring(0, 7) === currentMonth)
+                                         .reduce((sum, revenue) => sum + (Number(revenue.amount) || 0), 0);
+    const monthlyRevenuesEl = document.getElementById('monthlyRevenues');
+    if (monthlyRevenuesEl) monthlyRevenuesEl.textContent = monthlyRevenuesAmount.toFixed(2);
+
+    // 🔥 حساب الأرباح المتراكمة (للاستخدام في التقارير فقط)
     const activity = activities.find(a => a.id == currentActivityId);
-    const initialCapital = activity ? (activity.initialCapital || 0) : 0;
-    const monthPurchases = purchases.filter(p => p.date.substring(0, 7) === currentMonth)
-                                   .reduce((sum, purchase) => sum + purchase.total, 0);
-    const monthExpenses = expenses.filter(e => e.date.substring(0, 7) === currentMonth)
-                                 .reduce((sum, expense) => sum + expense.amount, 0);
-    const monthRevenues = revenues.filter(r => r.date.substring(0, 7) === currentMonth)
-                                 .reduce((sum, revenue) => sum + revenue.amount, 0);
-    const netProfit = initialCapital + monthRevenue + monthRevenues - monthPurchases - monthExpenses;
-    const liveProfitEl = document.getElementById('liveProfit');
-    if (liveProfitEl) liveProfitEl.textContent = netProfit.toFixed(2);
     
-    // العملاء الجدد (سنضيف createdAt لاحقاً)
-    const newCustomers = customers.length; // مؤقتاً
-    const liveCustomersEl = document.getElementById('liveCustomers');
-    if (liveCustomersEl) liveCustomersEl.textContent = newCustomers;
-    
-    // المصروفات الشهرية
-    const monthlyExpensesEl = document.getElementById('monthlyExpenses');
-    if (monthlyExpensesEl) {
-        monthlyExpensesEl.innerHTML = `<p>المصروفات هذا الشهر: ${monthExpenses.toFixed(2)} ريال</p>`;
-    }
-
-    // الأرباح المتراكمة (من بداية السنة) مع رأس المال
     const yearStart = new Date().getFullYear() + '-01-01';
-    const cumulativeRevenue = sales.filter(s => s.date >= yearStart).reduce((sum, sale) => sum + sale.total, 0);
+    const cumulativeSales = sales.filter(s => s.date >= yearStart);
+    const cumulativeSalesRevenue = cumulativeSales.reduce((sum, sale) => sum + sale.total, 0);
     const cumulativeRevenuesExtra = revenues.filter(r => r.date >= yearStart).reduce((sum, revenue) => sum + revenue.amount, 0);
-    const cumulativePurchases = purchases.filter(p => p.date >= yearStart).reduce((sum, purchase) => sum + purchase.total, 0);
     const cumulativeExpenses = expenses.filter(e => e.date >= yearStart).reduce((sum, expense) => sum + expense.amount, 0);
-    const cumulativeProfits = initialCapital + cumulativeRevenue + cumulativeRevenuesExtra - cumulativePurchases - cumulativeExpenses;
-    const cumulativeProfitsEl = document.getElementById('cumulativeProfits');
-    if (cumulativeProfitsEl) {
-        cumulativeProfitsEl.innerHTML = `<p>الأرباح المتراكمة: ${cumulativeProfits.toFixed(2)} ريال</p>`;
-    }
-}
-
+    const cumulativeCOGS = calculateCOGS(cumulativeSales);
+    
+    // صافي الأرباح المتراكمة من العمليات (للتقارير فقط)
+    const cumulativeGrossProfit = cumulativeSalesRevenue - cumulativeCOGS;
+    const cumulativeNetProfitFromOperations = cumulativeGrossProfit + cumulativeRevenuesExtra - cumulativeExpenses;
+    
+    }).catch(error => {
+        console.error('❌ خطأ في إعادة تحميل البيانات:', error);
+    });
+}// 📊 رسم الأصناف الأكثر مبيعاً فقط
 function renderCharts() {
-    renderSalesChart();
-    renderRevenueChart();
     renderTopItemsChart();
-    renderExpensesChart();
-    renderPurchasesSalesChart();
 }
 
 function renderSalesChart() {
@@ -19835,20 +19664,31 @@ function renderTopItemsChart() {
     const ctx = document.getElementById('topItemsChart');
     if (!ctx) return;
     
+    console.log('🔄 رسم الأصناف الأكثر مبيعاً - البيانات الحالية:');
+    console.log('  sales:', sales);
+    
     // حساب الأصناف الأكثر مبيعاً
     const itemSales = {};
-    sales.forEach(sale => {
-        sale.items.forEach(item => {
-            if (!itemSales[item.name]) {
-                itemSales[item.name] = 0;
+    if (sales && Array.isArray(sales) && sales.length > 0) {
+        sales.forEach((sale, idx) => {
+            console.log(`  مبيعة #${idx}:`, sale);
+            if (sale.items && Array.isArray(sale.items)) {
+                sale.items.forEach(item => {
+                    console.log(`    صنف: ${item.name}, كمية: ${item.quantity}`);
+                    if (!itemSales[item.name]) {
+                        itemSales[item.name] = 0;
+                    }
+                    itemSales[item.name] += item.quantity;
+                });
             }
-            itemSales[item.name] += item.quantity;
         });
-    });
+    }
 
     const topItems = Object.entries(itemSales)
         .sort((a, b) => b[1] - a[1])
         .slice(0, 5);
+    
+    console.log('✅ أعلى الأصناف:', topItems);
 
     // تدمير الرسم البياني القديم إذا موجود
     if (window.topItemsChartInstance) {
@@ -20530,186 +20370,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 }
 // نهاية الكود JavaScript
-    </script>
-
-    <!-- نافذة مراقب البيانات المتقدم -->
-    <div id="data-monitor-modal">
-        <div class="modal-content">
-            <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #ddd; padding-bottom: 15px;">
-                <h3 style="margin: 0; color: #333;">📊 مراقب البيانات المتقدم</h3>
-                <span class="close" onclick="closeDataMonitorModal()" style="cursor: pointer; font-size: 24px; color: #999; font-weight: bold;">&times;</span>
-            </div>
-            <div class="modal-body">
-                <div class="form-grid grid-4" style="margin-bottom: 20px;">
-                    <button class="btn-success" onclick="DATA_MONITOR.saveSnapshot('manual'); showNotification('✅ تم الحفظ', 'تم حفظ لقطة يدوية', 'success');" style="background: #16a34a; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;">
-                        💾 حفظ لقطة يدوية
-                    </button>
-                    <button class="btn-info" onclick="DATA_MONITOR.detectDataLoss()" style="background: #3b82f6; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;">
-                        🔍 فحص فقدان البيانات
-                    </button>
-                    <button class="btn-warning" onclick="DATA_MONITOR.enabled = !DATA_MONITOR.enabled; updateDataMonitorDisplay(); showNotification('📊', DATA_MONITOR.enabled ? 'تم تفعيل المراقبة' : 'تم إيقاف المراقبة', 'info');" style="background: #f59e0b; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;">
-                        <span id="dataMonitorToggle">⏸️ إيقاف المراقبة</span>
-                    </button>
-                    <button class="btn-danger" onclick="checkFirebaseData()" style="background: #dc2626; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;">
-                        🔥 فحص Firebase
-                    </button>
-                </div>
-                
-                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-                    <h4>📈 إحصائيات البيانات الحالية</h4>
-                    <div id="currentDataStats" class="form-grid grid-4" style="font-size: 0.9em;">
-                        <!-- سيتم ملؤها بالجافا سكريبت -->
-                    </div>
-                </div>
-                
-                <div style="background: #e8f5e9; padding: 15px; border-radius: 8px;">
-                    <h4>🗂️ اللقطات المحفوظة</h4>
-                    <div id="savedSnapshots" style="max-height: 300px; overflow-y: auto;">
-                        <!-- سيتم ملؤها بالجافا سكريبت -->
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <script>
-        // دوال مراقب البيانات
-        function showDataMonitorModal() {
-            const modal = document.getElementById('data-monitor-modal');
-            modal.classList.add('show');
-            updateDataMonitorDisplay();
-        }
-        
-        function closeDataMonitorModal() {
-            const modal = document.getElementById('data-monitor-modal');
-            modal.classList.remove('show');
-        }
-        
-        // فحص مباشر لـ Firebase
-        async function checkFirebaseData() {
-            if (!USE_FIREBASE || !currentActivityId) {
-                showNotification('⚠️ خطأ', 'Firebase غير مُفعّل أو لا يوجد نشاط محدد', 'warning');
-                return;
-            }
-            
-            try {
-                console.log('🔥 بدء فحص Firebase المباشر...');
-                const { ref, get } = window.firebaseModules;
-                const db = window.firebaseDatabase;
-                
-                // فحص بيانات النشاط الكامل
-                const activityRef = ref(db, `activities/${currentActivityId}`);
-                const snapshot = await get(activityRef);
-                
-                if (snapshot.exists()) {
-                    const activityData = snapshot.val();
-                    console.log('🔥 بيانات Firebase الكاملة:', activityData);
-                    
-                    let message = `📊 تقرير Firebase للنشاط ${currentActivityId}:\n\n`;
-                    let hasData = false;
-                    
-                    const dataTypes = ['items', 'customers', 'suppliers', 'purchases', 'sales', 'expenses', 'revenues', 'salaries', 'assets', 'salesReturns', 'advances', 'purchaseReturns'];
-                    
-                    dataTypes.forEach(type => {
-                        if (activityData[type]) {
-                            const count = Object.keys(activityData[type]).length;
-                            message += `${type}: ${count} عنصر\n`;
-                            hasData = true;
-                        } else {
-                            message += `${type}: فارغ\n`;
-                        }
-                    });
-                    
-                    if (hasData) {
-                        message += '\n✅ توجد بيانات في Firebase';
-                        showNotification('🔥 Firebase متصل', message, 'success');
-                    } else {
-                        message += '\n❌ لا توجد بيانات في Firebase!';
-                        showNotification('🔥 مشكلة في Firebase', message, 'error');
-                    }
-                } else {
-                    const message = `❌ لا توجد بيانات للنشاط ${currentActivityId} في Firebase!`;
-                    console.error(message);
-                    showNotification('🔥 مشكلة خطيرة', message, 'error');
-                }
-            } catch (error) {
-                console.error('❌ خطأ في فحص Firebase:', error);
-                showNotification('🔥 خطأ في الاتصال', error.message, 'error');
-            }
-        }
-        
-        function updateDataMonitorDisplay() {
-            // تحديث الإحصائيات الحالية
-            const statsDiv = document.getElementById('currentDataStats');
-            if (statsDiv) {
-                statsDiv.innerHTML = `
-                    <div><strong>الأصناف:</strong> ${items?.length || 0}</div>
-                    <div><strong>العملاء:</strong> ${customers?.length || 0}</div>
-                    <div><strong>الموردين:</strong> ${suppliers?.length || 0}</div>
-                    <div><strong>المشتريات:</strong> ${purchases?.length || 0}</div>
-                    <div><strong>المبيعات:</strong> ${sales?.length || 0}</div>
-                    <div><strong>المصروفات:</strong> ${expenses?.length || 0}</div>
-                    <div><strong>الإيرادات:</strong> ${revenues?.length || 0}</div>
-                    <div><strong>الرواتب:</strong> ${salaries?.length || 0}</div>
-                    <div><strong>الأصول:</strong> ${assets?.length || 0}</div>
-                    <div><strong>مرتجعات المبيعات:</strong> ${salesReturns?.length || 0}</div>
-                    <div><strong>العهد والسلف:</strong> ${advances?.length || 0}</div>
-                    <div><strong>مرتجعات المشتريات:</strong> ${purchaseReturns?.length || 0}</div>
-                    <div><strong>المستخدمين:</strong> ${users?.length || 0}</div>
-                    <div><strong>الأنشطة:</strong> ${activities?.length || 0}</div>
-                `;
-            }
-            
-            // تحديث قائمة اللقطات
-            const snapshotsDiv = document.getElementById('savedSnapshots');
-            if (snapshotsDiv && DATA_MONITOR.dataSnapshots) {
-                const snapshots = Object.entries(DATA_MONITOR.dataSnapshots)
-                    .sort(([,a], [,b]) => b.timestamp - a.timestamp);
-                
-                snapshotsDiv.innerHTML = snapshots.map(([key, snapshot]) => `
-                    <div style="background: white; padding: 10px; margin: 5px 0; border-radius: 5px; display: flex; justify-content: space-between; align-items: center;">
-                        <div>
-                            <strong>${snapshot.label}</strong><br>
-                            <small>${new Date(snapshot.timestamp).toLocaleString('ar')}</small><br>
-                            <small>إجمالي العناصر: ${Object.values(snapshot.counts).reduce((a,b) => a+b, 0)}</small>
-                        </div>
-                        <button class="btn-primary btn-sm" onclick="DATA_MONITOR.restoreFromSnapshot(DATA_MONITOR.dataSnapshots['${key}']); closeDataMonitorModal();" style="background: #059669; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
-                            استعادة
-                        </button>
-                    </div>
-                `).join('');
-            }
-            
-            // تحديث حالة المراقبة
-            const toggleBtn = document.getElementById('dataMonitorToggle');
-            if (toggleBtn) {
-                toggleBtn.textContent = DATA_MONITOR.enabled ? '⏸️ إيقاف المراقبة' : '▶️ تفعيل المراقبة';
-            }
-        }
-        
-        // إغلاق النافذة عند النقر خارجها
-        document.addEventListener('click', function(e) {
-            const modal = document.getElementById('data-monitor-modal');
-            if (e.target === modal) {
-                closeDataMonitorModal();
-            }
-        });
-        
-        // التأكد من إخفاء النافذة عند تحميل الصفحة
-        document.addEventListener('DOMContentLoaded', function() {
-            const modal = document.getElementById('data-monitor-modal');
-            if (modal) {
-                modal.classList.remove('show');
-            }
-        });
-        
-        // التأكد من إخفاء النافذة فوراً
-        setTimeout(() => {
-            const modal = document.getElementById('data-monitor-modal');
-            if (modal) {
-                modal.classList.remove('show');
-            }
-        }, 100);
     </script>
 
 </body>
