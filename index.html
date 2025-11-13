@@ -369,8 +369,8 @@
     
     <!-- السكربتات الخارجية - Firebase بدون defer لأنه مطلوب فوراً -->
 
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script defer type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <script type="module">
         // Import Firebase modules
@@ -414,7 +414,31 @@
             child
         };
 
-        if (DEBUG_MODE) {
+        // تعريف DEBUG_MODE بشكل آمن على window (مع قيمة افتراضية)
+        window.DEBUG_MODE = typeof window.DEBUG_MODE === 'boolean' ? window.DEBUG_MODE : false;
+
+        // فلترة رسائل الكونسول: إظهار info/log فقط عند تفعيل DEBUG_MODE، وإظهار التحذيرات/الأخطاء دائماً
+        (function setupConsoleFilter(){
+            try {
+                const original = window.__ORIGINAL_CONSOLE__ || window.console;
+                if (!window.__ORIGINAL_CONSOLE__) {
+                    window.__ORIGINAL_CONSOLE__ = original;
+                }
+                const filtered = {
+                    ...original,
+                    log: (...args) => { if (window.DEBUG_MODE) original.log(...args); },
+                    info: (...args) => { if (window.DEBUG_MODE) (original.info ? original.info(...args) : original.log(...args)); },
+                    debug: (...args) => { if (window.DEBUG_MODE && original.debug) original.debug(...args); },
+                    warn: (...args) => (original.warn ? original.warn(...args) : original.log(...args)),
+                    error: (...args) => (original.error ? original.error(...args) : original.log(...args)),
+                };
+                window.console = filtered;
+            } catch (e) {
+                // تجاهل أي خطأ في تهيئة الفلتر
+            }
+        })();
+
+        if (window.DEBUG_MODE) {
             console.log('✅ Firebase initialized successfully!');
         }
 
@@ -446,13 +470,12 @@
     </script>
     
     <script>
-        (function() {
-            'use strict';
-            
-            console.log('🚀 بدء تشغيل نظام "تذكرني" الجديد...');
-            
-            // فحص فوري عند تحميل السكريبت (قبل DOMContentLoaded)
-            function checkAndAutoLogin() {
+        'use strict';
+        
+        console.log('🚀 بدء تشغيل نظام "تذكرني" الجديد...');
+        
+        // فحص فوري عند تحميل السكريبت (قبل DOMContentLoaded)
+        function checkAndAutoLogin() {
                 console.log('🔍 فحص بيانات "تذكرني"...');
                 
                 const rememberedUser = localStorage.getItem('rememberedUser');
@@ -537,10 +560,9 @@
                 console.log('🔒 تم تعيين علامة AUTO_LOGIN_IN_PROGRESS');
             }
             
-        })();
     </script>
     
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
     <style>
         /* تنسيقات لوحة التحكم المتقدمة */
@@ -649,9 +671,9 @@
             --border-radius: 12px;
             --shadow: 0 4px 6px rgba(0,0,0,0.1);
             --sidebar-width: 280px;
-            --sidebar-bg: #2c3e50;
-            --sidebar-text: #ecf0f1;
-            --header-bg: linear-gradient(135deg, #2c5aa0 0%, #34495e 100%);
+            --sidebar-bg: #1a3a5c;
+            --sidebar-text: #ffffff;
+            --header-bg: linear-gradient(135deg, #1a3a5c 0%, #0d2742 100%);
         }
     
 
@@ -889,6 +911,26 @@
 
     .advanced-stats .stat-number {
         font-size: 2em;
+    }
+
+    /* 📄 التذييل - تخطيط عمودي للموبايل */
+    #appFooter > div > div[style*="grid"] {
+        grid-template-columns: 1fr !important;
+        gap: 20px !important;
+    }
+
+    #appFooter {
+        padding: 20px 15px !important;
+        margin-top: 30px !important;
+        margin-right: 0 !important; /* إلغاء الهامش الأيمن على الموبايل */
+    }
+
+    #appFooter h4 {
+        font-size: 16px !important;
+    }
+
+    #appFooter p, #appFooter span, #appFooter a {
+        font-size: 13px !important;
     }
 
     .section {
@@ -3998,6 +4040,32 @@ textarea.editing-mode {
                 <input type="color" class="color-picker" value="#2c3e50" onchange="updateColor('--sidebar-bg', this.value)" id="sidebarColorPicker">
             </div>
 
+            <hr style="margin: 15px 0; border: none; border-top: 1px solid #e0e0e0;">
+            
+            <h4 style="margin: 10px 0; font-size: 0.95em; color: #1a3a5c;">📄 تخصيص التذييل</h4>
+            
+            <div class="control-group">
+                <label>🎨 لون خلفية التذييل (أول):</label>
+                <input type="color" class="color-picker" value="#1a3a5c" onchange="updateFooterGradient(this.value, 'start')" id="footerColor1Picker">
+            </div>
+
+            <div class="control-group">
+                <label>🎨 لون خلفية التذييل (ثاني):</label>
+                <input type="color" class="color-picker" value="#0d2742" onchange="updateFooterGradient(this.value, 'end')" id="footerColor2Picker">
+            </div>
+
+            <div class="control-group">
+                <label>✍️ خط التذييل:</label>
+                <select id="footerFontSelect" onchange="updateFooterFont(this.value)">
+                    <option value="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">Segoe UI</option>
+                    <option value="'Tajawal', sans-serif">Tajawal</option>
+                    <option value="'Amiri', serif">Amiri</option>
+                    <option value="'El Messiri', sans-serif">El Messiri</option>
+                    <option value="'Reem Kufi', sans-serif">Reem Kufi</option>
+                    <option value="'Arial', sans-serif">Arial</option>
+                </select>
+            </div>
+
             <button onclick="resetDesign()" class="btn-primary" style="width: 100%; margin-top: 8px; padding: 8px 12px; font-size: 0.9em;">🔄 إعادة تعيين</button>
             <button onclick="toggleControlPanel()" class="btn-danger" style="width: 100%; margin-top: 8px; padding: 8px 12px; font-size: 0.9em;">❌ إغلاق</button>
         </div>
@@ -5680,6 +5748,28 @@ textarea.editing-mode {
             </div>
         </div>
 
+        <!-- 📄 قسم إعدادات التذييل - جديد -->
+        <div id="footerSettingsSection" class="footer-settings settings-card" style="display: none;">
+            <h3>📄 إعدادات التذييل</h3>
+            <p style="color: #666; font-size: 0.9em; margin-bottom: 15px;">
+                قم بتخصيص معلومات التذييل التي تظهر في نهاية الصفحة
+            </p>
+            
+            <button class="btn-primary" onclick="openFooterSettingsModal()" style="padding: 15px 30px; font-size: 1.1em;">
+                ⚙️ تخصيص بيانات التذييل
+            </button>
+            
+            <div class="tips-container" style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin-top: 20px; font-size: 0.85em;">
+                <p><strong>💡 نصائح:</strong></p>
+                <ul style="margin: 5px 0; padding-right: 20px;">
+                    <li>يمكنك ترك أي حقل فارغاً إذا لم تكن بحاجة إليه</li>
+                    <li>سيتم إخفاء الروابط الفارغة تلقائياً من التذييل</li>
+                    <li>يُحفظ التذييل تلقائياً على الجهاز المحلي</li>
+                    <li>استخدم أيقونات مناسبة لوصف بيانات التواصل</li>
+                </ul>
+            </div>
+        </div>
+
         <!-- شعار البرنامج وشعار النشاط التجاري -->
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
             <div id="programLogoSection" class="logo-settings settings-card">
@@ -5992,6 +6082,10 @@ textarea.editing-mode {
 // === دوال Firebase المحسّنة مع معالجة الأخطاء ===
 // ... (أسفل دوال firebaseGet, firebaseSet, etc.)
 
+console.log('🔥 بدء تحميل السكريبت الرئيسي...');
+
+console.log('🔍 Checking if we reach this point...');
+
 /**
  * دالة لرفع ملف إلى Firebase Storage
  * @param {File} file - الملف المراد رفعه
@@ -6058,28 +6152,32 @@ async function uploadFile(file, path) {
 // ========================================
 const USE_FIREBASE = true; // true = Firebase, false = LocalStorage فقط
 
-let DEBUG_MODE = false; // تقليل رسائل Debug لتجنب الإزعاج
+// اجعل قيمة DEBUG_MODE متزامنة مع window.DEBUG_MODE الذي تم تعريفه مسبقاً
+let DEBUG_MODE = typeof window.DEBUG_MODE === 'boolean' ? window.DEBUG_MODE : false;
 
 function debugLog(...args) {
-    if (DEBUG_MODE) {
+    if (window.DEBUG_MODE) {
         console.log(...args);
     }
 }
 
 // دالة لتبديل DEBUG_MODE من الكونسول
 function toggleDebugMode(enable = null) {
+    const original = window.__ORIGINAL_CONSOLE__ || console;
     if (enable === null) {
-        DEBUG_MODE = !DEBUG_MODE;
+        window.DEBUG_MODE = !window.DEBUG_MODE;
     } else {
-        DEBUG_MODE = enable;
+        window.DEBUG_MODE = !!enable;
     }
-    console.log(`🐛 DEBUG_MODE: ${DEBUG_MODE ? 'مفعّل' : 'معطّل'}`);
-    return DEBUG_MODE;
+    DEBUG_MODE = window.DEBUG_MODE; // إبقاء المتغير المحلي متزامناً
+    // استخدم الكونسول الأصلي لإظهار الحالة دائماً حتى عند الإيقاف
+    original.log(`🐛 DEBUG_MODE: ${window.DEBUG_MODE ? 'مفعّل' : 'معطّل'}`);
+    return window.DEBUG_MODE;
 }
 
 // كشف الدالة للعالمية
 if (typeof window !== 'undefined') {
-    window.DEBUG_MODE = DEBUG_MODE;
+    // لا تعيد الكتابة على window.DEBUG_MODE هنا حتى لا تفسد القيمة القادمة من التهيئة المبكرة
     window.toggleDebugMode = toggleDebugMode;
 }
 
@@ -6407,6 +6505,8 @@ if (typeof window !== 'undefined') {
     debugLog('🎯 تم تعريف window.initializeApp بنجاح في مكان مبكر!');
 }
 
+console.log('🔥 Firebase initialization completed, continuing...');
+
 // ========================================
 // 📧 دوال إعدادات البريد الإلكتروني (EmailJS)
 // ========================================
@@ -6490,6 +6590,28 @@ async function saveEmailJsSettings() {
     } catch (error) {
         console.error('❌ خطأ في حفظ إعدادات البريد:', error);
         showNotification('❌ خطأ', 'فشل حفظ إعدادات البريد الإلكتروني', 'error');
+    }
+}
+
+// تحميل قيم EmailJS إلى حقول النموذج (يُستدعى أثناء التهيئة)
+function loadEmailJsSettings() {
+    try {
+        const serviceId = emailJsConfig.serviceID || localStorage.getItem('emailjs_service_id') || '';
+        const templateId = emailJsConfig.templateID || localStorage.getItem('emailjs_template_id') || '';
+        const resetTemplateId = emailJsConfig.resetTemplateID || localStorage.getItem('emailjs_reset_template_id') || '';
+        const publicKey = emailJsConfig.publicKey || localStorage.getItem('emailjs_public_key') || '';
+
+        const serviceEl = document.getElementById('emailJsServiceId');
+        const templateEl = document.getElementById('emailJsTemplateId');
+        const resetTplEl = document.getElementById('emailJsResetTemplateId');
+        const publicKeyEl = document.getElementById('emailJsPublicKey');
+
+        if (serviceEl) serviceEl.value = serviceId;
+        if (templateEl) templateEl.value = templateId;
+        if (resetTplEl) resetTplEl.value = resetTemplateId;
+        if (publicKeyEl) publicKeyEl.value = publicKey;
+    } catch (e) {
+        console.warn('⚠️ تعذر تحميل إعدادات EmailJS إلى الحقول:', e?.message || e);
     }
 }
 
@@ -8797,7 +8919,48 @@ loadSavedEmailSettings();
             saveDesignPreferences(); // حفظ التخصيصات تلقائياً
         }
 
+        // تحديث تدرج التذييل
+        function updateFooterGradient(color, position) {
+            const footer = document.getElementById('appFooter');
+            if (!footer) return;
+            
+            // الحصول على الألوان الحالية
+            const currentStyle = footer.style.background;
+            let color1 = '#667eea';
+            let color2 = '#764ba2';
+            
+            // استخراج الألوان من التدرج الحالي
+            const match = currentStyle.match(/linear-gradient\(135deg,\s*([^)]+)\s+0%,\s*([^)]+)\s+100%\)/);
+            if (match) {
+                color1 = match[1].trim();
+                color2 = match[2].trim();
+            }
+            
+            // تحديث اللون المطلوب
+            if (position === 'start') {
+                color1 = color;
+            } else {
+                color2 = color;
+            }
+            
+            // تطبيق التدرج الجديد
+            const newGradient = `linear-gradient(135deg, ${color1} 0%, ${color2} 100%)`;
+            footer.style.background = newGradient;
+            
+            saveDesignPreferences();
+        }
+
+        // تحديث خط التذييل
+        function updateFooterFont(font) {
+            const footer = document.getElementById('appFooter');
+            if (footer) {
+                footer.style.fontFamily = font;
+                saveDesignPreferences();
+            }
+        }
+
         function saveDesignPreferences() {
+            const footer = document.getElementById('appFooter');
             const preferences = {
                 primaryColor: getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim(),
                 bgColor: getComputedStyle(document.documentElement).getPropertyValue('--bg-color').trim(),
@@ -8805,7 +8968,9 @@ loadSavedEmailSettings();
                 headerBg: getComputedStyle(document.documentElement).getPropertyValue('--header-bg').trim(),
                 sidebarBg: getComputedStyle(document.documentElement).getPropertyValue('--sidebar-bg').trim(),
                 fontSize: getComputedStyle(document.documentElement).getPropertyValue('--font-size').trim(),
-                fontFamily: getComputedStyle(document.documentElement).getPropertyValue('--font-family').trim()
+                fontFamily: getComputedStyle(document.documentElement).getPropertyValue('--font-family').trim(),
+                footerBg: footer ? footer.style.background : '',
+                footerFont: footer ? footer.style.fontFamily : ''
             };
             localStorage.setItem('designPreferences', JSON.stringify(preferences));
         }
@@ -8865,6 +9030,27 @@ loadSavedEmailSettings();
                         if (fontSelect) fontSelect.value = preferences.fontFamily;
                     }
                     
+                    // تحميل إعدادات التذييل
+                    const footer = document.getElementById('appFooter');
+                    if (footer) {
+                        if (preferences.footerBg) {
+                            footer.style.background = preferences.footerBg;
+                            // استخراج الألوان من التدرج
+                            const match = preferences.footerBg.match(/linear-gradient\(135deg,\s*([^)]+)\s+0%,\s*([^)]+)\s+100%\)/);
+                            if (match) {
+                                const footerColor1 = document.getElementById('footerColor1Picker');
+                                const footerColor2 = document.getElementById('footerColor2Picker');
+                                if (footerColor1) footerColor1.value = match[1].trim();
+                                if (footerColor2) footerColor2.value = match[2].trim();
+                            }
+                        }
+                        if (preferences.footerFont) {
+                            footer.style.fontFamily = preferences.footerFont;
+                            const footerFontSelect = document.getElementById('footerFontSelect');
+                            if (footerFontSelect) footerFontSelect.value = preferences.footerFont;
+                        }
+                    }
+                    
                 } catch (e) {
                     console.error('خطأ في تحميل تخصيصات التصميم:', e);
                 }
@@ -8881,15 +9067,22 @@ loadSavedEmailSettings();
             document.documentElement.style.setProperty('--bg-color', '#ecf0f1');
             document.documentElement.style.setProperty('--text-color', '#2c3e50');
             document.documentElement.style.setProperty('--header-bg', 'linear-gradient(135deg, #2c5aa0 0%, #34495e 100%)');
-            document.documentElement.style.setProperty('--sidebar-bg', '#2c3e50');
+            document.documentElement.style.setProperty('--sidebar-bg', '#1a3a5c');
             document.documentElement.style.setProperty('--font-size', '16px');
             document.documentElement.style.setProperty('--font-family', "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif");
+            
+            // إعادة تعيين التذييل
+            const footer = document.getElementById('appFooter');
+            if (footer) {
+                footer.style.background = 'linear-gradient(135deg, #1a3a5c 0%, #0d2742 100%)';
+                footer.style.fontFamily = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+            }
             
             document.querySelector('input[type="range"]').value = 16;
             document.getElementById('font-size-value').textContent = '16px';
             document.querySelector('input[value="#2c5aa0"]').value = '#2c5aa0';
             document.querySelector('input[value="#ecf0f1"]').value = '#ecf0f1';
-            document.querySelector('input[value="#2c3e50"]').value = '#2c3e50';
+            document.querySelector('input[value="#2c3e50"]').value = '#1a3a5c';
             document.getElementById('headerColorPicker').value = '#2c5aa0';
             document.getElementById('sidebarColorPicker').value = '#2c3e50';
             document.getElementById('fontFamilySelect').value = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
@@ -9684,6 +9877,7 @@ function formatDate(dateString) {
         const userManagementSection = document.getElementById('userManagementSection');
         const activityManagementSection = document.getElementById('activityManagementSection');
         const branchManagementSection = document.getElementById('branchManagementSection');
+        const footerSettingsSection = document.getElementById('footerSettingsSection');
 
         if (userManagementSection) {
             if (loggedInUser && (loggedInUser.role === 'admin' || loggedInUser.role === 'manager')) {
@@ -9711,6 +9905,12 @@ function formatDate(dateString) {
             } else {
                 branchManagementSection.style.display = 'none';
             }
+        }
+
+        // 📄 إظهار إعدادات التذييل لجميع المستخدمين
+        if (footerSettingsSection) {
+            footerSettingsSection.style.display = 'block';
+            loadFooterSettings(); // تحميل إعدادات التذييل المحفوظة
         }
 
         // تطبيق قيود مدير النشاط على إدارة المستخدمين
@@ -9843,6 +10043,8 @@ function formatDate(dateString) {
                 const headerLogo = document.getElementById('activityHeaderLogo');
                 if (headerLogo) headerLogo.style.display = 'none';
             }
+
+console.log('🔍 Reached line ~10000 in main script...');
 
             const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
             updateAccountInfoSection(loggedInUser);
@@ -12213,6 +12415,172 @@ function loadCustomersToSelect() {
                 }
             });
         }
+
+        // === 📄 دوال إدارة إعدادات التذييل ===
+        
+        // تحميل إعدادات التذييل من localStorage
+        function loadFooterSettings() {
+            console.log('🎯 loadFooterSettings() CALLED!');
+            try {
+                const savedSettings = localStorage.getItem('footerSettings');
+                const settings = savedSettings ? JSON.parse(savedSettings) : getDefaultFooterSettings();
+                
+                // تعبئة الحقول في صفحة الإعدادات (فقط إذا كانت موجودة)
+                const companyNameInput = document.getElementById('footerCompanyNameInput');
+                if (companyNameInput) {
+                    companyNameInput.value = settings.companyName || '';
+                    document.getElementById('footerCompanyDescInput').value = settings.companyDesc || '';
+                    document.getElementById('footerPhoneInput').value = settings.phone || '';
+                    document.getElementById('footerEmailInput').value = settings.email || '';
+                    document.getElementById('footerAddressInput').value = settings.address || '';
+                    document.getElementById('footerTwitterInput').value = settings.twitterUrl || '';
+                    document.getElementById('footerFacebookInput').value = settings.facebookUrl || '';
+                    document.getElementById('footerInstagramInput').value = settings.instagramUrl || '';
+                    document.getElementById('footerLinkedinInput').value = settings.linkedinUrl || '';
+                    document.getElementById('footerCopyrightInput').value = settings.copyright || '';
+                    document.getElementById('footerVersionInput').value = settings.version || '';
+                }
+                
+                // تطبيق الإعدادات على التذييل الفعلي
+                updateFooterDisplay(settings);
+                
+                console.log('✅ تم تحميل إعدادات التذييل');
+            } catch (error) {
+                console.error('❌ خطأ في تحميل إعدادات التذييل:', error);
+                // حتى في حالة الخطأ، أظهر التذييل بالقيم الافتراضية
+                updateFooterDisplay(getDefaultFooterSettings());
+            }
+        }
+        
+        // حفظ إعدادات التذييل
+        function saveFooterSettings() {
+            try {
+                const settings = {
+                    companyName: document.getElementById('footerCompanyNameInput').value.trim(),
+                    companyDesc: document.getElementById('footerCompanyDescInput').value.trim(),
+                    phone: document.getElementById('footerPhoneInput').value.trim(),
+                    email: document.getElementById('footerEmailInput').value.trim(),
+                    address: document.getElementById('footerAddressInput').value.trim(),
+                    twitterUrl: document.getElementById('footerTwitterInput').value.trim(),
+                    facebookUrl: document.getElementById('footerFacebookInput').value.trim(),
+                    instagramUrl: document.getElementById('footerInstagramInput').value.trim(),
+                    linkedinUrl: document.getElementById('footerLinkedinInput').value.trim(),
+                    copyright: document.getElementById('footerCopyrightInput').value.trim(),
+                    version: document.getElementById('footerVersionInput').value.trim()
+                };
+                
+                localStorage.setItem('footerSettings', JSON.stringify(settings));
+                updateFooterDisplay(settings);
+                
+                showNotification('✅ تم الحفظ', 'تم حفظ إعدادات التذييل بنجاح', 'success');
+                console.log('✅ تم حفظ إعدادات التذييل');
+            } catch (error) {
+                console.error('❌ خطأ في حفظ إعدادات التذييل:', error);
+                showNotification('❌ خطأ', 'حدث خطأ في حفظ الإعدادات', 'error');
+            }
+        }
+        
+        // تطبيق الإعدادات على التذييل
+        function updateFooterDisplay(settings) {
+            try {
+                // تحديث النصوص
+                const footerCompanyName = document.getElementById('footerCompanyName');
+                const footerCompanyDesc = document.getElementById('footerCompanyDesc');
+                const footerPhone = document.getElementById('footerPhone');
+                const footerEmail = document.getElementById('footerEmail');
+                const footerAddress = document.getElementById('footerAddress');
+                const footerCopyright = document.getElementById('footerCopyright');
+                const footerVersion = document.getElementById('footerVersion');
+                
+                if (footerCompanyName) footerCompanyName.textContent = settings.companyName || 'اسم الشركة';
+                if (footerCompanyDesc) footerCompanyDesc.textContent = settings.companyDesc || 'وصف مختصر عن الشركة أو النشاط التجاري';
+                if (footerPhone) footerPhone.textContent = settings.phone ? `📞 ${settings.phone}` : '📞 +966 xx xxx xxxx';
+                if (footerEmail) footerEmail.textContent = settings.email ? `✉️ ${settings.email}` : '✉️ info@company.com';
+                if (footerAddress) footerAddress.textContent = settings.address ? `📍 ${settings.address}` : '📍 العنوان';
+                if (footerCopyright) footerCopyright.textContent = settings.copyright || '© 2025 جميع الحقوق محفوظة';
+                if (footerVersion) footerVersion.textContent = settings.version || 'الإصدار 1.0';
+                
+                // تحديث الروابط وإخفاء الفارغة منها
+                const links = [
+                    { id: 'footerTwitterLink', url: settings.twitterUrl },
+                    { id: 'footerFacebookLink', url: settings.facebookUrl },
+                    { id: 'footerInstagramLink', url: settings.instagramUrl },
+                    { id: 'footerLinkedinLink', url: settings.linkedinUrl }
+                ];
+                
+                links.forEach(link => {
+                    const element = document.getElementById(link.id);
+                    if (element) {
+                        if (link.url) {
+                            element.href = link.url;
+                            element.style.display = 'inline-block';
+                        } else {
+                            element.href = '#';
+                            element.style.display = 'none';
+                        }
+                    }
+                });
+                
+                console.log('✅ تم تطبيق إعدادات التذييل على DOM');
+            } catch (error) {
+                console.error('❌ خطأ في تطبيق إعدادات التذييل:', error);
+            } finally {
+                // إظهار التذييل دائماً (حتى في حالة الخطأ)
+                setTimeout(() => {
+                    console.log('⏰ setTimeout fired - about to show footer...');
+                    const footer = document.getElementById('appFooter');
+                    if (footer) {
+                        footer.style.opacity = '1';
+                        console.log('✅ تم إظهار التذييل');
+                    } else {
+                        console.error('❌ لم يتم العثور على عنصر التذييل #appFooter');
+                    }
+                }, 50);
+            }
+        }
+        
+        // الإعدادات الافتراضية
+        function getDefaultFooterSettings() {
+            return {
+                companyName: 'اسم الشركة',
+                companyDesc: 'وصف مختصر عن الشركة أو النشاط التجاري',
+                phone: '+966 xx xxx xxxx',
+                email: 'info@company.com',
+                address: 'العنوان',
+                twitterUrl: '',
+                facebookUrl: '',
+                instagramUrl: '',
+                linkedinUrl: '',
+                copyright: '© 2025 جميع الحقوق محفوظة',
+                version: 'الإصدار 1.0'
+            };
+        }
+        
+        // فتح نافذة إعدادات التذييل المنبثقة
+        function openFooterSettingsModal() {
+            const modal = document.getElementById('footerSettingsModal');
+            if (modal) {
+                modal.style.display = 'flex';
+                // تحميل البيانات الحالية في الحقول
+                loadFooterSettings();
+            }
+        }
+        
+        // إغلاق نافذة إعدادات التذييل المنبثقة
+        function closeFooterSettingsModal() {
+            const modal = document.getElementById('footerSettingsModal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+        
+        // حفظ الإعدادات من النافذة المنبثقة
+        function saveFooterSettingsFromModal() {
+            saveFooterSettings();
+            closeFooterSettingsModal();
+        }
+        
+        // === نهاية دوال إدارة إعدادات التذييل ===
         
         // تحديث بيانات المورد عند الاختيار
         function updateSupplierFields() {
@@ -14773,6 +15141,8 @@ function renderPurchaseReturns() {
             printWindow.document.close();
             printWindow.print();
         }
+
+console.log('🔍 Reached line ~15100 in main script...');
 
         // ===== Reports Functions =====
         function updateReportItemFilter() {
@@ -18526,47 +18896,7 @@ function updateAllCharts() {
             if (removeBtn) removeBtn.style.display = 'inline-block';
         }
 
-        // ===== Email Functions =====
-        function saveEmailJsSettings() {
-            const serviceId = document.getElementById('emailJsServiceId').value.trim();
-            const templateId = document.getElementById('emailJsTemplateId').value.trim();
-            const resetTemplateId = document.getElementById('emailJsResetTemplateId').value.trim();
-            const publicKey = document.getElementById('emailJsPublicKey').value.trim();
-            
-            // التحقق من إدخال جميع الحقول المطلوبة
-            if (!serviceId || !templateId || !publicKey) {
-                showNotification('⚠️ حقول مطلوبة', 'يرجى إدخال جميع الحقول المطلوبة', 'warning');
-                return;
-            }
-            
-            // تحديث الكونفيجريشن
-            emailJsConfig.serviceID = serviceId;
-            emailJsConfig.templateID = templateId;
-            emailJsConfig.resetTemplateID = resetTemplateId;
-            emailJsConfig.publicKey = publicKey;
-            
-            // حفظ في LocalStorage
-            localStorage.setItem('diwan_email_config', JSON.stringify(emailJsConfig));
-            localStorage.setItem('emailjs_service_id', serviceId);
-            localStorage.setItem('emailjs_template_id', templateId);
-            localStorage.setItem('emailjs_reset_template_id', resetTemplateId);
-            localStorage.setItem('emailjs_public_key', publicKey);
-            
-            console.log('✅ تم حفظ إعدادات البريد:', emailJsConfig);
-            
-            // إغلاق النافذة
-            closeEmailSettingsModal();
-            
-            showNotification('✅ تم الحفظ', 'تم حفظ إعدادات البريد الإلكتروني بنجاح', 'success');
-        }
-
-        function loadEmailJsSettings() {
-            document.getElementById('emailJsServiceId').value = emailJsConfig.serviceID || '';
-            document.getElementById('emailJsTemplateId').value = emailJsConfig.templateID || '';
-            const resetTpl = document.getElementById('emailJsResetTemplateId');
-            if (resetTpl) resetTpl.value = emailJsConfig.resetTemplateID || '';
-            document.getElementById('emailJsPublicKey').value = emailJsConfig.publicKey || '';
-        }
+        // ===== Email Functions (مُوحَّدة أعلى الملف؛ تمت إزالة النسخة المكررة) =====
 function emailSaleInvoice(saleId) {
     if (!emailJsConfig.serviceID || !emailJsConfig.templateID || !emailJsConfig.publicKey) {
         showNotification('⚠️ يرجى تكوين إعدادات البريد الإلكتروني أولاً من صفحة الإعدادات.', 'warning');
@@ -19687,6 +20017,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // دالة تصدير الأصول إلى Excel
         function exportAssetsToExcel() {
+console.log('🔍 Reached exportAssetsToExcel function...');
             try {
                 // الحصول على البيانات المفلترة
                 const filteredAssets = getFilteredAssets();
@@ -21358,6 +21689,8 @@ function loadBankAccount() {
     }, 500);
 }
 
+console.log('🎯 About to define loadRecentActivities...');
+
 function loadRecentActivities() {
     // دالة مؤقتة لحل الخطأ
     console.log('جاري تحميل الأنشطة الحديثة...');
@@ -21365,12 +21698,33 @@ function loadRecentActivities() {
 }
 
 // تحميل تخصيصات التصميم عند تحميل الصفحة
+console.log('🎯 About to add DOMContentLoaded listener...');
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('📄 تم تحميل الصفحة - تحميل تخصيصات التصميم...');
+    console.log('�🚀🚀 DOMContentLoaded FIRED! - بدء تحميل التطبيق...');
+    console.log('�📄 تم تحميل الصفحة - تحميل تخصيصات التصميم...');
     if (typeof loadDesignPreferences === 'function') {
         loadDesignPreferences();
         console.log('🎨 تم تحميل تخصيصات التصميم المحفوظة');
     }
+    
+    // تحميل إعدادات التذييل بعد تحميل DOM بالكامل
+    console.log('📄 بدء تحميل إعدادات التذييل...');
+    setTimeout(() => {
+        console.log('⏰ setTimeout fired - checking loadFooterSettings...');
+        if (typeof loadFooterSettings === 'function') {
+            console.log('✅ loadFooterSettings function found, calling it...');
+            loadFooterSettings();
+            console.log('📄 تم استدعاء loadFooterSettings() من DOMContentLoaded');
+        } else {
+            console.error('❌ دالة loadFooterSettings غير موجودة!');
+            // إظهار التذييل بالقيم الافتراضية حتى لو فشل التحميل
+            const footer = document.getElementById('appFooter');
+            if (footer) {
+                footer.style.opacity = '1';
+                console.log('✅ تم إظهار التذييل بالقيم الافتراضية');
+            }
+        }
+    }, 200); // تأخير 200ms للتأكد من تحميل جميع العناصر
     
     // فحص الإعداد الأولي للنظام
     if (typeof checkFirstSetup === 'function') {
@@ -21382,11 +21736,181 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
         console.error('❌ لم يتم العثور على وظيفة checkFirstSetup');
     }
+    console.log('🏁 DOMContentLoaded COMPLETED!');
 });
-
 }
-// نهاية الكود JavaScript
-    </script>
+
+</script>
+
+    <!-- 🆕 نافذة إعدادات التذييل المنبثقة -->
+    <div id="footerSettingsModal" class="modal" style="display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); justify-content: center; align-items: center;">
+        <div class="modal-content" style="max-width: 800px; max-height: 90vh; overflow-y: auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); position: relative;">
+            <span class="close" onclick="closeFooterSettingsModal()">&times;</span>
+            <h2 style="color: #667eea; margin-bottom: 20px;">⚙️ تخصيص بيانات التذييل</h2>
+            
+            <div class="form-grid grid-1">
+                <div>
+                    <label>اسم الشركة:</label>
+                    <input type="text" id="footerCompanyNameInput" placeholder="أدخل اسم الشركة">
+                </div>
+                
+                <div>
+                    <label>وصف الشركة:</label>
+                    <textarea id="footerCompanyDescInput" rows="3" placeholder="وصف مختصر عن الشركة أو النشاط التجاري"></textarea>
+                </div>
+                
+                <div class="form-grid grid-2">
+                    <div>
+                        <label>📞 رقم الهاتف:</label>
+                        <input type="text" id="footerPhoneInput" placeholder="+966 xx xxx xxxx">
+                    </div>
+                    
+                    <div>
+                        <label>✉️ البريد الإلكتروني:</label>
+                        <input type="email" id="footerEmailInput" placeholder="info@company.com">
+                    </div>
+                </div>
+                
+                <div>
+                    <label>📍 العنوان:</label>
+                    <input type="text" id="footerAddressInput" placeholder="عنوان الشركة">
+                </div>
+                
+                <hr style="margin: 20px 0; border: none; border-top: 1px solid #e0e0e0;">
+                
+                <h4 style="margin-bottom: 10px; color: #667eea;">🌐 روابط التواصل الاجتماعي</h4>
+                
+                <div class="form-grid grid-2">
+                    <div>
+                        <label>𝕏 تويتر/X:</label>
+                        <input type="url" id="footerTwitterInput" placeholder="https://twitter.com/yourcompany">
+                    </div>
+                    
+                    <div>
+                        <label>📘 فيسبوك:</label>
+                        <input type="url" id="footerFacebookInput" placeholder="https://facebook.com/yourcompany">
+                    </div>
+                    
+                    <div>
+                        <label>📷 انستقرام:</label>
+                        <input type="url" id="footerInstagramInput" placeholder="https://instagram.com/yourcompany">
+                    </div>
+                    
+                    <div>
+                        <label>💼 لينكدإن:</label>
+                        <input type="url" id="footerLinkedinInput" placeholder="https://linkedin.com/company/yourcompany">
+                    </div>
+                </div>
+                
+                <hr style="margin: 20px 0; border: none; border-top: 1px solid #e0e0e0;">
+                
+                <div class="form-grid grid-2">
+                    <div>
+                        <label>© نص الحقوق:</label>
+                        <input type="text" id="footerCopyrightInput" placeholder="© 2025 جميع الحقوق محفوظة">
+                    </div>
+                    
+                    <div>
+                        <label>رقم الإصدار:</label>
+                        <input type="text" id="footerVersionInput" placeholder="الإصدار 1.0">
+                    </div>
+                </div>
+                
+                <div class="form-grid grid-2" style="margin-top: 20px; gap: 10px;">
+                    <button class="btn-success" onclick="saveFooterSettingsFromModal()">💾 حفظ التغييرات</button>
+                    <button class="btn-secondary" onclick="closeFooterSettingsModal()">❌ إلغاء</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🆕 التذييل (Footer) -->
+    <footer id="appFooter" style="background: linear-gradient(135deg, #1a3a5c 0%, #0d2742 100%); color: white; padding: 30px 20px; margin-top: 50px; margin-right: var(--sidebar-width); border-top: 4px solid #0d2742; opacity: 0; transition: opacity 0.3s ease-in-out, margin-right 0.3s ease; position: relative; z-index: 10;">
+        <div style="max-width: 1200px; margin: 0 auto;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-bottom: 20px;">
+                <!-- معلومات الشركة -->
+                <div>
+                    <h4 style="margin: 0 0 15px 0; font-size: 18px; color: white;" id="footerCompanyName">اسم الشركة</h4>
+                    <p style="margin: 5px 0; font-size: 14px; opacity: 0.9;" id="footerCompanyDesc">وصف مختصر عن الشركة أو النشاط التجاري</p>
+                </div>
+                
+                <!-- معلومات التواصل -->
+                <div>
+                    <h4 style="margin: 0 0 15px 0; font-size: 18px; color: white;">تواصل معنا</h4>
+                    <p style="margin: 5px 0; font-size: 14px; opacity: 0.9;"><span id="footerPhone">📞 +966 xx xxx xxxx</span></p>
+                    <p style="margin: 5px 0; font-size: 14px; opacity: 0.9;"><span id="footerEmail">✉️ info@company.com</span></p>
+                    <p style="margin: 5px 0; font-size: 14px; opacity: 0.9;"><span id="footerAddress">📍 العنوان</span></p>
+                </div>
+                
+                <!-- روابط التواصل الاجتماعي -->
+                <div>
+                    <h4 style="margin: 0 0 15px 0; font-size: 18px; color: white;">تابعنا</h4>
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                        <a href="#" id="footerTwitterLink" style="color: white; font-size: 24px; opacity: 0.8; transition: opacity 0.3s;" title="تويتر" target="_blank">𝕏</a>
+                        <a href="#" id="footerFacebookLink" style="color: white; font-size: 24px; opacity: 0.8; transition: opacity 0.3s;" title="فيسبوك" target="_blank">📘</a>
+                        <a href="#" id="footerInstagramLink" style="color: white; font-size: 24px; opacity: 0.8; transition: opacity 0.3s;" title="انستقرام" target="_blank">📷</a>
+                        <a href="#" id="footerLinkedinLink" style="color: white; font-size: 24px; opacity: 0.8; transition: opacity 0.3s;" title="لينكدإن" target="_blank">💼</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- الحقوق والتوثيق -->
+            <div style="border-top: 1px solid rgba(255,255,255,0.2); padding-top: 20px; text-align: center;">
+                <p style="margin: 5px 0; font-size: 14px; opacity: 0.9;" id="footerCopyright">© 2025 جميع الحقوق محفوظة</p>
+                <p style="margin: 5px 0; font-size: 12px; opacity: 0.7;" id="footerVersion">الإصدار 1.0</p>
+            </div>
+        </div>
+    </footer>
+
+            <script>
+                // Safety net: show footer only when the app UI is ready (avoid early flash)
+                (function() {
+                    try {
+                                    const getStyle = (el) => el ? window.getComputedStyle(el) : null;
+                                    const isAppReady = () => {
+                                        // اعتبر التطبيق جاهزاً فقط عندما تظهر الحاوية الرئيسية
+                                        const app = document.querySelector('.app-container');
+                                        const appVisible = app && getStyle(app).display !== 'none';
+                                        return Boolean(appVisible);
+                                    };
+
+                        const showFooter = () => {
+                            const footer = document.getElementById('appFooter');
+                            if (footer) footer.style.opacity = '1';
+                        };
+
+                        const run = () => {
+                            if (typeof loadFooterSettings === 'function') {
+                                try { loadFooterSettings(); } catch (e) { console.error('footer fallback load error:', e); }
+                            }
+                            showFooter();
+                        };
+
+                        const start = () => {
+                            if (isAppReady()) {
+                                run();
+                                return;
+                            }
+                            const startTime = Date.now();
+                            const maxWaitMs = 8000; // fallback after 8s even if not ready
+                            const interval = setInterval(() => {
+                                if (isAppReady() || (Date.now() - startTime) > maxWaitMs) {
+                                    clearInterval(interval);
+                                    run();
+                                }
+                            }, 150);
+                        };
+
+                        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+                            start();
+                        } else {
+                            document.addEventListener('DOMContentLoaded', start, { once: true });
+                        }
+                    } catch (err) {
+                        console.error('Footer safety script error:', err);
+                    }
+                })();
+            </script>
 
 </body>
 </html>
