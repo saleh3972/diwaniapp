@@ -6925,6 +6925,7 @@ textarea.editing-mode {
             </div>
             
             <input type="file" id="importFile" accept=".json" style="display: none;" onchange="handleFileImport(this.files)">
+            <input type="file" id="importExcelFile" accept=".xlsx,.xls" style="display: none;" onchange="handleExcelImport(this.files)">
         </div>
     </div>
 </div>
@@ -19621,7 +19622,7 @@ if (data.length > 0) {
         function exportActivityData() {
             if (!ensureActivitySelected()) return;
             const activity = activities.find(a => a.id == currentActivityId);
-            const activityData = { items, customers, suppliers, purchases, sales, expenses, revenues, salaries, salesReturns, purchaseReturns, exportDate: new Date().toISOString(), system: 'نظام ديواني المحاسبي', activityName: activity ? activity.name : 'غير معروف' };
+            const activityData = { items, customers, suppliers, purchases, sales, expenses, revenues, salaries, salesReturns, purchaseReturns, exportDate: new Date().toISOString(), system: 'نظام الديوان المحاسبي', activityName: activity ? activity.name : 'غير معروف' };
             const dataStr = JSON.stringify(activityData, null, 2);
             const link = document.createElement('a');
             link.href = URL.createObjectURL(new Blob([dataStr], {type: 'application/json'}));
@@ -19814,16 +19815,148 @@ if (data.length > 0) {
 
         async function importData() {
             if (!ensureActivitySelected()) return;
-            const confirmed = await showConfirmDialog(
-                'استيراد البيانات',
-                'تحذير: سيتم استبدال جميع بيانات النشاط الحالي بالبيانات المستوردة. هل تريد المتابعة؟',
-                'warning',
-                'متابعة',
-                'إلغاء'
-            );
-            if (confirmed) {
+            
+            // نافذة اختيار نوع الملف
+            const choice = await new Promise((resolve) => {
+                const overlay = document.createElement('div');
+                overlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; display: flex; align-items: center; justify-content: center;';
+                
+                const dialog = document.createElement('div');
+                dialog.style.cssText = 'background: white; padding: 30px; border-radius: 15px; max-width: 400px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.3);';
+                dialog.innerHTML = `
+                    <h3 style="margin: 0 0 20px 0; color: #333;">استيراد البيانات</h3>
+                    <p style="margin: 0 0 25px 0; color: #666; line-height: 1.6;">اختر نوع الملف الذي تريد استيراده:</p>
+                    <div style="display: flex; gap: 15px; margin-bottom: 15px;">
+                        <button id="choiceJSON" style="flex: 1; padding: 15px; background: #059669; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold;">
+                            📄 JSON
+                        </button>
+                        <button id="choiceExcel" style="flex: 1; padding: 15px; background: #0284c7; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold;">
+                            📊 Excel
+                        </button>
+                    </div>
+                    <button id="choiceCancel" style="width: 100%; padding: 12px; background: #e5e7eb; color: #333; border: none; border-radius: 8px; cursor: pointer; font-size: 14px;">
+                        إلغاء
+                    </button>
+                `;
+                
+                overlay.appendChild(dialog);
+                document.body.appendChild(overlay);
+                
+                document.getElementById('choiceJSON').onclick = () => {
+                    document.body.removeChild(overlay);
+                    resolve('json');
+                };
+                document.getElementById('choiceExcel').onclick = () => {
+                    document.body.removeChild(overlay);
+                    resolve('excel');
+                };
+                document.getElementById('choiceCancel').onclick = () => {
+                    document.body.removeChild(overlay);
+                    resolve(null);
+                };
+                overlay.onclick = (e) => {
+                    if (e.target === overlay) {
+                        document.body.removeChild(overlay);
+                        resolve(null);
+                    }
+                };
+            });
+            
+            if (choice === 'json') {
                 document.getElementById('importFile').click();
+            } else if (choice === 'excel') {
+                document.getElementById('importExcelFile').click();
             }
+        }
+
+         async function handleExcelImport(files) {
+            if (!files.length) return;
+            if (!ensureActivitySelected()) return;
+            
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    // التحقق من توفر مكتبة XLSX
+                    if (typeof XLSX === 'undefined') {
+                        showNotification('❌ خطأ', 'مكتبة Excel غير متوفرة. يرجى تحديث الصفحة والمحاولة مرة أخرى', 'error');
+                        return;
+                    }
+                    
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, {type: 'array'});
+                    
+                    // تحويل كل ورقة إلى JSON
+                    const importedData = {};
+                    const sheetMapping = {
+                        'الأصناف': 'items',
+                        'العملاء': 'customers',
+                        'الموردين': 'suppliers',
+                        'المشتريات': 'purchases',
+                        'المبيعات': 'sales',
+                        'المصروفات': 'expenses',
+                        'الإيرادات': 'revenues',
+                        'الرواتب': 'salaries',
+                        'مرتجعات المبيعات': 'salesReturns',
+                        'مرتجعات المشتريات': 'purchaseReturns'
+                    };
+                    
+                    let foundData = false;
+                    workbook.SheetNames.forEach(sheetName => {
+                        const key = sheetMapping[sheetName] || sheetName;
+                        const worksheet = workbook.Sheets[sheetName];
+                        const jsonData = XLSX.utils.sheet_to_json(worksheet);
+                        if (jsonData.length > 0) {
+                            importedData[key] = jsonData;
+                            foundData = true;
+                        }
+                    });
+                    
+                    if (!foundData) {
+                        showNotification('❌ ملف فارغ', 'الملف لا يحتوي على بيانات صالحة', 'error');
+                        return;
+                    }
+                    
+                    const confirmed = await showConfirmDialog(
+                        'تأكيد الاستيراد من Excel',
+                        `تم العثور على ${Object.keys(importedData).length} جدول بيانات.\nهل تريد استيراد البيانات إلى النشاط الحالي؟`,
+                        'info',
+                        'نعم',
+                        'إلغاء'
+                    );
+                    
+                    if (confirmed) {
+                        const savePromises = [];
+                        const keysToImport = ['items', 'customers', 'suppliers', 'purchases', 'sales', 'expenses', 'revenues', 'salaries', 'salesReturns', 'purchaseReturns'];
+                        
+                        keysToImport.forEach(key => {
+                            if (importedData[key] && Array.isArray(importedData[key])) {
+                                savePromises.push(saveToLocalStorage(key, importedData[key]));
+                            }
+                        });
+                        
+                        const saveResults = await Promise.all(savePromises);
+                        if (savePromises.length && saveResults.some(result => !result)) {
+                            showNotification('❌ خطأ في الحفظ', 'تعذر حفظ بعض البيانات المستوردة. يرجى المحاولة مرة أخرى', 'error');
+                            return;
+                        }
+                        
+                        await refreshActivityData();
+                        const importInput = document.getElementById('importExcelFile');
+                        if (importInput) {
+                            importInput.value = '';
+                        }
+                        showNotification('✅ تم الاستيراد', 'تم استيراد البيانات من Excel بنجاح!', 'success');
+                    }
+                } catch (error) {
+                    console.error('❌ خطأ في استيراد Excel:', error);
+                    const importInput = document.getElementById('importExcelFile');
+                    if (importInput) {
+                        importInput.value = '';
+                    }
+                    showNotification('❌ خطأ', 'حدث خطأ أثناء استيراد ملف Excel. تأكد من صحة الملف', 'error');
+                }
+            };
+            reader.readAsArrayBuffer(files[0]);
         }
 
          async function handleFileImport(files) { // أضفنا كلمة async
@@ -19934,9 +20067,12 @@ if (data.length > 0) {
 
         async function clearActivityData() {
             if (!ensureActivitySelected()) return;
+            const activity = activities.find(a => a.id == currentActivityId);
+            const activityName = activity ? activity.name : 'النشاط الحالي';
+            
             const confirmed1 = await showConfirmDialog(
                 'حذف جميع البيانات',
-                'تحذير: سيتم حذف جميع بيانات هذا النشاط نهائياً. هل أنت متأكد؟',
+                `تحذير: سيتم حذف جميع بيانات "${activityName}" نهائياً.\n\n⚠️ هذا يشمل:\n• الأصناف\n• العملاء والموردين\n• جميع الفواتير والمعاملات\n\nهل أنت متأكد؟`,
                 'danger',
                 'نعم',
                 'إلغاء'
@@ -19944,40 +20080,62 @@ if (data.length > 0) {
             if (confirmed1) {
                 const confirmed2 = await showConfirmDialog(
                     'تأكيد نهائي',
-                    'هل أنت متأكد جداً؟ هذه العملية لا يمكن التراجع عنها!',
+                    '⛔ هل أنت متأكد جداً؟\n\nهذه العملية لا يمكن التراجع عنها!\nستُحذف جميع البيانات من Firebase و LocalStorage.',
                     'danger',
                     'حذف نهائياً',
                     'إلغاء'
                 );
                 if (confirmed2) {
-                    const dataKeys = ['items', 'customers', 'suppliers', 'purchases', 'sales', 'salesReturns', 'purchaseReturns', 'expenses', 'revenues', 'salaries', 'lastBackup'];
-                    const removalResults = await Promise.all(dataKeys.map(key => removeFromLocalStorage(key)));
-                    if (removalResults.some(result => !result)) {
-                        showNotification('❌ خطأ', 'تعذر حذف البيانات بالكامل. يرجى التحقق من الاتصال وإعادة المحاولة', 'error');
-                        return;
-                    }
-                    dataKeys.forEach(key => {
-                        const storageKey = getActivityDataKey(key);
-                        if (storageKey) {
-                            localStorage.removeItem(storageKey);
+                    try {
+                        const dataKeys = ['items', 'customers', 'suppliers', 'purchases', 'sales', 'salesReturns', 'purchaseReturns', 'expenses', 'revenues', 'salaries', 'lastBackup'];
+                        
+                        // حذف من Firebase
+                        if (auth.currentUser && currentActivityId) {
+                            const deletePromises = dataKeys.map(async (key) => {
+                                const path = `activities/${currentActivityId}/${key}`;
+                                try {
+                                    await database.ref(path).remove();
+                                    console.log(`✅ تم حذف ${key} من Firebase`);
+                                    return true;
+                                } catch (error) {
+                                    console.error(`❌ فشل حذف ${key} من Firebase:`, error);
+                                    return false;
+                                }
+                            });
+                            await Promise.all(deletePromises);
                         }
-                    });
-                    const reminderKey = getActivityDataKey('lastBackupTimestamp');
-                    if (reminderKey) {
-                        localStorage.removeItem(reminderKey);
+                        
+                        // حذف من LocalStorage
+                        dataKeys.forEach(key => {
+                            const storageKey = getActivityDataKey(key);
+                            if (storageKey) {
+                                localStorage.removeItem(storageKey);
+                            }
+                        });
+                        
+                        const reminderKey = getActivityDataKey('lastBackupTimestamp');
+                        if (reminderKey) {
+                            localStorage.removeItem(reminderKey);
+                        }
+                        
+                        // تفريغ المتغيرات
+                        items = [];
+                        customers = [];
+                        suppliers = [];
+                        purchases = [];
+                        sales = [];
+                        expenses = [];
+                        revenues = [];
+                        salaries = [];
+                        salesReturns = [];
+                        purchaseReturns = [];
+                        
+                        await refreshActivityData();
+                        showNotification('✅ تم المسح', `تم مسح جميع بيانات "${activityName}" بنجاح من Firebase و LocalStorage`, 'success');
+                    } catch (error) {
+                        console.error('❌ خطأ في مسح البيانات:', error);
+                        showNotification('❌ خطأ', 'حدث خطأ أثناء مسح البيانات. يرجى المحاولة مرة أخرى', 'error');
                     }
-                    items = [];
-                    customers = [];
-                    suppliers = [];
-                    purchases = [];
-                    sales = [];
-                    expenses = [];
-                    revenues = [];
-                    salaries = [];
-                    salesReturns = [];
-                    purchaseReturns = [];
-                    await refreshActivityData();
-                    showNotification('✅ تم المسح', 'تم مسح جميع بيانات النشاط الحالي', 'success');
                 }
             }
         }
