@@ -378,16 +378,16 @@
         import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
         import { getDatabase, ref, set, get, update, remove, onValue, push, child } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
 
-        // Firebase Configuration - بيئة الإنتاج (Production)
+        // Firebase Configuration - بيئة التطوير (Development)
         const firebaseConfig = {
-            apiKey: "AIzaSyDtm443qYDGFOH7NIFgaxVWPhhW5Ezrfrw",
-            authDomain: "diwani-bc43f.firebaseapp.com",
-            databaseURL: "https://diwani-bc43f-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "diwani-bc43f",
-            storageBucket: "diwani-bc43f.firebasestorage.app",
-            messagingSenderId: "796547946795",
-            appId: "1:796547946795:web:fe9d572923625463dc0d6e",
-            measurementId: "G-VEZFJDN2LB"
+            apiKey: "AIzaSyD0vzY_eb9sN2uh5sn4cJyYQSI6YoyJAeI",
+            authDomain: "diwanitestapp.firebaseapp.com",
+            databaseURL: "https://diwanitestapp-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "diwanitestapp",
+            storageBucket: "diwanitestapp.firebasestorage.app",
+            messagingSenderId: "296228843355",
+            appId: "1:296228843355:web:e2a30eced24e7fef16747e",
+            measurementId: "G-7P91XB244P"
         };
 
         // Initialize Firebase
@@ -6929,6 +6929,117 @@ textarea.editing-mode {
     </div>
 </div>
 
+<!-- 📒 صفحة دفتر اليومية -->
+<div id="journal" class="section">
+    <h2>📒 دفتر اليومية (Journal Entries)</h2>
+    
+    <div class="settings-card" style="margin-bottom: 20px;">
+        <h3>✍️ إنشاء قيد محاسبي جديد</h3>
+        <div class="form-grid grid-3">
+            <input type="date" id="journalDate" placeholder="التاريخ *" required>
+            <input type="text" id="journalDescription" placeholder="الوصف / البيان *" required>
+            <input type="text" id="journalReference" placeholder="المرجع (اختياري)">
+        </div>
+        
+        <div id="journalEntriesContainer" style="margin-top: 15px;">
+            <h4>حركات القيد:</h4>
+            <div class="form-grid grid-4" id="journalEntryRows">
+                <div class="journal-entry-row" style="display: contents;">
+                    <select class="account-select" data-index="0">
+                        <option value="">اختر الحساب *</option>
+                    </select>
+                    <input type="number" class="debit-input" data-index="0" placeholder="المدين" min="0" step="0.01">
+                    <input type="number" class="credit-input" data-index="0" placeholder="الدائن" min="0" step="0.01">
+                    <button type="button" class="btn-danger btn-small" onclick="removeJournalRow(0)" style="padding: 8px;">🗑️ حذف</button>
+                </div>
+            </div>
+            <button type="button" class="btn-secondary" onclick="addJournalRow()" style="margin-top: 10px;">➕ إضافة حركة</button>
+        </div>
+        
+        <div style="margin-top: 15px; padding: 10px; background: #f0f9ff; border-radius: 8px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; text-align: center;">
+                <div>
+                    <strong>إجمالي المدين:</strong>
+                    <div id="totalDebit" style="color: #c62828; font-size: 1.2em;">0.00</div>
+                </div>
+                <div>
+                    <strong>إجمالي الدائن:</strong>
+                    <div id="totalCredit" style="color: #2e7d32; font-size: 1.2em;">0.00</div>
+                </div>
+                <div>
+                    <strong>الفرق:</strong>
+                    <div id="balanceDiff" style="font-size: 1.2em;">0.00</div>
+                </div>
+            </div>
+        </div>
+        
+        <textarea id="journalNotes" placeholder="ملاحظات (اختياري)" rows="2" style="margin-top: 10px; width: 100%;"></textarea>
+        
+        <button class="btn-primary" onclick="saveJournalEntry()" style="margin-top: 15px; width: 100%;">💾 حفظ القيد</button>
+    </div>
+    
+    <div class="settings-card">
+        <h3>📋 قائمة القيود المحاسبية</h3>
+        
+        <div class="form-grid grid-4" style="margin-bottom: 15px;">
+            <input type="date" id="journalFilterFrom" placeholder="من تاريخ">
+            <input type="date" id="journalFilterTo" placeholder="إلى تاريخ">
+            <input type="text" id="journalSearchText" placeholder="بحث في الوصف أو المرجع">
+            <button class="btn-secondary" onclick="renderJournalList()">🔍 بحث</button>
+        </div>
+        
+        <div id="journalList" style="max-height: 500px; overflow-y: auto;"></div>
+    </div>
+</div>
+
+<!-- 🗂️ صفحة دليل الحسابات -->
+<div id="chartOfAccounts" class="section">
+    <h2>🗂️ دليل الحسابات (Chart of Accounts)</h2>
+    
+    <div class="settings-card" style="margin-bottom: 20px;">
+        <div class="form-grid grid-3">
+            <input type="text" id="accountSearchText" placeholder="🔍 بحث في الحسابات (كود أو اسم)">
+            <select id="accountCategoryFilter">
+                <option value="">جميع التصنيفات</option>
+                <option value="asset">الأصول</option>
+                <option value="liability">الخصوم</option>
+                <option value="equity">حقوق الملكية</option>
+                <option value="revenue">الإيرادات</option>
+                <option value="expense">المصروفات</option>
+            </select>
+            <button class="btn-secondary" onclick="renderChartOfAccounts()">🔍 بحث</button>
+        </div>
+    </div>
+    
+    <div class="settings-card">
+        <h3>📊 ملخص الحسابات</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+            <div style="background: linear-gradient(135deg, #2196f3, #42a5f5); padding: 15px; border-radius: 8px; text-align: center; color: white;">
+                <div style="font-size: 0.9em; opacity: 0.9;">💰 الأصول</div>
+                <div style="font-size: 1.5em; font-weight: bold;" id="assetsBalance">0.00</div>
+            </div>
+            <div style="background: linear-gradient(135deg, #f44336, #ef5350); padding: 15px; border-radius: 8px; text-align: center; color: white;">
+                <div style="font-size: 0.9em; opacity: 0.9;">📊 الخصوم</div>
+                <div style="font-size: 1.5em; font-weight: bold;" id="liabilitiesBalance">0.00</div>
+            </div>
+            <div style="background: linear-gradient(135deg, #9c27b0, #ab47bc); padding: 15px; border-radius: 8px; text-align: center; color: white;">
+                <div style="font-size: 0.9em; opacity: 0.9;">🏢 حقوق الملكية</div>
+                <div style="font-size: 1.5em; font-weight: bold;" id="equityBalance">0.00</div>
+            </div>
+            <div style="background: linear-gradient(135deg, #4caf50, #66bb6a); padding: 15px; border-radius: 8px; text-align: center; color: white;">
+                <div style="font-size: 0.9em; opacity: 0.9;">💵 الإيرادات</div>
+                <div style="font-size: 1.5em; font-weight: bold;" id="revenueBalance">0.00</div>
+            </div>
+            <div style="background: linear-gradient(135deg, #ff9800, #ffa726); padding: 15px; border-radius: 8px; text-align: center; color: white;">
+                <div style="font-size: 0.9em; opacity: 0.9;">💸 المصروفات</div>
+                <div style="font-size: 1.5em; font-weight: bold;" id="expenseBalance">0.00</div>
+            </div>
+        </div>
+        
+        <div id="chartOfAccountsList"></div>
+    </div>
+</div>
+
 <!-- 📱 صفحة حول البرنامج -->
 <div id="about" class="section">
     <h2>ℹ️ حول البرنامج</h2>
@@ -8021,6 +8132,8 @@ let branches = []; // 🏢 الفروع - جديد
 let advances = [];
 let salesReturns = [], purchaseReturns = [];
 let salePayments = [], purchasePayments = []; // 💰 نظام الدفعات - جديد
+let journalEntries = []; // 📒 القيود المحاسبية - جديد
+let chartOfAccounts = []; // 🗂️ دليل الحسابات - جديد
 let currentPurchaseItems = [], currentSaleItems = [];
 let editingPurchaseId = null, editingSaleId = null, editingSalaryId = null;
 let currentPurchaseNumber = 1, currentSaleNumber = 1;
@@ -8029,6 +8142,757 @@ let activeSaleReturn = null, activePurchaseReturn = null;
 let users = [];
 const GOSI_RATE = 0.09;
 const GOSI_SALARY_CAP = 45000;
+
+// ========================================
+// 📊 دليل الحسابات الافتراضي (Chart of Accounts)
+// ========================================
+const DEFAULT_CHART_OF_ACCOUNTS = [
+    // 1000 - الأصول (Assets)
+    { code: "1000", name: "الأصول", nameEn: "Assets", type: "header", parent: null, balance: 0, debit: 0, credit: 0 },
+    { code: "1100", name: "الأصول المتداولة", nameEn: "Current Assets", type: "header", parent: "1000", balance: 0, debit: 0, credit: 0 },
+    { code: "1110", name: "النقدية وما في حكمها", nameEn: "Cash & Cash Equivalents", type: "header", parent: "1100", balance: 0, debit: 0, credit: 0 },
+    { code: "1111", name: "الصندوق", nameEn: "Cash", type: "account", parent: "1110", balance: 0, debit: 0, credit: 0, category: "asset" },
+    { code: "1112", name: "البنك", nameEn: "Bank", type: "account", parent: "1110", balance: 0, debit: 0, credit: 0, category: "asset" },
+    { code: "1120", name: "المدينون (العملاء)", nameEn: "Accounts Receivable", type: "account", parent: "1100", balance: 0, debit: 0, credit: 0, category: "asset" },
+    { code: "1130", name: "المخزون", nameEn: "Inventory", type: "account", parent: "1100", balance: 0, debit: 0, credit: 0, category: "asset" },
+    { code: "1200", name: "الأصول الثابتة", nameEn: "Fixed Assets", type: "header", parent: "1000", balance: 0, debit: 0, credit: 0 },
+    { code: "1210", name: "الأراضي", nameEn: "Land", type: "account", parent: "1200", balance: 0, debit: 0, credit: 0, category: "asset" },
+    { code: "1220", name: "المباني", nameEn: "Buildings", type: "account", parent: "1200", balance: 0, debit: 0, credit: 0, category: "asset" },
+    { code: "1230", name: "السيارات", nameEn: "Vehicles", type: "account", parent: "1200", balance: 0, debit: 0, credit: 0, category: "asset" },
+    { code: "1240", name: "الأثاث والمعدات", nameEn: "Furniture & Equipment", type: "account", parent: "1200", balance: 0, debit: 0, credit: 0, category: "asset" },
+    { code: "1250", name: "الأجهزة الإلكترونية", nameEn: "Electronics", type: "account", parent: "1200", balance: 0, debit: 0, credit: 0, category: "asset" },
+    
+    // 2000 - الخصوم (Liabilities)
+    { code: "2000", name: "الخصوم", nameEn: "Liabilities", type: "header", parent: null, balance: 0, debit: 0, credit: 0 },
+    { code: "2100", name: "الخصوم المتداولة", nameEn: "Current Liabilities", type: "header", parent: "2000", balance: 0, debit: 0, credit: 0 },
+    { code: "2110", name: "الدائنون (الموردون)", nameEn: "Accounts Payable", type: "account", parent: "2100", balance: 0, debit: 0, credit: 0, category: "liability" },
+    { code: "2120", name: "الرواتب المستحقة", nameEn: "Salaries Payable", type: "account", parent: "2100", balance: 0, debit: 0, credit: 0, category: "liability" },
+    { code: "2130", name: "الضرائب المستحقة", nameEn: "Taxes Payable", type: "account", parent: "2100", balance: 0, debit: 0, credit: 0, category: "liability" },
+    { code: "2200", name: "الخصوم طويلة الأجل", nameEn: "Long-term Liabilities", type: "header", parent: "2000", balance: 0, debit: 0, credit: 0 },
+    { code: "2210", name: "القروض طويلة الأجل", nameEn: "Long-term Loans", type: "account", parent: "2200", balance: 0, debit: 0, credit: 0, category: "liability" },
+    
+    // 3000 - حقوق الملكية (Equity)
+    { code: "3000", name: "حقوق الملكية", nameEn: "Equity", type: "header", parent: null, balance: 0, debit: 0, credit: 0 },
+    { code: "3100", name: "رأس المال", nameEn: "Capital", type: "account", parent: "3000", balance: 0, debit: 0, credit: 0, category: "equity" },
+    { code: "3200", name: "الأرباح المحتجزة", nameEn: "Retained Earnings", type: "account", parent: "3000", balance: 0, debit: 0, credit: 0, category: "equity" },
+    { code: "3300", name: "أرباح العام الحالي", nameEn: "Current Year Profit", type: "account", parent: "3000", balance: 0, debit: 0, credit: 0, category: "equity" },
+    
+    // 4000 - الإيرادات (Revenue)
+    { code: "4000", name: "الإيرادات", nameEn: "Revenue", type: "header", parent: null, balance: 0, debit: 0, credit: 0 },
+    { code: "4100", name: "إيرادات المبيعات", nameEn: "Sales Revenue", type: "account", parent: "4000", balance: 0, debit: 0, credit: 0, category: "revenue" },
+    { code: "4200", name: "إيرادات الخدمات", nameEn: "Service Revenue", type: "account", parent: "4000", balance: 0, debit: 0, credit: 0, category: "revenue" },
+    { code: "4300", name: "إيرادات أخرى", nameEn: "Other Revenue", type: "account", parent: "4000", balance: 0, debit: 0, credit: 0, category: "revenue" },
+    { code: "4400", name: "خصم مكتسب", nameEn: "Discount Earned", type: "account", parent: "4000", balance: 0, debit: 0, credit: 0, category: "revenue" },
+    
+    // 5000 - المصروفات (Expenses)
+    { code: "5000", name: "المصروفات", nameEn: "Expenses", type: "header", parent: null, balance: 0, debit: 0, credit: 0 },
+    { code: "5100", name: "تكلفة المبيعات", nameEn: "Cost of Goods Sold", type: "account", parent: "5000", balance: 0, debit: 0, credit: 0, category: "expense" },
+    { code: "5200", name: "المشتريات", nameEn: "Purchases", type: "account", parent: "5000", balance: 0, debit: 0, credit: 0, category: "expense" },
+    { code: "5300", name: "الرواتب والأجور", nameEn: "Salaries & Wages", type: "account", parent: "5000", balance: 0, debit: 0, credit: 0, category: "expense" },
+    { code: "5400", name: "الإيجار", nameEn: "Rent", type: "account", parent: "5000", balance: 0, debit: 0, credit: 0, category: "expense" },
+    { code: "5500", name: "الكهرباء والماء", nameEn: "Utilities", type: "account", parent: "5000", balance: 0, debit: 0, credit: 0, category: "expense" },
+    { code: "5600", name: "الاتصالات", nameEn: "Communications", type: "account", parent: "5000", balance: 0, debit: 0, credit: 0, category: "expense" },
+    { code: "5700", name: "الصيانة", nameEn: "Maintenance", type: "account", parent: "5000", balance: 0, debit: 0, credit: 0, category: "expense" },
+    { code: "5800", name: "مصروفات التسويق", nameEn: "Marketing Expenses", type: "account", parent: "5000", balance: 0, debit: 0, credit: 0, category: "expense" },
+    { code: "5900", name: "مصروفات إدارية وعمومية", nameEn: "General & Administrative", type: "account", parent: "5000", balance: 0, debit: 0, credit: 0, category: "expense" },
+    { code: "5910", name: "خصم ممنوح", nameEn: "Discount Given", type: "account", parent: "5000", balance: 0, debit: 0, credit: 0, category: "expense" },
+    { code: "5920", name: "مصروفات أخرى", nameEn: "Other Expenses", type: "account", parent: "5000", balance: 0, debit: 0, credit: 0, category: "expense" }
+];
+
+// ========================================
+// 📒 دوال واجهة القيود المحاسبية
+// ========================================
+
+let journalRowIndex = 1;
+
+/**
+ * تهيئة قوائم الحسابات في القيود
+ */
+function initializeAccountSelects() {
+    const selects = document.querySelectorAll('.account-select');
+    selects.forEach(select => {
+        select.innerHTML = '<option value="">اختر الحساب *</option>';
+        chartOfAccounts.forEach(account => {
+            if (account.type === 'account') {
+                const option = document.createElement('option');
+                option.value = account.code;
+                option.textContent = `${account.code} - ${account.name}`;
+                select.appendChild(option);
+            }
+        });
+    });
+}
+
+/**
+ * إضافة صف جديد للقيد
+ */
+function addJournalRow() {
+    const container = document.getElementById('journalEntryRows');
+    const newRow = document.createElement('div');
+    newRow.className = 'journal-entry-row';
+    newRow.style.display = 'contents';
+    newRow.dataset.index = journalRowIndex;
+    
+    newRow.innerHTML = `
+        <select class="account-select" data-index="${journalRowIndex}">
+            <option value="">اختر الحساب *</option>
+            ${chartOfAccounts.filter(a => a.type === 'account').map(a => 
+                `<option value="${a.code}">${a.code} - ${a.name}</option>`
+            ).join('')}
+        </select>
+        <input type="number" class="debit-input" data-index="${journalRowIndex}" placeholder="المدين" min="0" step="0.01" oninput="updateJournalTotals()">
+        <input type="number" class="credit-input" data-index="${journalRowIndex}" placeholder="الدائن" min="0" step="0.01" oninput="updateJournalTotals()">
+        <button type="button" class="btn-danger btn-small" onclick="removeJournalRow(${journalRowIndex})" style="padding: 8px;">🗑️ حذف</button>
+    `;
+    
+    container.appendChild(newRow);
+    journalRowIndex++;
+    updateJournalTotals();
+}
+
+/**
+ * حذف صف من القيد
+ */
+function removeJournalRow(index) {
+    const rows = document.querySelectorAll('.journal-entry-row');
+    if (rows.length <= 1) {
+        showNotification('⚠️ تنبيه', 'يجب أن يحتوي القيد على حركة واحدة على الأقل', 'warning');
+        return;
+    }
+    
+    const row = document.querySelector(`[data-index="${index}"]`);
+    if (row) {
+        row.remove();
+        updateJournalTotals();
+    }
+}
+
+/**
+ * تحديث إجماليات القيد
+ */
+function updateJournalTotals() {
+    const debitInputs = document.querySelectorAll('.debit-input');
+    const creditInputs = document.querySelectorAll('.credit-input');
+    
+    let totalDebit = 0;
+    let totalCredit = 0;
+    
+    debitInputs.forEach(input => {
+        totalDebit += parseFloat(input.value) || 0;
+    });
+    
+    creditInputs.forEach(input => {
+        totalCredit += parseFloat(input.value) || 0;
+    });
+    
+    document.getElementById('totalDebit').textContent = totalDebit.toFixed(2);
+    document.getElementById('totalCredit').textContent = totalCredit.toFixed(2);
+    
+    const diff = Math.abs(totalDebit - totalCredit);
+    const diffEl = document.getElementById('balanceDiff');
+    diffEl.textContent = diff.toFixed(2);
+    diffEl.style.color = diff < 0.01 ? '#2e7d32' : '#c62828';
+}
+
+/**
+ * حفظ قيد محاسبي
+ */
+async function saveJournalEntry() {
+    const date = document.getElementById('journalDate').value;
+    const description = document.getElementById('journalDescription').value;
+    const reference = document.getElementById('journalReference').value;
+    const notes = document.getElementById('journalNotes').value;
+    
+    if (!date || !description) {
+        showNotification('⚠️ خطأ', 'يرجى إدخال التاريخ والوصف', 'error');
+        return;
+    }
+    
+    // جمع الحركات
+    const entries = [];
+    const rows = document.querySelectorAll('.journal-entry-row');
+    
+    rows.forEach(row => {
+        const index = row.dataset.index;
+        const accountCode = document.querySelector(`.account-select[data-index="${index}"]`).value;
+        const debit = parseFloat(document.querySelector(`.debit-input[data-index="${index}"]`).value) || 0;
+        const credit = parseFloat(document.querySelector(`.credit-input[data-index="${index}"]`).value) || 0;
+        
+        if (accountCode && (debit > 0 || credit > 0)) {
+            const account = getAccountByCode(accountCode);
+            entries.push({
+                accountCode: accountCode,
+                accountName: account ? account.name : '',
+                debit: debit,
+                credit: credit
+            });
+        }
+    });
+    
+    if (entries.length < 2) {
+        showNotification('⚠️ خطأ', 'يجب أن يحتوي القيد على حركتين على الأقل', 'error');
+        return;
+    }
+    
+    const totalDebit = entries.reduce((sum, e) => sum + e.debit, 0);
+    const totalCredit = entries.reduce((sum, e) => sum + e.credit, 0);
+    
+    const result = await createJournalEntry({
+        date: date,
+        description: description,
+        reference: reference || null,
+        referenceType: 'manual',
+        entries: entries,
+        total: totalDebit,
+        notes: notes
+    });
+    
+    if (result) {
+        showNotification('✅ نجاح', 'تم حفظ القيد المحاسبي بنجاح', 'success');
+        clearJournalForm();
+        renderJournalList();
+    }
+}
+
+/**
+ * مسح نموذج القيد
+ */
+function clearJournalForm() {
+    document.getElementById('journalDate').value = new Date().toISOString().split('T')[0];
+    document.getElementById('journalDescription').value = '';
+    document.getElementById('journalReference').value = '';
+    document.getElementById('journalNotes').value = '';
+    
+    // إعادة تعيين الصفوف
+    const container = document.getElementById('journalEntryRows');
+    container.innerHTML = `
+        <div class="journal-entry-row" style="display: contents;">
+            <select class="account-select" data-index="0" onchange="updateJournalTotals()">
+                <option value="">اختر الحساب *</option>
+                ${chartOfAccounts.filter(a => a.type === 'account').map(a => 
+                    `<option value="${a.code}">${a.code} - ${a.name}</option>`
+                ).join('')}
+            </select>
+            <input type="number" class="debit-input" data-index="0" placeholder="المدين" min="0" step="0.01" oninput="updateJournalTotals()">
+            <input type="number" class="credit-input" data-index="0" placeholder="الدائن" min="0" step="0.01" oninput="updateJournalTotals()">
+            <button type="button" class="btn-danger btn-small" onclick="removeJournalRow(0)" style="padding: 8px;">❌</button>
+        </div>
+    `;
+    journalRowIndex = 1;
+    updateJournalTotals();
+}
+
+/**
+ * عرض قائمة القيود المحاسبية
+ */
+function renderJournalList() {
+    const container = document.getElementById('journalList');
+    const filterFrom = document.getElementById('journalFilterFrom').value;
+    const filterTo = document.getElementById('journalFilterTo').value;
+    const searchText = document.getElementById('journalSearchText').value.toLowerCase();
+    
+    let filtered = journalEntries;
+    
+    if (filterFrom) {
+        filtered = filtered.filter(e => e.date >= filterFrom);
+    }
+    if (filterTo) {
+        filtered = filtered.filter(e => e.date <= filterTo);
+    }
+    if (searchText) {
+        filtered = filtered.filter(e => 
+            e.description.toLowerCase().includes(searchText) ||
+            (e.reference && e.reference.toString().includes(searchText))
+        );
+    }
+    
+    if (filtered.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">لا توجد قيود محاسبية</p>';
+        return;
+    }
+    
+    let html = '';
+    filtered.forEach(entry => {
+        html += `
+            <div class="journal-entry-card" style="background: white; border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 8px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 2px solid #1976d2; padding-bottom: 10px;">
+                    <div>
+                        <strong style="color: #1976d2;">📄 ${entry.description}</strong>
+                        ${entry.reference ? `<span style="color: #666; margin-right: 10px;">| المرجع: ${entry.reference}</span>` : ''}
+                    </div>
+                    <div style="text-align: left;">
+                        <span style="color: #666;">📅 ${entry.date}</span>
+                        <button class="btn-danger btn-small" onclick="deleteJournalEntryUI(${entry.id})" style="margin-right: 10px;">🗑️ حذف</button>
+                    </div>
+                </div>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: #f5f5f5;">
+                            <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">الحساب</th>
+                            <th style="border: 1px solid #ddd; padding: 8px; text-align: center; color: #c62828;">المدين</th>
+                            <th style="border: 1px solid #ddd; padding: 8px; text-align: center; color: #2e7d32;">الدائن</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${entry.entries.map(e => `
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 8px;">${e.accountCode} - ${e.accountName}</td>
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center; color: ${e.debit > 0 ? '#c62828' : '#999'};">${e.debit > 0 ? e.debit.toFixed(2) : '-'}</td>
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center; color: ${e.credit > 0 ? '#2e7d32' : '#999'};">${e.credit > 0 ? e.credit.toFixed(2) : '-'}</td>
+                            </tr>
+                        `).join('')}
+                        <tr style="background: #e3f2fd; font-weight: bold;">
+                            <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">الإجمالي</td>
+                            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; color: #c62828;">${entry.entries.reduce((sum, e) => sum + e.debit, 0).toFixed(2)}</td>
+                            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; color: #2e7d32;">${entry.entries.reduce((sum, e) => sum + e.credit, 0).toFixed(2)}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                ${entry.notes ? `<div style="margin-top: 10px; padding: 8px; background: #fff3cd; border-radius: 4px;"><strong>ملاحظات:</strong> ${entry.notes}</div>` : ''}
+                <div style="margin-top: 10px; font-size: 0.85em; color: #999;">👤 ${entry.createdBy} | 🕐 ${new Date(entry.createdAt).toLocaleString('ar-EG')}</div>
+            </div>
+        `;
+    });
+    
+    container.innerHTML = html;
+}
+
+/**
+ * حذف قيد محاسبي من الواجهة
+ */
+async function deleteJournalEntryUI(entryId) {
+    if (!confirm('هل أنت متأكد من حذف هذا القيد؟ سيتم عكس جميع الحركات المحاسبية.')) {
+        return;
+    }
+    
+    const success = await deleteJournalEntry(entryId);
+    if (success) {
+        showNotification('✅ نجاح', 'تم حذف القيد بنجاح', 'success');
+        renderJournalList();
+        renderChartOfAccounts();
+    }
+}
+
+/**
+ * عرض دليل الحسابات
+ */
+// ========================================
+// 📒 دوال واجهة المستخدم للنظام المحاسبي
+// ========================================
+
+/**
+ * تهيئة قوائم الحسابات في نموذج القيد
+ */
+function initializeAccountSelects() {
+    const container = document.getElementById('journalEntryRows');
+    if (!container) return;
+    
+    const selects = container.querySelectorAll('.account-select');
+    selects.forEach(select => {
+        select.innerHTML = '<option value="">اختر الحساب *</option>';
+        chartOfAccounts.forEach(account => {
+            if (account.type === 'account') {
+                select.innerHTML += `<option value="${account.code}">${account.code} - ${account.name}</option>`;
+            }
+        });
+    });
+    
+    // إضافة مستمعين للأحداث
+    updateJournalTotals();
+    addJournalEventListeners();
+}
+
+/**
+ * إضافة صف جديد لحركة قيد
+ */
+function addJournalRow() {
+    const container = document.getElementById('journalEntryRows');
+    if (!container) return;
+    
+    const rows = container.querySelectorAll('.journal-entry-row');
+    const newIndex = rows.length;
+    
+    const rowDiv = document.createElement('div');
+    rowDiv.className = 'journal-entry-row';
+    rowDiv.style.display = 'contents';
+    
+    rowDiv.innerHTML = `
+        <select class="account-select" data-index="${newIndex}">
+            <option value="">اختر الحساب *</option>
+            ${chartOfAccounts.filter(a => a.type === 'account').map(a => 
+                `<option value="${a.code}">${a.code} - ${a.name}</option>`
+            ).join('')}
+        </select>
+        <input type="number" class="debit-input" data-index="${newIndex}" placeholder="المدين" min="0" step="0.01">
+        <input type="number" class="credit-input" data-index="${newIndex}" placeholder="الدائن" min="0" step="0.01">
+        <button type="button" class="btn-danger btn-small" onclick="removeJournalRow(${newIndex})" style="padding: 8px;">🗑️ حذف</button>
+    `;
+    
+    container.appendChild(rowDiv);
+    addJournalEventListeners();
+}
+
+/**
+ * حذف صف من حركات القيد
+ */
+function removeJournalRow(index) {
+    const container = document.getElementById('journalEntryRows');
+    if (!container) return;
+    
+    const rows = container.querySelectorAll('.journal-entry-row');
+    if (rows.length <= 1) {
+        showNotification('⚠️ تنبيه', 'يجب أن يحتوي القيد على حركة واحدة على الأقل', 'warning');
+        return;
+    }
+    
+    rows[index].remove();
+    updateJournalTotals();
+}
+
+/**
+ * إضافة مستمعي الأحداث لحقول القيد
+ */
+function addJournalEventListeners() {
+    const debits = document.querySelectorAll('.debit-input');
+    const credits = document.querySelectorAll('.credit-input');
+    
+    debits.forEach(input => {
+        input.removeEventListener('input', updateJournalTotals);
+        input.addEventListener('input', updateJournalTotals);
+    });
+    
+    credits.forEach(input => {
+        input.removeEventListener('input', updateJournalTotals);
+        input.addEventListener('input', updateJournalTotals);
+    });
+}
+
+/**
+ * تحديث إجماليات القيد
+ */
+function updateJournalTotals() {
+    let totalDebit = 0;
+    let totalCredit = 0;
+    
+    document.querySelectorAll('.debit-input').forEach(input => {
+        totalDebit += parseFloat(input.value) || 0;
+    });
+    
+    document.querySelectorAll('.credit-input').forEach(input => {
+        totalCredit += parseFloat(input.value) || 0;
+    });
+    
+    const diff = totalDebit - totalCredit;
+    
+    document.getElementById('totalDebit').textContent = totalDebit.toFixed(2);
+    document.getElementById('totalCredit').textContent = totalCredit.toFixed(2);
+    document.getElementById('balanceDiff').textContent = diff.toFixed(2);
+    
+    // تغيير لون الفرق
+    const diffElement = document.getElementById('balanceDiff');
+    if (Math.abs(diff) < 0.01) {
+        diffElement.style.color = '#2e7d32'; // أخضر - متوازن
+    } else {
+        diffElement.style.color = '#c62828'; // أحمر - غير متوازن
+    }
+}
+
+/**
+ * حفظ قيد محاسبي يدوي
+ */
+async function saveJournalEntry() {
+    const date = document.getElementById('journalDate').value;
+    const description = document.getElementById('journalDescription').value;
+    const reference = document.getElementById('journalReference').value;
+    const notes = document.getElementById('journalNotes').value;
+    
+    if (!date || !description) {
+        showNotification('⚠️ بيانات ناقصة', 'يرجى إدخال التاريخ والوصف', 'warning');
+        return;
+    }
+    
+    // جمع حركات القيد
+    const entries = [];
+    const rows = document.querySelectorAll('.journal-entry-row');
+    
+    rows.forEach((row, index) => {
+        const accountSelect = row.querySelector(`.account-select[data-index="${index}"]`);
+        const debitInput = row.querySelector(`.debit-input[data-index="${index}"]`);
+        const creditInput = row.querySelector(`.credit-input[data-index="${index}"]`);
+        
+        if (!accountSelect || !debitInput || !creditInput) return;
+        
+        const accountCode = accountSelect.value;
+        const debit = parseFloat(debitInput.value) || 0;
+        const credit = parseFloat(creditInput.value) || 0;
+        
+        if (accountCode && (debit > 0 || credit > 0)) {
+            const account = getAccountByCode(accountCode);
+            entries.push({
+                accountCode: accountCode,
+                accountName: account ? account.name : '',
+                debit: debit,
+                credit: credit
+            });
+        }
+    });
+    
+    if (entries.length === 0) {
+        showNotification('⚠️ قيد فارغ', 'يرجى إضافة حركات للقيد', 'warning');
+        return;
+    }
+    
+    const total = entries.reduce((sum, e) => sum + Math.max(e.debit, e.credit), 0);
+    
+    const result = await createJournalEntry({
+        date: date,
+        description: description,
+        reference: reference || null,
+        referenceType: 'manual',
+        entries: entries,
+        total: total,
+        notes: notes
+    });
+    
+    if (result) {
+        showNotification('✅ تم الحفظ', 'تم حفظ القيد المحاسبي بنجاح', 'success');
+        clearJournalForm();
+        renderJournalList();
+        renderChartOfAccounts();
+    }
+}
+
+/**
+ * مسح نموذج القيد
+ */
+function clearJournalForm() {
+    document.getElementById('journalDate').value = new Date().toISOString().split('T')[0];
+    document.getElementById('journalDescription').value = '';
+    document.getElementById('journalReference').value = '';
+    document.getElementById('journalNotes').value = '';
+    
+    const container = document.getElementById('journalEntryRows');
+    if (!container) return;
+    
+    container.innerHTML = `
+        <div class="journal-entry-row" style="display: contents;">
+            <select class="account-select" data-index="0">
+                <option value="">اختر الحساب *</option>
+            </select>
+            <input type="number" class="debit-input" data-index="0" placeholder="المدين" min="0" step="0.01">
+            <input type="number" class="credit-input" data-index="0" placeholder="الدائن" min="0" step="0.01">
+            <button type="button" class="btn-danger btn-small" onclick="removeJournalRow(0)" style="padding: 8px;">🗑️ حذف</button>
+        </div>
+    `;
+    
+    initializeAccountSelects();
+    updateJournalTotals();
+}
+
+/**
+ * عرض قائمة القيود المحاسبية
+ */
+function renderJournalList() {
+    const container = document.getElementById('journalList');
+    if (!container) return;
+    
+    const filterFrom = document.getElementById('journalFilterFrom')?.value;
+    const filterTo = document.getElementById('journalFilterTo')?.value;
+    const searchText = document.getElementById('journalSearchText')?.value.toLowerCase();
+    
+    let filtered = [...journalEntries];
+    
+    if (filterFrom) {
+        filtered = filtered.filter(e => e.date >= filterFrom);
+    }
+    
+    if (filterTo) {
+        filtered = filtered.filter(e => e.date <= filterTo);
+    }
+    
+    if (searchText) {
+        filtered = filtered.filter(e => 
+            e.description.toLowerCase().includes(searchText) ||
+            (e.reference && e.reference.toString().includes(searchText))
+        );
+    }
+    
+    if (filtered.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">لا توجد قيود محاسبية</p>';
+        return;
+    }
+    
+    let html = '';
+    
+    filtered.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(entry => {
+        const totalDebit = entry.entries.reduce((sum, e) => sum + e.debit, 0);
+        const totalCredit = entry.entries.reduce((sum, e) => sum + e.credit, 0);
+        
+        html += `
+            <div style="background: white; border: 1px solid #ddd; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 2px solid #1976d2; padding-bottom: 10px;">
+                    <div>
+                        <strong style="color: #1976d2; font-size: 1.1em;">قيد رقم: ${entry.id}</strong>
+                        <span style="margin: 0 10px; color: #666;">|</span>
+                        <span style="color: #666;">📅 ${entry.date}</span>
+                    </div>
+                    <button class="btn-danger btn-small" onclick="deleteJournalEntryUI(${entry.id})" style="padding: 6px 12px;">🗑️ حذف</button>
+                </div>
+                
+                <div style="margin-bottom: 10px;">
+                    <strong>البيان:</strong> ${entry.description}
+                    ${entry.reference ? `<span style="margin: 0 10px;">|</span><strong>المرجع:</strong> ${entry.reference}` : ''}
+                </div>
+                
+                <table style="width: 100%; border-collapse: collapse; margin: 10px 0;">
+                    <thead>
+                        <tr style="background: #f5f5f5;">
+                            <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">الحساب</th>
+                            <th style="border: 1px solid #ddd; padding: 8px; text-align: center; color: #c62828;">المدين</th>
+                            <th style="border: 1px solid #ddd; padding: 8px; text-align: center; color: #2e7d32;">الدائن</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${entry.entries.map(e => `
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 8px;">${e.accountCode} - ${e.accountName}</td>
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center; color: ${e.debit > 0 ? '#c62828' : '#999'};">${e.debit.toFixed(2)}</td>
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: center; color: ${e.credit > 0 ? '#2e7d32' : '#999'};">${e.credit.toFixed(2)}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                    <tfoot>
+                        <tr style="background: #f0f9ff; font-weight: bold;">
+                            <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">الإجمالي:</td>
+                            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; color: #c62828;">${totalDebit.toFixed(2)}</td>
+                            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; color: #2e7d32;">${totalCredit.toFixed(2)}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+                
+                ${entry.notes ? `<div style="margin-top: 10px; padding: 8px; background: #fff3cd; border-radius: 4px;"><strong>ملاحظات:</strong> ${entry.notes}</div>` : ''}
+                
+                <div style="margin-top: 10px; font-size: 0.85em; color: #666;">
+                    <span>👤 ${entry.createdBy}</span>
+                    <span style="margin: 0 10px;">|</span>
+                    <span>🕒 ${new Date(entry.createdAt).toLocaleString('ar-EG')}</span>
+                </div>
+            </div>
+        `;
+    });
+    
+    container.innerHTML = html;
+}
+
+/**
+ * حذف قيد من الواجهة
+ */
+async function deleteJournalEntryUI(entryId) {
+    const confirmed = confirm('هل أنت متأكد من حذف هذا القيد؟\nسيتم عكس جميع الحركات المحاسبية.');
+    if (!confirmed) return;
+    
+    const success = await deleteJournalEntry(entryId);
+    if (success) {
+        showNotification('✅ تم الحذف', 'تم حذف القيد وعكس الحركات بنجاح', 'success');
+        renderJournalList();
+        renderChartOfAccounts();
+    } else {
+        showNotification('❌ خطأ', 'فشل حذف القيد', 'error');
+    }
+}
+
+function renderChartOfAccounts() {
+    const container = document.getElementById('chartOfAccountsList');
+    if (!container) return;
+    
+    console.log('📊 عرض دليل الحسابات:', chartOfAccounts.length, 'حساب');
+    
+    const searchText = document.getElementById('accountSearchText')?.value?.toLowerCase() || '';
+    const categoryFilter = document.getElementById('accountCategoryFilter')?.value || '';
+    
+    let filtered = chartOfAccounts.filter(a => a.type === 'account');
+    console.log('📋 الحسابات بعد الفلترة:', filtered.length);
+    
+    if (searchText) {
+        filtered = filtered.filter(a => 
+            a.code.includes(searchText) ||
+            a.name.toLowerCase().includes(searchText) ||
+            a.nameEn.toLowerCase().includes(searchText)
+        );
+    }
+    
+    if (categoryFilter) {
+        filtered = filtered.filter(a => a.category === categoryFilter);
+    }
+    
+    // تحديث الملخص
+    let assetsTotal = 0, liabilitiesTotal = 0, equityTotal = 0, revenueTotal = 0, expenseTotal = 0;
+    
+    chartOfAccounts.forEach(account => {
+        if (account.type === 'account') {
+            switch(account.category) {
+                case 'asset': assetsTotal += account.balance; break;
+                case 'liability': liabilitiesTotal += account.balance; break;
+                case 'equity': equityTotal += account.balance; break;
+                case 'revenue': revenueTotal += account.balance; break;
+                case 'expense': expenseTotal += account.balance; break;
+            }
+        }
+    });
+    
+    document.getElementById('assetsBalance').textContent = assetsTotal.toFixed(2);
+    document.getElementById('liabilitiesBalance').textContent = liabilitiesTotal.toFixed(2);
+    document.getElementById('equityBalance').textContent = equityTotal.toFixed(2);
+    document.getElementById('revenueBalance').textContent = revenueTotal.toFixed(2);
+    document.getElementById('expenseBalance').textContent = expenseTotal.toFixed(2);
+    
+    // عرض الحسابات
+    if (filtered.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">لا توجد حسابات</p>';
+        return;
+    }
+    
+    let html = '<table style="width: 100%; border-collapse: collapse; background: white;">';
+    html += `
+        <thead>
+            <tr style="background: linear-gradient(135deg, #1976d2, #42a5f5); color: white;">
+                <th style="border: 1px solid #ddd; padding: 12px; text-align: center;">الكود</th>
+                <th style="border: 1px solid #ddd; padding: 12px; text-align: right;">اسم الحساب</th>
+                <th style="border: 1px solid #ddd; padding: 12px; text-align: right;">الاسم بالإنجليزية</th>
+                <th style="border: 1px solid #ddd; padding: 12px; text-align: center;">التصنيف</th>
+                <th style="border: 1px solid #ddd; padding: 12px; text-align: center;">المدين</th>
+                <th style="border: 1px solid #ddd; padding: 12px; text-align: center;">الدائن</th>
+                <th style="border: 1px solid #ddd; padding: 12px; text-align: center;">الرصيد</th>
+            </tr>
+        </thead>
+        <tbody>
+    `;
+    
+    filtered.forEach((account, index) => {
+        const categoryLabels = {
+            'asset': '💰 أصول',
+            'liability': '📊 خصوم',
+            'equity': '🏢 حقوق ملكية',
+            'revenue': '💵 إيرادات',
+            'expense': '💸 مصروفات'
+        };
+        
+        html += `
+            <tr style="background: ${index % 2 === 0 ? '#f9f9f9' : 'white'};">
+                <td style="border: 1px solid #ddd; padding: 10px; text-align: center; font-weight: bold; color: #1976d2;">${account.code}</td>
+                <td style="border: 1px solid #ddd; padding: 10px;">${account.name}</td>
+                <td style="border: 1px solid #ddd; padding: 10px; color: #666;">${account.nameEn}</td>
+                <td style="border: 1px solid #ddd; padding: 10px; text-align: center;">${categoryLabels[account.category] || ''}</td>
+                <td style="border: 1px solid #ddd; padding: 10px; text-align: center; color: ${account.debit > 0 ? '#c62828' : '#999'};">${account.debit.toFixed(2)}</td>
+                <td style="border: 1px solid #ddd; padding: 10px; text-align: center; color: ${account.credit > 0 ? '#2e7d32' : '#999'};">${account.credit.toFixed(2)}</td>
+                <td style="border: 1px solid #ddd; padding: 10px; text-align: center; font-weight: bold; color: ${account.balance >= 0 ? '#2e7d32' : '#c62828'};">${account.balance.toFixed(2)}</td>
+            </tr>
+        `;
+    });
+    
+    html += '</tbody></table>';
+    container.innerHTML = html;
+}
 
 // ========================================
 // 🔥 تعريف دالة initializeApp مبكراً
@@ -8041,6 +8905,12 @@ async function initializeApp() {
     console.log('📋 تحميل البيانات الأساسية...');
     await loadUsers();
     await loadActivities();
+    
+    // 📒 تهيئة النظام المحاسبي
+    console.log('📊 تهيئة النظام المحاسبي...');
+    initializeChartOfAccounts();
+    journalEntries = (loadFromLocalStorage('journalEntries')) || [];
+    console.log(`✅ تم تحميل ${journalEntries.length} قيد محاسبي`);
     
     if (!currentActivityId) { 
         console.log('⚠️ لا يوجد نشاط محدد - عرض نافذة الأنشطة');
@@ -9989,6 +10859,345 @@ loadSavedEmailSettings();
             }
         }
 
+        // ========================================
+        // 📒 دوال القيود المحاسبية (Accounting Entries)
+        // ========================================
+        
+        /**
+         * تهيئة دليل الحسابات عند أول استخدام
+         */
+        function initializeChartOfAccounts() {
+            console.log('🔍 بدء تهيئة دليل الحسابات...');
+            console.log('📊 DEFAULT_CHART_OF_ACCOUNTS length:', DEFAULT_CHART_OF_ACCOUNTS?.length);
+            
+            const saved = loadFromLocalStorage('chartOfAccounts');
+            console.log('💾 البيانات المحفوظة:', saved?.length);
+            
+            if (!saved || saved.length === 0) {
+                chartOfAccounts = JSON.parse(JSON.stringify(DEFAULT_CHART_OF_ACCOUNTS));
+                saveToLocalStorage('chartOfAccounts', chartOfAccounts);
+                console.log('✅ تم تهيئة دليل الحسابات الافتراضي:', chartOfAccounts.length);
+            } else {
+                chartOfAccounts = saved;
+                console.log(`📂 تم تحميل دليل الحسابات: ${chartOfAccounts.length} حساب`);
+            }
+            
+            console.log('🎯 chartOfAccounts النهائي:', chartOfAccounts.length);
+        }
+        
+        /**
+         * الحصول على حساب بالكود
+         */
+        function getAccountByCode(code) {
+            return chartOfAccounts.find(acc => acc.code === code);
+        }
+        
+        /**
+         * الحصول على حساب بالاسم
+         */
+        function getAccountByName(name) {
+            return chartOfAccounts.find(acc => acc.name === name);
+        }
+        
+        /**
+         * تحديث رصيد حساب
+         */
+        async function updateAccountBalance(accountCode, debit, credit) {
+            const account = getAccountByCode(accountCode);
+            if (!account) {
+                console.error(`❌ الحساب ${accountCode} غير موجود`);
+                return false;
+            }
+            
+            account.debit += debit;
+            account.credit += credit;
+            
+            // حساب الرصيد حسب نوع الحساب
+            if (account.category === 'asset' || account.category === 'expense') {
+                // الأصول والمصروفات: المدين - الدائن
+                account.balance = account.debit - account.credit;
+            } else {
+                // الخصوم وحقوق الملكية والإيرادات: الدائن - المدين
+                account.balance = account.credit - account.debit;
+            }
+            
+            await saveToLocalStorage('chartOfAccounts', chartOfAccounts);
+            return true;
+        }
+        
+        /**
+         * إنشاء قيد محاسبي جديد
+         */
+        async function createJournalEntry(data) {
+            const entry = {
+                id: Date.now(),
+                date: data.date || new Date().toISOString().split('T')[0],
+                description: data.description,
+                reference: data.reference || null, // رقم الفاتورة/العملية المرتبطة
+                referenceType: data.referenceType || null, // نوع العملية (sale, purchase, expense, etc)
+                entries: data.entries, // مصفوفة من {accountCode, accountName, debit, credit}
+                total: data.total,
+                createdBy: data.createdBy || window.currentUser?.name || 'النظام',
+                createdAt: new Date().toISOString(),
+                approved: data.approved !== false, // افتراضياً معتمد
+                notes: data.notes || ''
+            };
+            
+            // التحقق من التوازن المحاسبي
+            const totalDebit = entry.entries.reduce((sum, e) => sum + e.debit, 0);
+            const totalCredit = entry.entries.reduce((sum, e) => sum + e.credit, 0);
+            
+            if (Math.abs(totalDebit - totalCredit) > 0.01) {
+                console.error('❌ القيد غير متوازن:', { totalDebit, totalCredit });
+                showNotification('❌ خطأ', 'القيد المحاسبي غير متوازن (المدين ≠ الدائن)', 'error');
+                return null;
+            }
+            
+            // تحديث أرصدة الحسابات
+            for (const e of entry.entries) {
+                await updateAccountBalance(e.accountCode, e.debit, e.credit);
+            }
+            
+            // حفظ القيد
+            journalEntries.unshift(entry);
+            await saveToLocalStorage('journalEntries', journalEntries);
+            
+            console.log('✅ تم إنشاء القيد المحاسبي:', entry.id);
+            return entry;
+        }
+        
+        /**
+         * حذف قيد محاسبي (عكس القيد)
+         */
+        async function deleteJournalEntry(entryId) {
+            const entry = journalEntries.find(e => e.id === entryId);
+            if (!entry) {
+                console.error('❌ القيد غير موجود');
+                return false;
+            }
+            
+            // عكس القيد (عكس المدين والدائن)
+            for (const e of entry.entries) {
+                await updateAccountBalance(e.accountCode, -e.debit, -e.credit);
+            }
+            
+            // حذف القيد
+            journalEntries = journalEntries.filter(e => e.id !== entryId);
+            await saveToLocalStorage('journalEntries', journalEntries);
+            
+            console.log('✅ تم حذف القيد المحاسبي:', entryId);
+            return true;
+        }
+        
+        /**
+         * إنشاء قيد تلقائي لفاتورة مبيعات
+         */
+        async function createSaleJournalEntry(sale) {
+            const total = sale.total || 0;
+            const customer = customers.find(c => c.id === sale.customerId);
+            const customerName = customer ? customer.name : 'عميل';
+            
+            const entries = [];
+            
+            // حسب طريقة الدفع
+            if (sale.paymentMethod === 'cash') {
+                // من حـ/ الصندوق
+                entries.push({
+                    accountCode: '1111',
+                    accountName: 'الصندوق',
+                    debit: total,
+                    credit: 0
+                });
+            } else if (sale.paymentMethod === 'bank') {
+                // من حـ/ البنك
+                entries.push({
+                    accountCode: '1112',
+                    accountName: 'البنك',
+                    debit: total,
+                    credit: 0
+                });
+            } else {
+                // مبيعات آجلة - من حـ/ المدينون (العملاء)
+                entries.push({
+                    accountCode: '1120',
+                    accountName: 'المدينون (العملاء)',
+                    debit: total,
+                    credit: 0
+                });
+            }
+            
+            // إلى حـ/ المبيعات
+            entries.push({
+                accountCode: '4100',
+                accountName: 'إيرادات المبيعات',
+                debit: 0,
+                credit: total
+            });
+            
+            return await createJournalEntry({
+                date: sale.date,
+                description: `فاتورة مبيعات رقم SAL${String(sale.number).padStart(3, '0')} - ${customerName}`,
+                reference: sale.id,
+                referenceType: 'sale',
+                entries: entries,
+                total: total,
+                notes: sale.notes || ''
+            });
+        }
+        
+        /**
+         * إنشاء قيد تلقائي لفاتورة مشتريات
+         */
+        async function createPurchaseJournalEntry(purchase) {
+            const total = purchase.total || 0;
+            const supplier = suppliers.find(s => s.id === purchase.supplierId);
+            const supplierName = supplier ? supplier.name : 'مورد';
+            
+            const entries = [];
+            
+            // من حـ/ المشتريات
+            entries.push({
+                accountCode: '5200',
+                accountName: 'المشتريات',
+                debit: total,
+                credit: 0
+            });
+            
+            // إلى حـ/ الدائنون (الموردون) أو النقدية/البنك
+            if (purchase.paidAmount >= total) {
+                // مدفوعة بالكامل
+                if (purchase.paymentMethod === 'bank') {
+                    entries.push({
+                        accountCode: '1112',
+                        accountName: 'البنك',
+                        debit: 0,
+                        credit: total
+                    });
+                } else {
+                    entries.push({
+                        accountCode: '1111',
+                        accountName: 'الصندوق',
+                        debit: 0,
+                        credit: total
+                    });
+                }
+            } else {
+                // مشتريات آجلة
+                entries.push({
+                    accountCode: '2110',
+                    accountName: 'الدائنون (الموردون)',
+                    debit: 0,
+                    credit: total
+                });
+            }
+            
+            return await createJournalEntry({
+                date: purchase.date,
+                description: `فاتورة مشتريات رقم PUR${String(purchase.number).padStart(3, '0')} - ${supplierName}`,
+                reference: purchase.id,
+                referenceType: 'purchase',
+                entries: entries,
+                total: total,
+                notes: purchase.notes || ''
+            });
+        }
+        
+        /**
+         * إنشاء قيد تلقائي لمصروف
+         */
+        async function createExpenseJournalEntry(expense) {
+            const amount = expense.amount || 0;
+            
+            const entries = [];
+            
+            // من حـ/ المصروفات
+            let expenseAccountCode = '5920'; // مصروفات أخرى (افتراضي)
+            
+            // تحديد الحساب حسب نوع المصروف
+            if (expense.category) {
+                const categoryMap = {
+                    'rent': '5400',
+                    'utilities': '5500',
+                    'communications': '5600',
+                    'maintenance': '5700',
+                    'marketing': '5800',
+                    'administrative': '5900'
+                };
+                expenseAccountCode = categoryMap[expense.category] || '5920';
+            }
+            
+            const expenseAccount = getAccountByCode(expenseAccountCode);
+            
+            entries.push({
+                accountCode: expenseAccountCode,
+                accountName: expenseAccount ? expenseAccount.name : 'مصروفات أخرى',
+                debit: amount,
+                credit: 0
+            });
+            
+            // إلى حـ/ الصندوق أو البنك
+            if (expense.paymentMethod === 'bank') {
+                entries.push({
+                    accountCode: '1112',
+                    accountName: 'البنك',
+                    debit: 0,
+                    credit: amount
+                });
+            } else {
+                entries.push({
+                    accountCode: '1111',
+                    accountName: 'الصندوق',
+                    debit: 0,
+                    credit: amount
+                });
+            }
+            
+            return await createJournalEntry({
+                date: expense.date,
+                description: `مصروف: ${expense.description || 'مصروف'}`,
+                reference: expense.id,
+                referenceType: 'expense',
+                entries: entries,
+                total: amount,
+                notes: expense.notes || ''
+            });
+        }
+        
+        /**
+         * إنشاء قيد تلقائي لراتب
+         */
+        async function createSalaryJournalEntry(salary) {
+            const netSalary = salary.net || salary.basic || 0;
+            
+            const entries = [];
+            
+            // من حـ/ الرواتب والأجور
+            entries.push({
+                accountCode: '5300',
+                accountName: 'الرواتب والأجور',
+                debit: netSalary,
+                credit: 0
+            });
+            
+            // إلى حـ/ الصندوق (افتراضي)
+            entries.push({
+                accountCode: '1111',
+                accountName: 'الصندوق',
+                debit: 0,
+                credit: netSalary
+            });
+            
+            return await createJournalEntry({
+                date: salary.month ? `${salary.month}-01` : new Date().toISOString().split('T')[0],
+                description: `راتب: ${salary.employeeName || 'موظف'} - ${salary.month || ''}`,
+                reference: salary.id,
+                referenceType: 'salary',
+                entries: entries,
+                total: netSalary,
+                notes: salary.notes || ''
+            });
+        }
+
 
 
         // === دوال التخزين المعدلة ===
@@ -11272,6 +12481,8 @@ loadSavedEmailSettings();
                 { id: 'sadaqa', label: '🤲 حساب الصدقة' },
                 { id: 'salaries', label: '💼 إدارة الرواتب' },
                 { id: 'assets', label: '🏢 إدارة الأصول' },
+                { id: 'journal', label: '📒 دفتر اليومية' },
+                { id: 'chartOfAccounts', label: '🗂️ دليل الحسابات' },
                 { id: 'reports', label: '📊 الحسابات والتقارير' },
                 { id: 'settings', label: '⚙️ الإعدادات والنظام' },
                 { id: 'about', label: 'ℹ️ حول البرنامج' }
@@ -11848,6 +13059,22 @@ function formatDate(dateString) {
     } else if (sectionId === 'about') {
         // 📱 تحميل معلومات حول البرنامج عند فتح الصفحة
         loadAboutPageOnOpen();
+    } else if (sectionId === 'journal') {
+        // 📒 تهيئة صفحة دفتر اليومية
+        if (chartOfAccounts.length === 0) {
+            console.log('⚠️ دليل الحسابات فارغ - إعادة التهيئة');
+            initializeChartOfAccounts();
+        }
+        initializeAccountSelects();
+        clearJournalForm();
+        renderJournalList();
+    } else if (sectionId === 'chartOfAccounts') {
+        // 🗂️ تهيئة صفحة دليل الحسابات
+        if (chartOfAccounts.length === 0) {
+            console.log('⚠️ دليل الحسابات فارغ - إعادة التهيئة');
+            initializeChartOfAccounts();
+        }
+        renderChartOfAccounts();
     }
 }
 
@@ -13995,6 +15222,9 @@ function loadCustomersToSelect() {
         purchases.push(newPurchaseData);
         currentPurchaseNumber++;
         showNotification('✅ تم الحفظ', `تم حفظ الفاتورة رقم PUR${newPurchaseData.number.toString().padStart(3, '0')} بنجاح!`, 'success');
+        
+        // 📒 إنشاء القيد المحاسبي التلقائي
+        await createPurchaseJournalEntry(newPurchaseData);
     }
     
     const success1 = saveToLocalStorage('purchases', purchases);
@@ -14874,6 +16104,9 @@ function loadCustomersToSelect() {
                 sales.push(newSaleData);
                 currentSaleNumber++;
                 showNotification('✅ تم الحفظ', `تم حفظ الفاتورة رقم SAL${newSaleData.number.toString().padStart(3, '0')} بنجاح!`, 'success');
+                
+                // 📒 إنشاء القيد المحاسبي التلقائي
+                await createSaleJournalEntry(newSaleData);
             }
             
             const success1 = saveToLocalStorage('sales', sales);
@@ -15985,6 +17218,9 @@ function renderPurchaseReturns() {
         renderExpenses();
         updateExpenseStats();
         updateDashboard();
+        
+        // 📒 إنشاء القيد المحاسبي التلقائي
+        await createExpenseJournalEntry(expense);
     } else {
         showNotification('❌ خطأ', 'حدث خطأ في حفظ البيانات', 'error');
     }
@@ -16343,6 +17579,9 @@ function renderPurchaseReturns() {
                 renderSalaries();
                 updateSalarySummary();
                 updateDataStats();
+                
+                // 📒 إنشاء القيد المحاسبي التلقائي
+                await createSalaryJournalEntry(salaryRecord);
             } else {
                 showNotification('❌ خطأ', 'حدث خطأ في حفظ مسير الرواتب', 'error');
             }
@@ -24401,6 +25640,13 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => {
             console.log('🔍 بدء فحص الإعداد الأولي للنظام...');
             checkFirstSetup();
+            
+            // 📒 تهيئة النظام المحاسبي فوراً
+            if (typeof initializeChartOfAccounts === 'function') {
+                console.log('💼 تهيئة النظام المحاسبي من DOMContentLoaded...');
+                initializeChartOfAccounts();
+                console.log('✅ تم: chartOfAccounts.length =', chartOfAccounts.length);
+            }
         }, 1000); // تأخير قصير للتأكد من تحميل Firebase
     } else {
         console.error('❌ لم يتم العثور على وظيفة checkFirstSetup');
