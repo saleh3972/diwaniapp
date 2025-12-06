@@ -138,7 +138,7 @@
         import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
         import { getDatabase, ref, set, get, update, remove, onValue, push, child } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
 
-        // Firebase Configuration - بيئة الإنتاج (Production)
+        // Firebase Configuration - بيئة الانتاج (Production)
         const firebaseConfig = {
             apiKey: "AIzaSyDtm443qYDGFOH7NIFgaxVWPhhW5Ezrfrw",
             authDomain: "diwani-bc43f.firebaseapp.com",
@@ -6501,7 +6501,7 @@ textarea.editing-mode {
                 </div>
                 <div>
                     <label style="font-size: 12px; color: #666; display: block; margin-bottom: 4px;">سعر البيع *</label>
-                    <input type="number" class="unit-price" placeholder="0.00" min="0" step="0.01" required style="padding: 10px; border: 1px solid #ddd; border-radius: 6px; width: 100%;">
+                    <input type="number" class="unit-price" value="0.00" placeholder="0.00" min="0" step="0.01" required style="padding: 10px; border: 1px solid #ddd; border-radius: 6px; width: 100%;">
                 </div>
                 <div style="display: flex; align-items: flex-end;">
                     <button type="button" class="btn-secondary" disabled style="padding: 10px; opacity: 0.5; cursor: not-allowed;">🔒 أساسية</button>
@@ -7137,7 +7137,7 @@ textarea.editing-mode {
         <select id="purchaseUnit" onchange="updatePurchaseUnitPrice()">
             <option value="">-- اختر الوحدة --</option>
         </select>
-        <input type="number" id="purchasePrice" placeholder="سعر الشراء">
+        <input type="text" inputmode="decimal" id="purchasePrice" placeholder="سعر الشراء" lang="en-US" style="font-family: 'Arial', sans-serif !important; direction: ltr; text-align: right;" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
     </div>
     
     <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px;">
@@ -18764,9 +18764,13 @@ function searchCustomers() {
             unitRows.forEach((row, index) => {
                 const unitName = row.querySelector('.unit-name').value.trim();
                 const factor = parseFloat(row.querySelector('.unit-factor').value) || 1;
-                const price = parseFloat(row.querySelector('.unit-price').value);
                 
-                if (!unitName || isNaN(price) || price < 0) {
+                const priceInput = row.querySelector('.unit-price');
+                const priceRaw = priceInput.value;
+                const price = parseFloat(priceRaw);
+                
+                // Validation: Name required, Price required (allow 0 but not empty), Price >= 0
+                if (!unitName || priceRaw === '' || isNaN(price) || price < 0) {
                     return; // Skip invalid rows
                 }
                 
@@ -18867,7 +18871,7 @@ function searchCustomers() {
                 </div>
                 <div>
                     <label style="font-size: 12px; color: #666; display: block; margin-bottom: 4px;">سعر البيع *</label>
-                    <input type="number" class="unit-price" placeholder="0.00" min="0" step="0.01" required style="padding: 10px; border: 1px solid #ddd; border-radius: 6px; width: 100%;">
+                    <input type="number" class="unit-price" value="0.00" placeholder="0.00" min="0" step="0.01" required style="padding: 10px; border: 1px solid #ddd; border-radius: 6px; width: 100%;">
                 </div>
                 <div style="display: flex; align-items: flex-end;">
                     <button type="button" onclick="removeUnitRow(${unitRowCounter})" style="padding: 8px; width: 100%; background: transparent; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; color: #999; font-size: 18px; transition: all 0.2s;" onmouseover="this.style.background='#ffebee'; this.style.color='#d32f2f'; this.style.borderColor='#d32f2f';" onmouseout="this.style.background='transparent'; this.style.color='#999'; this.style.borderColor='#ddd';">✕</button>
@@ -20326,7 +20330,8 @@ function loadCustomersToSelect() {
                 
                 // Auto-select first unit
                 unitSelect.value = '0';
-                priceInput.value = item.cost || item.units[0].price;
+                // FIX: Use item.cost only. If not set, 0. Do NOT use sales price.
+                priceInput.value = item.cost || 0;
             } else {
                 // Fallback for old items
                 priceInput.value = item ? (item.cost || 0) : '';
@@ -20335,12 +20340,21 @@ function loadCustomersToSelect() {
         
         // 📏 Update price when unit is selected (Purchases)
         function updatePurchaseUnitPrice() {
+            const itemSelect = document.getElementById('purchaseItem');
             const unitSelect = document.getElementById('purchaseUnit');
             const priceInput = document.getElementById('purchasePrice');
             
+            const itemId = parseInt(itemSelect.value);
+            const item = items.find(i => i.id === itemId);
             const selectedOption = unitSelect.options[unitSelect.selectedIndex];
-            if (selectedOption && selectedOption.dataset.price) {
-                priceInput.value = selectedOption.dataset.price;
+            
+            if (item && selectedOption) {
+                const factor = parseFloat(selectedOption.dataset.factor) || 1;
+                const baseCost = parseFloat(item.cost) || 0;
+                // Calculate cost based on unit factor
+                priceInput.value = baseCost > 0 ? (baseCost * factor) : 0;
+            } else {
+                priceInput.value = 0;
             }
         }
         
@@ -21051,13 +21065,16 @@ function loadCustomersToSelect() {
                 const currentValue = select.value;
                 select.innerHTML = '<option value="">-- اختر مركز التكلفة --</option>';
                 
-                // Filter out 'main' type cost centers (only allow sub centers)
-                costCenters.filter(cc => cc.type !== 'main').forEach(cc => {
-                    const option = document.createElement('option');
-                    option.value = cc.id;
-                    option.textContent = `${cc.code} - ${cc.name}`;
-                    select.appendChild(option);
-                });
+                // Check if costCenters is valid array
+                if (Array.isArray(costCenters)) {
+                    // Filter out 'main' type cost centers (only allow sub centers)
+                    costCenters.filter(cc => cc.type !== 'main').forEach(cc => {
+                        const option = document.createElement('option');
+                        option.value = cc.id;
+                        option.textContent = `${cc.code} - ${cc.name}`;
+                        select.appendChild(option);
+                    });
+                }
                 
                 if (currentValue) select.value = currentValue;
             });
@@ -24072,10 +24089,13 @@ function populateTransactionCostCenters(selectId) {
     const select = document.getElementById(selectId);
     if (!select) return;
     
+    select.innerHTML = '<option value="">-- اختر مركز التكلفة --</option>';
+
+    if (!Array.isArray(costCenters)) return;
+
     // Filter for 'sub' type cost centers only
     const subCenters = costCenters.filter(c => c.type === 'sub');
     
-    select.innerHTML = '<option value="">-- اختر مركز التكلفة --</option>';
     subCenters.forEach(c => {
         select.innerHTML += `<option value="${c.id}">${c.code} - ${c.name}</option>`;
     });
@@ -37755,11 +37775,11 @@ function saveAttendanceData() {
             // 4. Write ONLY to isolated key
             try {
                 localStorage.setItem(storageKey, JSON.stringify(data));
-                alert('✅ تم الحفظ بنجاح في التخزين الآمن.');
+                showNotification('✅ تم الحفظ', 'تم حفظ الأرصدة الافتتاحية بنجاح في التخزين الآمن.', 'success');
                 document.getElementById('openingBalanceModal').style.display = 'none';
             } catch (e) {
                 console.error('Error saving opening balances:', e);
-                alert('❌ حدث خطأ أثناء الحفظ');
+                showNotification('❌ خطأ', 'حدث خطأ أثناء حفظ الأرصدة الافتتاحية.', 'error');
             }
         }
 
